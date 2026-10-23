@@ -1,0 +1,8 @@
+---
+import Ast from './Ast.astro';
+---
+<div class="brk" aria-hidden="true"><Ast /></div>
+<style>
+  .brk { display: flex; justify-content: center; padding-top: var(--s-88); }
+  .brk :global(.ast) { width: 16px; height: 16px; }
+</style>

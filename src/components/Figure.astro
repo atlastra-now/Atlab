@@ -1,0 +1,101 @@
+---
+import Shot from './Shot.astro';
+import { evidence } from '../utils/evidence';
+
+type Item = {
+  src: ImageMetadata;
+  alt: string;
+  product?: 'spotify' | 'qq';
+  label?: string;
+  context?: string;
+  crop?: string;
+  ratio?: string;
+  focus?: number;
+  emphasis?: boolean;
+  light?: boolean;
+};
+export interface Props {
+  n: number;
+  layout: 'single' | 'pair' | 'before-after' | 'row';
+  width?: 960 | 1200;
+  items: Item[];
+  what: string;
+  note?: string;
+}
+const { n, layout, width = 960, items, what, note } = Astro.props;
+const productName = { spotify: 'Spotify', qq: 'QQ 音乐' };
+const letters = ['a', 'b', 'c', 'd', 'e'];
+---
+<figure class:list={['fig', `L-${layout}`, layout === 'row' && width === 1200 ? 'w-full' : '']}>
+  {layout === 'before-after' ? (
+    <div class="ba">
+      <div class="ba-full">
+        <p class="tag">{items[0].product && <i style={`background:var(--${items[0].product})`}></i>}{items[0].product ? productName[items[0].product] : ''}{items[0].context && <span>{items[0].context}</span>}</p>
+        <Shot {...items[0]} sizes="(min-width: 760px) 380px, 40vw" />
+      </div>
+      <ol class="moments">
+        {items.slice(1).map((it, i) => (
+          <li class:list={{ key: it.emphasis }}>
+            <p class="mh"><span>{letters[i]}</span>{it.label}{it.context && <em>{it.context}</em>}</p>
+            <Shot {...it} sizes="(min-width: 760px) 560px, 100vw" widths={[560, 1120]} />
+          </li>
+        ))}
+      </ol>
+    </div>
+  ) : (
+    <div class="items">
+      {items.map((it) => (
+        <div class="item">
+          {(it.product || it.label || it.context) && (
+            <p class="tag">{it.product && <i style={`background:var(--${it.product})`}></i>}{it.product ? productName[it.product] : it.label}{it.context && <span>{it.context}</span>}</p>
+          )}
+          <Shot {...it} />
+        </div>
+      ))}
+    </div>
+  )}
+  <figcaption>
+    <p class="what"><span class="n">图 {n}</span><span>{what}</span></p>
+    {note && <p class="note" set:html={evidence(note)} />}
+  </figcaption>
+</figure>
+
+<style>
+  .fig { margin: var(--s-56) auto 0; max-width: var(--wide); }
+  .L-single { max-width: var(--read); }
+  .L-row.w-full { max-width: var(--full); }
+  .tag { font-size: var(--t-kind); line-height: var(--t-kind-lh); font-weight: 700; margin-bottom: var(--s-8); }
+  .tag i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .tag span { font-weight: 400; color: var(--muted); margin-left: 6px; }
+
+  .L-single .items { display: block; }
+  .L-single .item { max-width: 300px; }
+  .L-pair .items { display: grid; grid-template-columns: repeat(2, minmax(0, 340px)); gap: var(--s-24); justify-content: center; }
+  .L-row .items { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--s-16); }
+
+  .ba { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr); gap: var(--s-40); align-items: start; }
+  .moments { display: flex; flex-direction: column; gap: 28px; padding-top: 28px; }
+  .mh { font-size: 13px; line-height: 20px; font-weight: 700; margin-bottom: var(--s-8); display: flex; gap: 10px; align-items: baseline; }
+  .mh span { display: inline-grid; place-items: center; min-width: 18px; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .mh em { font-style: normal; font-weight: 400; color: var(--ink-2); }
+
+  figcaption { margin-top: var(--s-16); max-width: var(--read); }
+  .L-single figcaption { max-width: none; }
+  .what { font-size: var(--t-cap1); line-height: var(--t-cap1-lh); font-weight: 500; }
+  .what .n { margin-right: 10px; font-weight: 700; }
+  .note { font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); margin-top: var(--s-4); }
+  .note :global(b) { font-weight: 500; color: var(--ink-2); }
+
+  @media (max-width: 900px) {
+    .L-row .items { grid-auto-columns: 42%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--s-8); }
+    .L-row .item { scroll-snap-align: start; }
+  }
+  @media (max-width: 760px) {
+    .ba { grid-template-columns: 1fr; gap: var(--s-24); }
+    .ba-full { max-width: 220px; }
+    .moments { padding-top: 0; }
+  }
+  @media (max-width: 620px) {
+    .L-pair .items { gap: var(--s-12); }
+  }
+</style>

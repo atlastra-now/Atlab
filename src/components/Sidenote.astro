@@ -1,0 +1,11 @@
+---
+const { n } = Astro.props;
+---
+<span class="sn"><b>{n}</b><slot /></span>
+<style>
+  .sn { font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); display: block; margin-top: var(--s-12); padding-left: 14px; border-left: 1px solid var(--line); }
+  .sn b { color: var(--ink); font-weight: 700; margin-right: var(--s-4); }
+  @media (min-width: 1180px) {
+    .sn { float: right; clear: right; width: 220px; margin: var(--s-4) -260px 0 0; border: 0; padding: 0; }
+  }
+</style>

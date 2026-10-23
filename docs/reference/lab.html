@@ -1,0 +1,715 @@
+<title>Product Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@500&display=swap">
+<style>
+/* Layout：首页用 12 栏内容网格（Bandcamp Daily）；文章页用居中阅读栏 680 / 宽图 960 / 通栏 1200（Every）。
+   全站中性色；颜色只来自项目图片。两个记忆点：✱ 标记，以及「原话用宋体」。 */
+:root{
+  --bg:#FFFFFF; --ink:#111111; --ink-2:#55554F; --muted:#8C8C86; --line:#E6E6E1; --wash:#F4F4F1;
+  --sans:"Schibsted Grotesk","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --quote:"Noto Serif SC","Songti SC","STSong",serif;
+  --read:680px; --wide:960px; --full:1200px; --gutter:24px;
+  /* 图片位颜色：模拟各项目真实截图的主色，不随主题变化 */
+  --m-spotify:#161616; --m-qq:#F3F3F0; --m-doxa:#E6E0D4; --m-ai:#D8DFE6; --m-biz:#E2E7DC; --m-tool:#ECE4E4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#111112;--ink:#EEEEEA;--ink-2:#B4B4AE;--muted:#85857F;--line:#2A2A2C;--wash:#1B1B1D;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#111112;--ink:#EEEEEA;--ink-2:#B4B4AE;--muted:#85857F;--line:#2A2A2C;--wash:#1B1B1D;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.85;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3,p,figure,ol,ul,blockquote{margin:0;padding:0}
+ol,ul{list-style:none}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.tnum{font-variant-numeric:tabular-nums}
+.pad{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+@media (min-width:760px){.pad{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}}
+@media (min-width:1200px){.pad{padding-left:max(48px,env(safe-area-inset-left,0px));padding-right:max(48px,env(safe-area-inset-right,0px))}}
+.full{max-width:var(--full);margin-inline:auto}
+.ast{width:.62em;height:.62em;display:inline-block;vertical-align:.12em}
+
+/* ---------- 预览切换条（非网站本身） ---------- */
+.pv{border-bottom:1px solid var(--line);background:var(--wash)}
+.pv .full{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;padding-block:8px}
+.pv p{font-size:12px;color:var(--muted)}
+.pv nav{display:flex;gap:4px}
+.pv button{font:500 12px var(--sans);background:none;border:0;color:var(--ink-2);padding:4px 10px;border-radius:3px;cursor:pointer}
+.pv button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* ---------- 站点页眉（首页与文章页共用） ---------- */
+.site{border-bottom:1px solid var(--ink)}
+.site .full{display:flex;justify-content:space-between;align-items:center;height:64px;gap:16px}
+.mark{font-weight:800;font-size:20px;letter-spacing:-.03em;display:flex;align-items:center;gap:3px}
+.mark .ast{width:13px;height:13px;margin-top:-10px}
+.site nav{display:flex;gap:22px;font-size:14px;font-weight:500;color:var(--ink-2)}
+.site nav a.on{color:var(--ink)}
+
+/* ---------- 共用：标签、图片位、图注 ---------- */
+.kind{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.kind .sub{font-weight:400;color:var(--muted)}
+.kind .ast{width:8px;height:8px;margin:0}
+.img{position:relative;border-radius:3px;overflow:hidden;background:var(--c,var(--wash))}
+.img.dark{color:#77777C}
+.img.light{color:#9A9A92;box-shadow:inset 0 0 0 1px rgba(0,0,0,.07)}
+.img .ph{position:absolute;left:12px;right:12px;bottom:10px;font-size:11px;line-height:15px}
+.img img{width:100%;height:100%;object-fit:cover;display:block}
+.cap{font-size:13px;line-height:20px;color:var(--muted);margin-top:12px}
+.cap b{font-weight:500;color:var(--ink-2)}
+.cap .fig{font-weight:700;color:var(--ink);margin-right:8px}
+.say{font-family:var(--quote);font-weight:500}
+.view[hidden]{display:none!important}
+
+/* ================= 文章页 ================= */
+.art-head{max-width:var(--read);margin:0 auto;padding-top:72px;text-align:left}
+.art-head .kind{margin-bottom:22px}
+.art-head h1{font-size:46px;line-height:56px;font-weight:700;letter-spacing:-.025em;text-wrap:balance}
+.art-head .dek{font-size:20px;line-height:34px;color:var(--ink-2);margin-top:20px}
+.byline{display:flex;align-items:center;gap:12px;margin-top:32px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;line-height:20px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;flex:none}
+.avatar .ast{width:14px;height:14px;margin:0}
+.byline b{font-weight:700;display:block}
+.byline span{color:var(--muted)}
+
+.hero-fig{max-width:var(--full);margin:56px auto 0}
+.hf{display:grid;grid-template-columns:minmax(0,3.2fr) minmax(0,2fr) minmax(0,3.4fr) minmax(0,2.5fr);gap:var(--gutter);align-items:end}
+.hf-prompt{align-self:start;padding-top:8px}
+.hf-prompt .lbl{font-size:12px;font-weight:700;letter-spacing:.02em}
+.hf-prompt .say{font-size:30px;line-height:44px;margin-top:12px;display:block}
+.hf-prompt p{font-size:14px;line-height:23px;color:var(--ink-2);margin-top:14px;max-width:16em}
+.hf .tag{font-size:12px;line-height:16px;font-weight:500;color:var(--ink-2);margin-bottom:8px;display:block}
+.hf .tag i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.r916{aspect-ratio:9/16}.r45{aspect-ratio:4/5}.r43{aspect-ratio:4/3}.r1610{aspect-ratio:16/10}.r32{aspect-ratio:3/2}
+.hero-fig .cap{max-width:var(--read);margin-left:auto;margin-right:auto}
+
+.contents{max-width:var(--read);margin:56px auto 0;border-top:1px solid var(--ink);padding-top:16px}
+.contents .lbl{font-size:12px;font-weight:700;letter-spacing:.02em}
+.contents ol{margin-top:12px}
+.contents li{display:grid;grid-template-columns:56px 1fr;gap:8px;padding-block:10px;border-bottom:1px solid var(--line);font-size:16px;line-height:26px}
+.contents li span{font-weight:700;font-size:13px;line-height:26px}
+
+.brk{display:flex;justify-content:center;padding-block:88px 0;color:var(--ink)}
+.brk .ast{width:16px;height:16px}
+
+.sec{max-width:var(--read);margin:0 auto;padding-top:64px}
+.sec .kind{margin-bottom:14px}
+.sec h2{font-size:30px;line-height:40px;font-weight:700;letter-spacing:-.015em;text-wrap:balance}
+.sec .dek{font-size:20px;line-height:34px;color:var(--ink-2);margin-top:18px}
+
+.log{max-width:calc(var(--read) + 260px);margin:56px auto 0;padding-left:0;display:grid;grid-template-columns:minmax(0,var(--read)) 120px 120px;column-gap:10px;justify-content:start}
+@media (min-width:1100px){.log{transform:translateX(130px)}}
+.log .row{grid-column:1;display:grid;grid-template-columns:96px minmax(0,1fr);gap:16px;padding-block:18px;border-top:1px solid var(--line)}
+.log .row:last-of-type{border-bottom:1px solid var(--line)}
+.log .who{font-size:12px;line-height:18px;color:var(--muted);padding-top:8px}
+.log .who b{display:block;font-weight:700;color:var(--ink);font-size:13px}
+.log .u .say{font-size:27px;line-height:40px}
+.log .a .say{font-size:19px;line-height:32px;color:var(--ink-2);padding-top:4px;display:block}
+.log .a small{display:block;font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:2px}
+.log .turn .say{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px;text-decoration-color:var(--ink)}
+.log .bk{border-left:1px solid var(--ink);padding-left:10px;font-size:12px;line-height:18px;color:var(--ink-2);margin-block:26px 20px}
+.log .bk1{grid-column:2;grid-row:1 / 4}
+.log .bk2{grid-column:3;grid-row:2 / 5;border-left-style:solid;border-left-color:var(--muted)}
+.log .bk b{display:block;color:var(--ink);font-weight:700}
+
+.fig2{max-width:var(--wide);margin:64px auto 0}
+.f2{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,2fr) minmax(0,4fr);gap:var(--gutter);align-items:end}
+.f2 .tag{font-size:12px;font-weight:700;margin-bottom:8px;display:block}
+.f2 .tag span{font-weight:400;color:var(--muted);margin-left:6px}
+.fig2 .cap{max-width:var(--read)}
+
+.prose{max-width:var(--read);margin:56px auto 0;position:relative}
+.prose p{font-size:17px;line-height:32px}
+.prose p + p{margin-top:20px}
+.fig3{margin:36px 0 36px}
+.f3{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.f3 .tag{font-size:12px;font-weight:700;margin-bottom:8px;display:block}
+.f3 .tag span{font-weight:400;color:var(--muted);margin-left:6px}
+.prose sup{font-size:11px;font-weight:700;margin-left:1px}
+.sn{font-size:13px;line-height:20px;color:var(--muted);display:block;margin-top:12px;padding-left:14px;border-left:1px solid var(--line)}
+.sn b{color:var(--ink);font-weight:700;margin-right:4px}
+@media (min-width:1180px){.sn{float:right;clear:right;width:220px;margin:4px -260px 0 0;border:0;padding:0}}
+
+.verdict{max-width:var(--read);margin:64px auto 0;padding-top:20px;border-top:1px solid var(--ink)}
+.verdict .lbl{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.verdict .lbl .ast{width:9px;height:9px;margin:0}
+.verdict p.v{font-size:25px;line-height:40px;font-weight:700;letter-spacing:-.01em;margin-top:12px}
+.verdict .cap{margin-top:16px}
+.art-end{height:96px}
+
+/* ================= 首页 ================= */
+.cats{border-bottom:1px solid var(--line)}
+.cats .full{display:flex;gap:22px;overflow-x:auto;font-size:14px;font-weight:500;color:var(--muted);padding-block:12px;white-space:nowrap}
+.cats a.on{color:var(--ink);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+.home{padding-block:40px 96px}
+.feat{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter);align-items:end;padding-bottom:48px;border-bottom:1px solid var(--line)}
+.feat .img{grid-column:1 / 9}
+.feat .txt{grid-column:9 / 13;padding-bottom:4px}
+.feat h2{font-size:32px;line-height:42px;font-weight:700;letter-spacing:-.02em;margin-top:14px;text-wrap:balance}
+.feat p{font-size:16px;line-height:28px;color:var(--ink-2);margin-top:12px}
+.meta{font-size:13px;line-height:20px;color:var(--muted);margin-top:16px}
+.feat-comp{display:flex;gap:4%;align-items:flex-end;justify-content:center;height:100%;padding:7% 8% 0}
+.feat-comp div{border-radius:6px 6px 0 0;background:#2A2A2C}
+.sec-lbl{display:flex;justify-content:space-between;align-items:baseline;margin-top:40px;font-size:13px;font-weight:700}
+.sec-lbl a{font-weight:500;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px var(--gutter);margin-top:20px}
+.card .kind{margin-top:16px}
+.card h3{font-size:20px;line-height:29px;font-weight:700;letter-spacing:-.01em;margin-top:8px;text-wrap:balance}
+.card p{font-size:15px;line-height:25px;color:var(--ink-2);margin-top:8px}
+.card a:hover h3{text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:4px}
+.index{margin-top:56px;border-top:1px solid var(--ink)}
+.index li a{display:grid;grid-template-columns:72px minmax(0,1fr) 160px 80px;gap:var(--gutter);padding-block:16px;border-bottom:1px solid var(--line);font-size:16px;line-height:24px;align-items:baseline}
+.index .n{font-size:13px;font-weight:700}
+.index .t{font-weight:500}
+.index .c,.index .d{font-size:13px;color:var(--muted)}
+.index .d{text-align:right}
+.sample{font-size:12px;color:var(--muted);margin-bottom:20px}
+
+/* ================= 规范 ================= */
+.spec{padding-block:56px 96px}
+.spec h2{font-size:30px;line-height:40px;font-weight:700;letter-spacing:-.015em}
+.spec .intro{font-size:18px;line-height:31px;color:var(--ink-2);max-width:var(--read);margin-top:14px}
+.sp-block{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gutter);margin-top:56px;padding-top:16px;border-top:1px solid var(--ink)}
+.sp-block > h3{grid-column:1 / 4;font-size:15px;font-weight:700;line-height:24px}
+.sp-block > div{grid-column:4 / 13}
+.trow{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:var(--gutter);padding-block:14px;border-bottom:1px solid var(--line);align-items:baseline}
+.trow .s{font-size:12px;line-height:18px;color:var(--muted)}
+.trow .s b{display:block;color:var(--ink);font-weight:700}
+.rules li{padding-block:12px;border-bottom:1px solid var(--line);font-size:15px;line-height:25px;color:var(--ink-2)}
+.rules li b{color:var(--ink);font-weight:700;margin-right:6px}
+.swa{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}
+.swa i{display:block;height:40px;border-radius:2px;box-shadow:inset 0 0 0 1px var(--line);margin-bottom:6px}
+.swa span{font-size:12px;line-height:17px;color:var(--muted);display:block}
+.swa b{font-size:13px;font-weight:700;display:block}
+.widths{display:flex;flex-direction:column;gap:8px}
+.widths div{height:28px;background:var(--wash);font-size:12px;line-height:28px;padding-left:10px;color:var(--ink-2);margin-inline:auto;width:100%}
+
+/* ================= 图片排布 ================= */
+.lay{padding-block:56px 96px}
+.lay-intro{max-width:var(--read)}
+.lay-intro h2{font-size:30px;line-height:40px;font-weight:700;letter-spacing:-.015em;margin-top:14px}
+.lay-intro p{font-size:18px;line-height:31px;color:var(--ink-2);margin-top:14px}
+.lay-rules{max-width:var(--read);margin-top:32px;border-top:1px solid var(--ink)}
+.lay-rules li{display:grid;grid-template-columns:28px 1fr;gap:8px;padding-block:12px;border-bottom:1px solid var(--line);font-size:15px;line-height:25px;color:var(--ink-2)}
+.lay-rules li span{font-weight:700;color:var(--ink)}
+.lay-rules b{color:var(--ink);font-weight:700}
+.pat{margin-top:96px}
+.pat-h{max-width:var(--read);margin:0 auto 28px;display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:baseline}
+.pat-h .k{font-size:13px;font-weight:700;grid-row:span 2}
+.pat-h h3{font-size:22px;line-height:32px;font-weight:700}
+.pat-h p{font-size:14px;line-height:23px;color:var(--muted)}
+.w-read{max-width:var(--read);margin-inline:auto}
+.w-wide{max-width:var(--wide);margin-inline:auto}
+.w-full{max-width:var(--full);margin-inline:auto}
+.p-inline{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;align-items:end}
+.p-inline .note{font-size:15px;line-height:26px;color:var(--ink-2)}
+.p-inline .note p + p{margin-top:12px}
+.p-pair{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.p-pair .tag,.p-seq .tag,.p-detail .tag,.p-ba .tag{font-size:12px;line-height:16px;font-weight:700;margin-bottom:8px;display:block}
+.p-pair .tag i,.mx .tag i{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.p-pair .tag span,.p-seq .tag span,.p-ba .tag span,.p-detail .tag span{font-weight:400;color:var(--muted);margin-left:6px}
+.p-ba{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.p-seq{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.p-detail{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,5fr) minmax(0,4fr);gap:24px;align-items:end}
+.pin{position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;color:#111;font:700 12px/22px var(--sans);text-align:center;transform:translate(-50%,-50%);box-shadow:0 0 0 2px #111}
+.legend li{display:grid;grid-template-columns:26px 1fr;gap:6px;font-size:14px;line-height:23px;color:var(--ink-2);padding-block:8px;border-top:1px solid var(--line)}
+.legend li b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;box-shadow:0 0 0 1.5px var(--ink);font-size:11px;color:var(--ink)}
+.mx-wrap{overflow-x:auto}
+.mx{display:grid;grid-template-columns:110px repeat(5,minmax(120px,1fr));gap:12px 16px;min-width:820px}
+.mx .h{font-size:12px;font-weight:700;padding-bottom:6px;border-bottom:1px solid var(--ink)}
+.mx .rl{font-size:13px;font-weight:700;padding-top:2px}
+.mx .tx{font-size:12px;line-height:18px;color:var(--muted);margin-top:6px}
+
+/* ================= 证据图组 + 放大 ================= */
+.evfig{margin-top:8px}
+.evfig.wide{max-width:var(--wide);margin-inline:auto}
+.prose .evfig.out{margin-block:40px;clear:both}
+@media (min-width:1060px){.prose .evfig.out{margin-left:-140px;margin-right:-140px;max-width:none}}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.side-h{font-size:12px;line-height:18px;font-weight:700;margin-bottom:10px}
+.side-h span{font-weight:400;color:var(--muted);margin-left:8px}
+.bd{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.ev-shot{position:relative;display:grid;grid-template-columns:minmax(0,1fr);column-gap:20px;align-items:start;min-height:0}
+.ev-shot > .img{grid-column:1;max-width:340px}
+.hl{position:absolute;border:1.5px solid rgba(255,255,255,.92);box-shadow:0 0 0 1px rgba(0,0,0,.28);border-radius:3px;pointer-events:none}
+.hl em{position:absolute;top:3px;left:6px;font:700 11px/14px var(--sans);font-style:normal;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.6)}
+.lead{position:absolute;height:1px;background:var(--ink);top:calc(var(--ny) + 11px);left:calc(56% * var(--xr));width:calc(56% * (1 - var(--xr)) + 14px)}
+.note{position:absolute;left:calc(56% + 20px);right:0;top:var(--ny)}
+.note .k{font-size:11px;line-height:16px;font-weight:700;color:var(--muted)}
+.note .say{font-size:15px;line-height:25px;margin-top:6px;color:var(--ink)}
+.note .g{font-size:13px;line-height:20px;color:var(--ink-2);margin-top:8px}
+.ba{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,6fr);gap:40px;align-items:start}
+.moments{display:flex;flex-direction:column;gap:28px;padding-top:28px}
+.mh{font-size:13px;line-height:20px;font-weight:700;margin-bottom:8px;display:flex;gap:10px;align-items:baseline}
+.mh span{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;box-shadow:0 0 0 1.5px var(--ink);font-size:11px;line-height:1}
+.mh em{font-style:normal;font-weight:400;color:var(--ink-2)}
+.moments li:not(.key) .mh{color:var(--ink-2)}
+.moments li.key .img{box-shadow:0 0 0 2px var(--ink)}
+.cap2{margin-top:18px;max-width:var(--read);font-size:13px;line-height:21px;color:var(--muted)}
+.cap2 .what{font-size:15px;line-height:24px;font-weight:500;color:var(--ink);margin-bottom:4px}
+.cap2 .what .fig{font-weight:700;margin-right:10px}
+.cap2 b{font-weight:500;color:var(--ink-2)}
+.hero-fig .cap2{margin-left:auto;margin-right:auto}
+.img img{cursor:zoom-in}
+.img img:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.lb[hidden]{display:none!important}
+.lb{position:fixed;inset:0;z-index:60;background:rgba(10,10,11,.95);color:#EDEDEA;display:flex;flex-direction:column}
+.lb-bar{display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));font-size:13px;line-height:20px;border-bottom:1px solid #2A2A2C}
+.lb-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-n{color:#8C8C86;font-variant-numeric:tabular-nums}
+.lb button{font:500 13px var(--sans);color:#EDEDEA;background:none;border:1px solid #3A3A3D;border-radius:4px;padding:4px 10px;cursor:pointer}
+.lb button:disabled{opacity:.35;cursor:default}
+.lb-scroll{flex:1;overflow:auto;padding:24px max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 40px) max(16px,env(safe-area-inset-left,0px))}
+.lb-img{display:block;width:min(560px,100%);height:auto;margin:0 auto;border-radius:4px}
+.lb-hint{text-align:center;font-size:12px;color:#8C8C86;margin-top:14px}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:1099px){
+  .log{grid-template-columns:minmax(0,1fr);max-width:var(--read)}
+  .log .bk{display:none}
+  .log-m{display:block!important}
+}
+@media (max-width:900px){
+  .hf{grid-template-columns:minmax(0,2fr) minmax(0,3.4fr) minmax(0,2.5fr)}
+  .hf-prompt{grid-column:1 / -1;margin-bottom:12px}
+  .feat .img,.feat .txt{grid-column:1 / 13}
+  .cards{grid-template-columns:1fr 1fr}
+  .index li a{grid-template-columns:48px minmax(0,1fr) 72px}
+  .index .c{display:none}
+  .sp-block > h3,.sp-block > div{grid-column:1 / 13}
+}
+@media (max-width:900px){
+  .p-seq{grid-template-columns:repeat(5,42%);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+  .p-seq > div{scroll-snap-align:start}
+  .p-detail{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
+  .p-detail .legend{grid-column:1 / -1}
+}
+@media (max-width:760px){
+  .cmp{grid-template-columns:1fr;gap:48px}
+  .ev-shot{grid-template-columns:minmax(0,1fr)}
+  .ev-shot > .img{max-width:300px}
+  .lead{display:none}
+  .note{position:static;margin-top:14px}
+  .ba{grid-template-columns:1fr;gap:24px}
+  .ba-full .img{max-width:220px}
+  .moments{padding-top:0}
+}
+@media (max-width:620px){
+  .p-inline{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
+  .p-pair,.p-ba{gap:12px}
+  .art-head{padding-top:44px}
+  .art-head h1{font-size:31px;line-height:41px}
+  .art-head .dek,.sec .dek{font-size:18px;line-height:31px}
+  .hf-prompt .say{font-size:25px;line-height:37px}
+  .hf{gap:10px}
+  .sec h2{font-size:24px;line-height:34px}
+  .log .row{grid-template-columns:1fr;gap:4px}
+  .log .who{padding-top:0}
+  .log .u .say{font-size:23px;line-height:35px}
+  .f2{gap:10px}
+  .verdict p.v{font-size:21px;line-height:34px}
+  .cards{grid-template-columns:1fr}
+  .feat h2{font-size:26px;line-height:36px}
+  .trow{grid-template-columns:1fr}
+  .contents li{grid-template-columns:48px 1fr}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ast" viewBox="0 0 20 20"><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3.1" y1="6" x2="16.9" y2="14"/><line x1="3.1" y1="14" x2="16.9" y2="6"/></g></symbol>
+</svg>
+
+<div class="pv pad">
+  <div class="full">
+    <p>Product Lab 预览 · 灰色和深色区域为真实截图位置 · 首页条目除第一篇外均为示例</p>
+    <nav aria-label="预览页面">
+      <button type="button" id="v-article" data-v="article" aria-pressed="true">文章页</button>
+      <button type="button" id="v-home" data-v="home" aria-pressed="false">首页</button>
+      <button type="button" id="v-layouts" data-v="layouts" aria-pressed="false">图组</button>
+      <button type="button" id="v-spec" data-v="spec" aria-pressed="false">规范</button>
+    </nav>
+  </div>
+</div>
+
+<header class="site pad">
+  <div class="full">
+    <a class="mark" href="#home" data-go="home">Product Lab<svg class="ast"><use href="#ast"/></svg></a>
+    <nav><a href="#home" data-go="home">文章</a><a href="#spec" data-go="spec">规范</a><a href="#home" data-go="home">关于</a></nav>
+  </div>
+</header>
+
+<!-- ======================= 文章页 ======================= -->
+<article class="view pad" id="article">
+  <header class="art-head">
+    <span class="kind">Case Study 01<svg class="ast"><use href="#ast"/></svg><span class="sub">AI 音乐发现</span></span>
+    <h1>当音乐发现可以被 Prompt</h1>
+    <p class="dek">Spotify Prompted Playlist 与 QQ 音乐智能歌单的产品研究：自然语言如何改变人们表达、修正和保留自己的音乐需求。</p>
+    <div class="byline">
+      <span class="avatar"><svg class="ast"><use href="#ast"/></svg></span>
+      <div><b>独立研究</b><span class="tnum">体验对照与社区资料 · 7 章 · 约 8 分钟</span></div>
+    </div>
+  </header>
+
+  <figure class="hero-fig">
+    <div class="hf">
+      <div class="hf-prompt">
+        <span class="lbl">研究 Prompt</span>
+        <span class="say">「陌生城市的周日下午」</span>
+        <p>一个无法用曲风标签描述的需求。图中是另外两次测试：「让人想哭的快乐」与「雨天下午写代码」。</p>
+      </div>
+      <div><span class="tag"><i style="background:#1DB954"></i>Spotify · 对话优化</span><div class="img dark r916" style="--c:var(--m-spotify)"><img src="img/spotify-refine.webp" alt="Spotify 中用对话优化歌单：用户输入雨天下午写代码的需求，随后反馈不喜欢电子音乐" style="object-position:top"></div></div>
+      <div><span class="tag"><i style="background:#F0B400"></i>QQ 音乐 · 智能歌单</span><div class="img dark" style="--c:#8A6A4E;aspect-ratio:9/15"><img src="img/qq-playlist.webp" alt="QQ 音乐智能歌单「想哭的快乐」，显示 AI 提示词和逐首推荐理由" style="object-position:top"></div></div>
+      <div><span class="tag"><i style="background:#F0B400"></i>QQ 音乐 · AI 对话推荐</span><div class="img light r916" style="--c:var(--m-qq)"><img src="img/qq-chat.webp" alt="QQ 音乐 AI 对话中按段落推荐的歌曲与说明" style="object-position:top"></div></div>
+    </div>
+    <figcaption class="cap2"><p class="what"><span class="fig tnum">图 1</span>两款产品的 AI 歌单与对话入口</p><p><b>观察｜</b>个人账号实测截图，用户名已打码。三张图来自不同 Prompt，只用于呈现产品形态。</p></figcaption>
+  </figure>
+
+  <div class="contents">
+    <p class="lbl">本文的三个发现</p>
+    <ol>
+      <li><span class="tnum">04.1</span>AI 让难以描述的感受和难以操作的规则，都变成可以探索的需求。</li>
+      <li><span class="tnum">04.2</span>用户通过结果发现偏好，AI 通过反馈理解需求，修正是双向的。</li>
+      <li><span class="tnum">04.3</span>AI 歌单没有单一终点。收藏几首歌就离开，也可能是一次成功。</li>
+    </ol>
+  </div>
+
+  <div class="brk" aria-hidden="true"><svg class="ast"><use href="#ast"/></svg></div>
+
+  <section class="sec" id="f42">
+    <span class="kind tnum">04.2<span class="sub">关键发现 · 2 / 3</span></span>
+    <h2>探索中的双向意图修正</h2>
+    <p class="dek">对于抽象、主观的音乐需求，用户未必能在第一次输入时说清偏好。AI 的价值不只在于生成结果，还在于帮助用户通过试听和反馈，逐步明确自己的方向。</p>
+  </section>
+
+  <div class="log" aria-label="一次优化过程的记录">
+    <div class="row u"><p class="who"><b>用户</b>输入</p><span class="say">陌生城市的周日下午</span></div>
+    <div class="row a"><p class="who"><b>Spotify</b>歌单简介</p><div><span class="say">安静、略带忧郁的城市漫步</span><small>据图 2a 的简介概括</small></div></div>
+    <div class="row u turn"><p class="who"><b>用户</b>试听后优化</p><span class="say">更明亮、乐观一点</span></div>
+    <div class="row a"><p class="who"><b>Spotify</b>优化后简介</p><div><span class="say">更积极的情绪，更丰富的曲风</span><small>据图 2c 的简介概括</small></div></div>
+    <p class="bk bk1"><b>用户</b>通过结果，发现自己想要的不是忧郁</p>
+    <p class="bk bk2"><b>AI</b>通过反馈，获得更明确的方向</p>
+  </div>
+  <p class="log-m cap" style="display:none;max-width:var(--read);margin:12px auto 0">用户通过结果发现自己的偏好；AI 通过反馈获得更明确的方向。</p>
+
+  <figure class="fig2">
+    <div class="f2">
+      <div><span class="tag tnum">2a<span>第一次诠释</span></span><div class="img dark r45" style="--c:var(--m-spotify)"><span class="ph">S3 局部：简介与前三首</span></div></div>
+      <div><span class="tag tnum">2b<span>反馈</span></span><div class="img dark r916" style="--c:var(--m-spotify)"><span class="ph">S4 优化输入</span></div></div>
+      <div><span class="tag tnum">2c<span>优化之后</span></span><div class="img dark r45" style="--c:var(--m-spotify)"><span class="ph">S5 局部：简介与前三首</span></div></div>
+    </div>
+    <figcaption class="cap2"><p class="what"><span class="fig tnum">图 2</span>同一个 Prompt，优化前后的简介与前三首</p><p><b>观察｜</b>前后两次结果使用相同的裁切位置，中间是用户唯一的一次输入。<b>比较范围｜</b>同一 Prompt、同一会话，Spotify 单人实测。</p></figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>这并不意味着第一次推荐失败。对于没有唯一正确答案的需求，初始结果本身就是用户识别和表达偏好的参照。</p>
+    <p><span class="sn"><b class="tnum">1</b>两个测试账号的使用历史不同，这里只比较解释方式，不比较推荐质量。</span>两款产品都为生成的歌单提供整体简介和逐首推荐理由。在本次体验中，Spotify 更常把 Prompt 转化为具体的声音和氛围；QQ 音乐在部分测试中更倾向于复述提示词，或围绕歌词展开<sup class="tnum">1</sup>。歌单简介帮助用户校准方向，逐首理由帮助用户判断陌生歌曲。</p>
+<figure class="evfig wide out">
+  <div class="cmp">
+    <div class="side">
+      <p class="side-h"><i class="bd" style="background:#1DB954"></i>Spotify<span>对话优化 · 「雨天下午写代码」</span></p>
+      <div class="ev-shot" style="--ny:52.5%;--xr:.97">
+        <div class="img dark r916" style="--c:var(--m-spotify)"><img src="img/spotify-refine.webp" alt="Spotify 对话中，AI 用节奏和专注感解释推荐" style="object-position:top" data-focus="0.43"></div>
+      </div>
+    </div>
+    <div class="side">
+      <p class="side-h"><i class="bd" style="background:#F0B400"></i>QQ 音乐<span>智能歌单 · 「让人想哭的快乐」</span></p>
+      <div class="ev-shot" style="--ny:57%;--xr:.97">
+        <div class="img dark r916" style="--c:#8A6A4E"><img src="img/qq-playlist.webp" alt="QQ 音乐智能歌单，逐首理由围绕歌词与情绪" style="object-position:bottom" data-focus="0.62"></div>
+      </div>
+    </div>
+  </div>
+  <figcaption class="cap2">
+    <p class="what"><span class="fig tnum">图 3</span>同样是推荐理由，Spotify 写声音，QQ 音乐写歌词</p>
+    <p><b>观察｜</b>Spotify 描述节奏如何服务场景；QQ 音乐的逐首理由围绕歌词和情绪展开。<b>比较范围｜</b>两张截图来自不同的 Prompt 和不同入口（对话优化、智能歌单）。这里只比较解释的写法，不比较推荐质量。</p>
+  </figcaption>
+</figure>
+
+    <p><span class="sn"><b class="tnum">2</b>补充观察：QQ 音乐元宝在部分事实检索任务中，文字回答能回应问题，但可播放歌曲未必与描述对应。来自辅助聊天入口，不作为 AI 歌单的性能比较。</span>但理由写得动人，不代表推荐准确。解释用户需求、选择实际歌曲、说明推荐依据，这三件事应当相互一致<sup class="tnum">2</sup>。</p>
+  </div>
+
+  <div class="verdict">
+    <p class="lbl"><svg class="ast"><use href="#ast"/></svg>判断</p>
+    <p class="v">好的 AI 音乐探索，是让用户看得懂推荐方向，能低成本地修正它，并通过试听验证这种理解。</p>
+    <p class="cap"><b>待验证｜</b>这种体验是否会提高陌生歌曲试听率、调整后满意度及持续使用意愿。</p>
+  </div>
+  <div class="art-end"></div>
+</article>
+
+<!-- ======================= 首页 ======================= -->
+<div class="view" id="home" hidden>
+  <div class="cats pad"><div class="full"><a class="on" href="#home">全部</a><a href="#home">产品研究</a><a href="#home">AI 产品</a><a href="#home">独立开发</a><a href="#home">商业拆解</a></div></div>
+  <main class="home pad">
+    <div class="full">
+      <a class="feat" href="#article" data-go="article">
+        <div class="img r1610" style="--c:#EDEDEA">
+          <div class="feat-comp"><div style="width:20%;height:62%;background:var(--m-spotify)"></div><div style="width:30%;height:92%;background:var(--m-spotify)"></div><div style="width:22%;height:74%;background:var(--m-qq);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)"></div></div>
+          <span class="ph" style="color:#9A9A92">封面：图 1 截图组合的裁切</span>
+        </div>
+        <div class="txt">
+          <span class="kind">Case Study 01<svg class="ast"><use href="#ast"/></svg><span class="sub">AI 音乐发现</span></span>
+          <h2>当音乐发现可以被 Prompt</h2>
+          <p>Spotify 与 QQ 音乐的 AI 歌单研究：自然语言如何改变人们表达、修正和保留自己的音乐需求。</p>
+          <p class="meta tnum">产品研究 · 约 8 分钟</p>
+        </div>
+      </a>
+
+      <div class="sec-lbl"><span>最近</span><span class="sample" style="margin:0">以下三篇为示例条目</span></div>
+      <ul class="cards">
+        <li class="card"><a href="#home">
+          <div class="img r43" style="--c:var(--m-ai)"><span class="ph" style="color:#7D8894">图片：产品界面截图</span></div>
+          <span class="kind">AI 产品<span class="sub">拆解</span></span>
+          <h3>AI 写作工具如何处理用户的上下文</h3>
+          <p>示例条目：用于验证不同主题、不同图片色调下的卡片效果。</p>
+        </a></li>
+        <li class="card"><a href="#home">
+          <div class="img r43" style="--c:var(--m-doxa)"><span class="ph" style="color:#8F8676">图片：Doxa 原型截图</span></div>
+          <span class="kind">独立开发<span class="sub">Doxa</span></span>
+          <h3>Doxa 开发笔记：从想法到第一个原型</h3>
+          <p>示例条目：独立项目的开发记录，同样使用文章页的阅读结构。</p>
+        </a></li>
+        <li class="card"><a href="#home">
+          <div class="img r43" style="--c:var(--m-biz)"><span class="ph" style="color:#7F8A76">图片：定价页截图</span></div>
+          <span class="kind">商业拆解<span class="sub">定价</span></span>
+          <h3>订阅制工具的定价页拆解</h3>
+          <p>示例条目：商业产品拆解，图片与图注规则保持一致。</p>
+        </a></li>
+      </ul>
+
+      <ol class="index">
+        <li><a href="#article" data-go="article"><span class="n tnum">01</span><span class="t">当音乐发现可以被 Prompt</span><span class="c">产品研究</span><span class="d tnum">2026</span></a></li>
+        <li><a href="#home"><span class="n tnum">02</span><span class="t">AI 写作工具如何处理用户的上下文</span><span class="c">AI 产品 · 示例</span><span class="d tnum">—</span></a></li>
+        <li><a href="#home"><span class="n tnum">03</span><span class="t">Doxa 开发笔记：从想法到第一个原型</span><span class="c">独立开发 · 示例</span><span class="d tnum">—</span></a></li>
+      </ol>
+    </div>
+  </main>
+</div>
+
+<!-- ======================= 图组 ======================= -->
+<div class="view pad" id="layouts" hidden>
+  <div class="full lay">
+    <div class="lay-intro">
+      <span class="kind">Product Lab<svg class="ast"><use href="#ast"/></svg><span class="sub">图组</span></span>
+      <h2>每组图先回答：读者应该看到什么</h2>
+      <p>排法服务于证据。竞品对照保证可比，前后变化指出改变的位置，单图解释突出关键机制。不同来源的截图保留必要的上下文，并在图注里写清比较范围。</p>
+    </div>
+    <ol class="lay-rules">
+      <li><span>1</span><div><b>图注两行。</b>第一行写读者应该看到什么，第二行写观察和比较范围。</div></li>
+      <li><span>2</span><div><b>不强制等高或统一裁切。</b>来自不同场景的截图，各自保留能说明问题的上下文。</div></li>
+      <li><span>3</span><div><b>不在图上加标记。</b>框选、引导线和摘录原文暂不使用，重点靠裁切和图注说明。</div></li>
+      <li><span>4</span><div><b>所有截图都能点开看原图。</b>小字较多的截图，放大后清晰可读。</div></li>
+    </ol>
+
+    <section class="pat">
+      <div class="pat-h"><span class="k">对照</span><h3>Spotify / QQ 音乐</h3><p>两边保留各自的上下文，裁切到同一类信息：推荐理由。</p></div>
+<figure class="evfig wide">
+  <div class="cmp">
+    <div class="side">
+      <p class="side-h"><i class="bd" style="background:#1DB954"></i>Spotify<span>对话优化 · 「雨天下午写代码」</span></p>
+      <div class="ev-shot" style="--ny:52.5%;--xr:.97">
+        <div class="img dark r916" style="--c:var(--m-spotify)"><img src="img/spotify-refine.webp" alt="Spotify 对话中，AI 用节奏和专注感解释推荐" style="object-position:top" data-focus="0.43"></div>
+      </div>
+    </div>
+    <div class="side">
+      <p class="side-h"><i class="bd" style="background:#F0B400"></i>QQ 音乐<span>智能歌单 · 「让人想哭的快乐」</span></p>
+      <div class="ev-shot" style="--ny:57%;--xr:.97">
+        <div class="img dark r916" style="--c:#8A6A4E"><img src="img/qq-playlist.webp" alt="QQ 音乐智能歌单，逐首理由围绕歌词与情绪" style="object-position:bottom" data-focus="0.62"></div>
+      </div>
+    </div>
+  </div>
+  <figcaption class="cap2">
+    <p class="what"><span class="fig tnum">图 3</span>同样是推荐理由，Spotify 写声音，QQ 音乐写歌词</p>
+    <p><b>观察｜</b>Spotify 描述节奏如何服务场景；QQ 音乐的逐首理由围绕歌词和情绪展开。<b>比较范围｜</b>两张截图来自不同的 Prompt 和不同入口（对话优化、智能歌单）。这里只比较解释的写法，不比较推荐质量。</p>
+  </figcaption>
+</figure>
+
+    </section>
+
+    <section class="pat">
+      <div class="pat-h"><span class="k">变化</span><h3>同一产品，优化前后</h3><p>左边是完整对话，右边放大三个时刻，变化发生在 b。</p></div>
+<figure class="evfig wide">
+  <div class="ba">
+    <div class="ba-full">
+      <p class="side-h"><i class="bd" style="background:#1DB954"></i>Spotify<span>完整对话</span></p>
+      <div class="img dark" style="--c:var(--m-spotify);aspect-ratio:1179/2556"><img src="img/spotify-refine.webp" alt="Spotify 一段完整的歌单优化对话" data-focus="0.38">
+        </div>
+    </div>
+    <ol class="moments">
+      <li><p class="mh"><span class="tnum">a</span>之前<em>AI 把需求诠释为「轻电子」</em></p><div class="img dark" style="--c:var(--m-spotify);aspect-ratio:3.18"><img src="img/spotify-refine.webp" alt="AI 的第一次说明" style="object-position:50% 49.7%" data-focus="0.43"></div></li>
+      <li class="key"><p class="mh"><span class="tnum">b</span>反馈<em>用户否定了这个方向</em></p><div class="img dark" style="--c:var(--m-spotify);aspect-ratio:2.98"><img src="img/spotify-refine.webp" alt="用户输入 I don't like electronic music" style="object-position:50% 67.5%" data-focus="0.57"></div></li>
+      <li><p class="mh"><span class="tnum">c</span>之后<em>AI 开始重新理解需求</em></p><div class="img dark" style="--c:var(--m-spotify);aspect-ratio:3.55"><img src="img/spotify-refine.webp" alt="AI 显示 Understanding dislike" style="object-position:50% 85.1%" data-focus="0.74"></div></li>
+    </ol>
+  </div>
+  <figcaption class="cap2">
+    <p class="what"><span class="fig tnum">图 4</span>一句否定，让 AI 重新理解需求</p>
+    <p><b>观察｜</b>同一段 Spotify 对话中的三个时刻：第一次说明、用户的否定反馈、AI 开始理解。<b>比较范围｜</b>同一 Prompt、同一会话。截图只记录到 AI 开始理解反馈；优化后的歌单待补截图。</p>
+  </figcaption>
+</figure>
+
+    </section>
+
+    <!-- F -->
+    <section class="pat">
+      <div class="pat-h"><span class="k">03</span><h3>五阶段泳道：结构化对照</h3><p>这类信息维度多，继续用专门的对照组件。截图只作缩略证据，差异写在格子里和正文中。</p></div>
+      <figure class="w-full">
+        <div class="mx-wrap">
+          <div class="mx">
+            <span></span><span class="h">需求表达</span><span class="h">歌单生成</span><span class="h">试听与判断</span><span class="h">调整优化</span><span class="h">保存与持续使用</span>
+            <span class="rl"><span class="dot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#1DB954;margin-right:6px;vertical-align:2px"></span>Spotify</span>
+            <div><div class="img dark r916" style="--c:var(--m-spotify)"><span class="ph">S1</span></div><p class="tx">提示词示例</p></div>
+            <div><div class="img dark r916" style="--c:var(--m-spotify)"><span class="ph">S3</span></div><p class="tx">简介 + 逐首说明</p></div>
+            <div><div class="img dark r916" style="--c:var(--m-spotify)"><span class="ph">S3</span></div><p class="tx">边听边判断</p></div>
+            <div><div class="img dark r916" style="--c:var(--m-spotify)"><img src="img/spotify-refine.webp" alt="Spotify 自然语言优化" style="object-position:top"></div><p class="tx">自然语言优化</p></div>
+            <div><div class="img dark r916" style="--c:var(--m-spotify)"><span class="ph">S9</span></div><p class="tx">每日 / 每周更新</p></div>
+            <span class="rl"><span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#F0B400;margin-right:6px;vertical-align:2px"></span>QQ 音乐</span>
+            <div><div class="img light r916" style="--c:var(--m-qq)"><span class="ph">S2</span></div><p class="tx">结构化选项</p></div>
+            <div><div class="img dark r916" style="--c:#8A6A4E"><img src="img/qq-playlist.webp" alt="QQ 音乐智能歌单结果" style="object-position:top"></div><p class="tx">简介 + 逐首说明</p></div>
+            <div><div class="img light r916" style="--c:var(--m-qq)"><span class="ph">S6</span></div><p class="tx">试听判断</p></div>
+            <div><div class="img light r916" style="--c:var(--m-qq)"><span class="ph">S8</span></div><p class="tx">改提示词、删单曲</p></div>
+            <div><div class="img light r916" style="--c:var(--m-qq)"><span class="ph">S10</span></div><p class="tx">更新周期 + 历史版本</p></div>
+          </div>
+        </div>
+        <figcaption class="cap w-read" style="margin-left:0"><span class="fig tnum">图 5</span><b>观察｜</b>矩阵只放缩略图，点击可放大。说明文字压缩到一行，详细差异写在正文里。</figcaption>
+      </figure>
+    </section>
+  </div>
+</div>
+
+<!-- ======================= 规范 ======================= -->
+<div class="view pad" id="spec" hidden>
+  <div class="full spec">
+    <span class="kind">Product Lab<svg class="ast"><use href="#ast"/></svg><span class="sub">视觉规范 v2</span></span>
+    <h2 style="margin-top:14px">一套规范，适用于所有主题</h2>
+    <p class="intro">页面本身保持中性，个性来自真实图片、清楚的字级和两个固定细节。换一个主题时只换图片，不换配色。</p>
+
+    <div class="sp-block"><h3>字体</h3><div>
+      <div class="trow"><p style="font-size:46px;line-height:56px;font-weight:700;letter-spacing:-.025em">文章标题</p><p class="s"><b>Title</b>46 / 56 · 700 · 手机 31 / 41</p></div>
+      <div class="trow"><p style="font-size:30px;line-height:40px;font-weight:700">章节标题</p><p class="s"><b>H2</b>30 / 40 · 700 · 首页头条 32</p></div>
+      <div class="trow"><p style="font-size:20px;line-height:29px;font-weight:700">卡片标题</p><p class="s"><b>H3</b>20 / 29 · 700</p></div>
+      <div class="trow"><p style="font-size:20px;line-height:34px;color:var(--ink-2)">导语与核心发现</p><p class="s"><b>Dek</b>20 / 34 · 400</p></div>
+      <div class="trow"><p style="font-size:17px;line-height:32px">正文，阅读栏 680，约 38 字一行。</p><p class="s"><b>Body</b>17 / 32 · 400</p></div>
+      <div class="trow"><p class="say" style="font-size:27px;line-height:40px">「陌生城市的周日下午」</p><p class="s"><b>原话 · 宋体</b>只用于 Prompt、用户反馈、AI 输出等逐字引用</p></div>
+      <div class="trow"><p style="font-size:13px;line-height:20px;color:var(--muted)"><b style="color:var(--ink)">图 2</b>　观察｜图注与边注</p><p class="s"><b>Caption</b>13 / 20 · 400</p></div>
+      <div class="trow"><p class="kind">栏目标签<svg class="ast"><use href="#ast"/></svg><span class="sub">子主题</span></p><p class="s"><b>Kind</b>12 / 16 · 700</p></div>
+      <p class="cap">西文 Schibsted Grotesk，中文思源黑体，原话用思源宋体。</p>
+    </div></div>
+
+    <div class="sp-block"><h3>颜色</h3><div>
+      <div class="swa">
+        <div><i style="background:var(--ink)"></i><b>Ink</b><span>标题、正文、线</span></div>
+        <div><i style="background:var(--ink-2)"></i><b>Ink 2</b><span>导语、AI 输出</span></div>
+        <div><i style="background:var(--muted)"></i><b>Muted</b><span>图注、元信息</span></div>
+        <div><i style="background:var(--line)"></i><b>Line</b><span>1px 分隔</span></div>
+        <div><i style="background:var(--wash)"></i><b>Wash</b><span>图片加载前</span></div>
+      </div>
+      <p class="cap">没有站点强调色。色彩只来自截图和项目素材；品牌色只作为 6px 圆点用来区分产品。</p>
+    </div></div>
+
+    <div class="sp-block"><h3>网格与宽度</h3><div>
+      <div class="widths">
+        <div style="max-width:680px">阅读栏 680：标题、正文、对话记录、判断</div>
+        <div style="max-width:960px">宽图 960：对比图、流程截图</div>
+        <div style="max-width:1200px">通栏 1200：Hero 图组、首页 12 栏网格（栏间距 24）</div>
+      </div>
+      <p class="cap">页边距 20 / 32 / 48。文字永远不出阅读栏；边注在 1180px 以上挂在阅读栏右侧，以下接在段落里。</p>
+    </div></div>
+
+    <div class="sp-block"><h3>间距</h3><div>
+      <ul class="rules">
+        <li><b>8 · 12 · 16</b>标签与标题、图片与标签、图片与图注</li>
+        <li><b>20 · 32</b>段落之间、导语与署名</li>
+        <li><b>56 · 64</b>正文与图、模块之间</li>
+        <li><b>88 + ✱</b>章节之间，用一个 ✱ 断开，不用粗线</li>
+      </ul>
+    </div></div>
+
+    <div class="sp-block"><h3>图片与图注</h3><div>
+      <ul class="rules">
+        <li><b>只裁切，不重绘。</b>无设备外框、无阴影，圆角 3px。浅色截图加极淡描边。</li>
+        <li><b>一组图要有主次。</b>主图最大，辅图约为主图 0.6 倍，底边对齐。</li>
+        <li><b>五种比例。</b>9:16 手机、4:5 局部、4:3 卡片、16:10 头条、3:2 桌面截图。</li>
+        <li><b>图注以「图 n」开头。</b>证据类型写在最前：观察｜示意｜。</li>
+      </ul>
+    </div></div>
+
+    <div class="sp-block"><h3>两个固定细节</h3><div>
+      <ul class="rules">
+        <li><b>✱ 标记。</b>出现在标志、栏目标签、章节分隔和「判断」前。全站只用这一个图形。</li>
+        <li><b>原话用宋体。</b>凡是逐字引用的人或 AI 的话都用宋体，作者自己的观点永远用黑体。对 AI 产品研究来说，这条规则本身就有意义。</li>
+      </ul>
+    </div></div>
+  </div>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="查看原图">
+  <div class="lb-bar">
+    <span class="lb-t" id="lb-t"></span><span class="lb-n" id="lb-n"></span>
+    <button type="button" id="lb-prev" aria-label="上一张">上一张</button>
+    <button type="button" id="lb-next" aria-label="下一张">下一张</button>
+    <button type="button" id="lb-close">关闭</button>
+  </div>
+  <div class="lb-scroll" id="lb-scroll"><img class="lb-img" id="lb-img" alt=""><p class="lb-hint">原图 · 上下滚动查看完整截图 · Esc 关闭</p></div>
+</div>
+
+<script>
+(function(){
+  var lb=document.getElementById('lb'), im=document.getElementById('lb-img'), sc=document.getElementById('lb-scroll'),
+      t=document.getElementById('lb-t'), n=document.getElementById('lb-n'),
+      prev=document.getElementById('lb-prev'), next=document.getElementById('lb-next'), close=document.getElementById('lb-close');
+  var group=[], idx=0, opener=null;
+  function shots(){return Array.prototype.slice.call(document.querySelectorAll('.img img'));}
+  shots().forEach(function(el){el.tabIndex=0;el.setAttribute('role','button');el.setAttribute('aria-label','查看原图：'+(el.alt||'截图'));});
+  function title(el){
+    var f=el.closest('figure'); var w=f&&f.querySelector('.what');
+    if(w)return w.textContent.trim();
+    var c=f&&f.querySelector('figcaption'); return c?c.textContent.trim():(el.alt||'');
+  }
+  function show(i){
+    idx=i; var el=group[i];
+    t.textContent=title(el); n.textContent=group.length>1?(i+1)+' / '+group.length:'';
+    prev.disabled=i===0; next.disabled=i===group.length-1;
+    prev.hidden=next.hidden=group.length<2;
+    var f=parseFloat(el.getAttribute('data-focus')||'0');
+    im.alt=el.alt||''; sc.scrollTop=0;
+    im.onload=function(){sc.scrollTop=Math.max(0,f*im.offsetHeight-120);};
+    im.src=el.currentSrc||el.src;
+    if(im.complete)im.onload();
+  }
+  function open(el){
+    opener=el; var f=el.closest('figure')||el.closest('.view');
+    group=Array.prototype.slice.call(f.querySelectorAll('.img img'));
+    lb.hidden=false; document.documentElement.style.overflow='hidden';
+    show(Math.max(0,group.indexOf(el))); close.focus();
+  }
+  function shut(){lb.hidden=true;document.documentElement.style.overflow='';if(opener)opener.focus();}
+  document.addEventListener('click',function(e){var el=e.target.closest&&e.target.closest('.img img');if(el){e.preventDefault();open(el);}});
+  document.addEventListener('keydown',function(e){
+    if(!lb.hidden){
+      if(e.key==='Escape')shut();
+      else if(e.key==='ArrowLeft'&&idx>0)show(idx-1);
+      else if(e.key==='ArrowRight'&&idx<group.length-1)show(idx+1);
+      return;
+    }
+    var el=document.activeElement; if(el&&el.matches&&el.matches('.img img')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();open(el);}
+  });
+  prev.addEventListener('click',function(){if(idx>0)show(idx-1);});
+  next.addEventListener('click',function(){if(idx<group.length-1)show(idx+1);});
+  close.addEventListener('click',shut);
+  lb.addEventListener('click',function(e){if(e.target===sc)shut();});
+})();
+</script>
+<script>
+(function(){
+  var views=document.querySelectorAll('.view'), btns=document.querySelectorAll('.pv button');
+  function show(v,scroll){
+    views.forEach(function(el){el.hidden=el.id!==v;});
+    btns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.v===v));});
+    if(scroll)window.scrollTo({top:0});
+  }
+  var start=(location.hash||'').slice(1);
+  show(['article','home','spec','layouts'].indexOf(start)>-1?start:'article',false);
+  btns.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.v,true);});});
+  document.querySelectorAll('[data-go]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();show(a.dataset.go,true);});});
+})();
+</script>

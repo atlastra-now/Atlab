@@ -1,0 +1,23 @@
+{
+  "name": "product-lab",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/subset-quote-font.mjs && astro check && astro build",
+    "preview": "astro preview",
+    "subset-font": "node scripts/subset-quote-font.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "latest",
+    "@astrojs/mdx": "latest",
+    "astro": "latest",
+    "sharp": "latest",
+    "typescript": "latest"
+  },
+  "devDependencies": {
+    "@fontsource/schibsted-grotesk": "latest",
+    "subset-font": "latest"
+  }
+}

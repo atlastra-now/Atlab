@@ -1,0 +1,46 @@
+/* 文章正文：MDX 输出的标题、段落、列表、表格。全部取自 tokens.css。 */
+.prose { padding-bottom: var(--s-88); }
+.prose > :where(h2, h3, h4, p, ul, ol, div:not(.fig), table, hr) {
+  max-width: var(--read);
+  margin-left: auto;
+  margin-right: auto;
+}
+.prose > p { font-size: var(--t-body); line-height: var(--t-body-lh); margin-top: var(--s-20); }
+.prose > :where(h2) {
+  font-size: var(--t-h2); line-height: var(--t-h2-lh); font-weight: 700; letter-spacing: -0.015em;
+  margin-top: var(--s-64); scroll-margin-top: var(--s-24);
+}
+.prose > :where(h3) {
+  font-size: var(--t-h3); line-height: var(--t-h3-lh); font-weight: 700; letter-spacing: -0.01em;
+  margin-top: var(--s-56); scroll-margin-top: var(--s-24);
+}
+.prose > :where(h4) {
+  font-size: var(--t-h4); line-height: var(--t-h4-lh); font-weight: 700;
+  margin-top: var(--s-40); scroll-margin-top: var(--s-24);
+}
+.prose > h2 + p, .prose > h3 + p, .prose > h4 + p { margin-top: var(--s-16); }
+.prose > .brk + h2 { margin-top: var(--s-64); }
+.prose p.dek {
+  font-size: var(--t-dek); line-height: var(--t-dek-lh); color: var(--ink-2); font-weight: 400;
+  margin-top: var(--s-20);
+}
+.prose strong { font-weight: 700; }
+.prose em { font-style: normal; }
+.prose a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); }
+
+.prose > :where(ul, ol) { margin-top: var(--s-16); padding-left: 0; }
+.prose > ul > li, .prose > ol > li { margin-top: var(--s-12); padding-left: 20px; position: relative; line-height: var(--t-body-lh); }
+.prose > ul > li::before { content: ''; position: absolute; left: 2px; top: 14px; width: 4px; height: 4px; border-radius: 50%; background: var(--ink-2); }
+.prose > ol { counter-reset: n; }
+.prose > ol > li { counter-increment: n; padding-left: 28px; }
+.prose > ol > li::before { content: counter(n) '.'; position: absolute; left: 0; top: 0; font-weight: 700; font-size: 14px; }
+
+.prose > table {
+  border-collapse: collapse; font-size: 14px; line-height: 22px; margin-top: var(--s-32);
+  display: block; overflow-x: auto;
+}
+.prose th, .prose td { text-align: left; vertical-align: top; padding: var(--s-12) var(--s-16) var(--s-12) 0; border-bottom: 1px solid var(--line); min-width: 120px; }
+.prose thead th { font-size: var(--t-kind); font-weight: 700; border-bottom: 1px solid var(--ink); white-space: nowrap; }
+.prose tbody th, .prose tbody td:first-child { font-weight: 700; }
+
+.prose .ev b { font-weight: 500; color: var(--ink-2); }

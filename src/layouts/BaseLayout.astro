@@ -1,0 +1,79 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { url } from '../utils/url';
+
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  current?: 'home';
+  type?: 'website' | 'article';
+}
+const { title, description, image, current, type = 'website' } = Astro.props;
+const pageTitle = title === 'Product Lab' ? title : `${title} · Product Lab`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = image ? new URL(image, Astro.site).href : undefined;
+const font = (f: string) => url(`fonts/${f}`);
+const faces = [
+  ['Schibsted Grotesk', 400, 'SchibstedGrotesk-400.woff2'],
+  ['Schibsted Grotesk', 500, 'SchibstedGrotesk-500.woff2'],
+  ['Schibsted Grotesk', 700, 'SchibstedGrotesk-700.woff2'],
+  ['Quote Serif', 500, 'quote-serif.woff2'],
+]
+  .map(([fam, w, f]) => `@font-face{font-family:'${fam}';src:url('${font(f as string)}') format('woff2');font-weight:${w};font-style:normal;font-display:swap}`)
+  .join('');
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <meta name="color-scheme" content="light dark" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="zh_CN" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta name="twitter:card" content="summary_large_image" />}
+    <link rel="preload" href={font('SchibstedGrotesk-400.woff2')} as="font" type="font/woff2" crossorigin />
+    <style set:html={faces}></style>
+  </head>
+  <body>
+    <SiteHeader current={current} />
+    <slot />
+    <SiteFooter />
+    <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="查看原图">
+      <div class="lb-bar">
+        <span class="lb-t" id="lb-t"></span><span class="lb-n" id="lb-n"></span>
+        <button type="button" id="lb-prev" aria-label="上一张">上一张</button>
+        <button type="button" id="lb-next" aria-label="下一张">下一张</button>
+        <button type="button" id="lb-close">关闭</button>
+      </div>
+      <div class="lb-scroll" id="lb-scroll"><img class="lb-img" id="lb-img" alt="" /><p class="lb-hint">原图 · 上下滚动查看完整截图 · Esc 关闭</p></div>
+    </div>
+    <script>
+      import '../scripts/lightbox';
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .lb[hidden] { display: none !important; }
+  .lb { position: fixed; inset: 0; z-index: 60; background: rgba(10, 10, 11, 0.95); color: #ededea; display: flex; flex-direction: column; }
+  .lb-bar { display: flex; align-items: center; gap: var(--s-12); padding: calc(env(safe-area-inset-top, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); font-size: 13px; line-height: 20px; border-bottom: 1px solid #2a2a2c; }
+  .lb-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lb-n { color: #8c8c86; }
+  .lb button { font: 500 13px var(--sans); color: #ededea; background: none; border: 1px solid #3a3a3d; border-radius: 4px; padding: 4px 10px; min-height: 44px; min-width: 44px; cursor: pointer; }
+  .lb button:disabled { opacity: 0.35; cursor: default; }
+  .lb :focus-visible { outline-color: #ededea; }
+  .lb-scroll { flex: 1; overflow: auto; padding: 24px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 40px) max(16px, env(safe-area-inset-left, 0px)); }
+  .lb-img { display: block; width: min(560px, 100%); height: auto; margin: 0 auto; border-radius: 4px; }
+  .lb-hint { text-align: center; font-size: 12px; color: #8c8c86; margin-top: 14px; }
+</style>

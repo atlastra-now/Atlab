@@ -1,0 +1,48 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: var(--t-body);
+  line-height: var(--t-body-lh);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+h1, h2, h3, h4, p, figure, ol, ul, blockquote { margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+h1, h2, h3, h4 { text-wrap: balance; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.pad { padding-left: var(--edge); padding-right: var(--edge-r); }
+.full { max-width: var(--full); margin-inline: auto; }
+.say { font-family: var(--quote); font-weight: 500; }
+.ast { width: 0.62em; height: 0.62em; display: inline-block; }
+
+/* 标志与页眉 */
+.site { border-bottom: 1px solid var(--ink); }
+.site .full { display: flex; justify-content: space-between; align-items: center; height: 64px; gap: var(--s-16); }
+.mark { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; display: flex; align-items: flex-start; gap: 3px; }
+.mark .ast { width: 13px; height: 13px; margin-top: 4px; }
+.site nav { display: flex; gap: 22px; font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.site nav a { display: inline-flex; align-items: center; min-height: 44px; }
+.site nav a[aria-current] { color: var(--ink); }
+
+.site-foot { border-top: 1px solid var(--line); margin-top: var(--s-88); padding-block: var(--s-32); font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); }
+.site-foot .full { display: flex; justify-content: space-between; gap: var(--s-16); flex-wrap: wrap; }
+.site-foot a { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* 栏目标签 */
+.kind { font-size: var(--t-kind); line-height: var(--t-kind-lh); font-weight: 700; letter-spacing: 0.02em; color: var(--ink); }
+.kind .sub { font-weight: 400; color: var(--muted); }
+.meta { font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); }
+
+/* 图片位 */
+.shot { position: relative; background: var(--wash); border-radius: 3px; overflow: hidden; }
+.shot.light { box-shadow: inset 0 0 0 1px var(--shot-edge); }
+.shot.emphasis { box-shadow: 0 0 0 2px var(--ink); }
+.shot img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
+.shot img:focus-visible { outline-offset: 2px; }

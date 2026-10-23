@@ -1,0 +1,15 @@
+---
+const { hypothesis } = Astro.props;
+---
+<div class="verdict">
+  <p class="lbl">判断</p>
+  <p class="v"><slot /></p>
+  {hypothesis && <p class="hyp"><b>待验证｜</b>{hypothesis}</p>}
+</div>
+<style>
+  .verdict { margin-top: var(--s-64); padding-top: var(--s-20); border-top: 1px solid var(--ink); }
+  .lbl { font-size: var(--t-kind); font-weight: 700; }
+  .v { font-size: var(--t-verdict); line-height: var(--t-verdict-lh); font-weight: 700; letter-spacing: -0.01em; margin-top: var(--s-12); }
+  .hyp { font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); margin-top: var(--s-16); }
+  .hyp b { font-weight: 500; color: var(--ink-2); }
+</style>

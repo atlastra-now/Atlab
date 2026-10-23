@@ -1,0 +1,22 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ArticleHeader from '../components/ArticleHeader.astro';
+import '../styles/prose.css';
+
+export interface Props {
+  data: {
+    title: string; kind: string; issue: number; topic: string; dek: string;
+  };
+  minutes: number;
+  image: string;
+}
+const { data, minutes, image } = Astro.props;
+---
+<BaseLayout title={data.title} description={data.dek} image={image} type="article">
+  <article class="pad">
+    <ArticleHeader {...data} minutes={minutes} />
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

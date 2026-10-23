@@ -1,0 +1,75 @@
+:root {
+  /* 颜色：整站中性，颜色只来自截图 */
+  --bg: #ffffff;
+  --ink: #111111;
+  --ink-2: #55554f;
+  --muted: #8c8c86;
+  --line: #e6e6e1;
+  --wash: #f4f4f1;
+  --spotify: #1db954;
+  --qq: #f0b400;
+  --shot-edge: rgba(0, 0, 0, 0.07);
+
+  /* 字体 */
+  --sans: 'Schibsted Grotesk', 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --quote: 'Quote Serif', 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+
+  /* 宽度 */
+  --read: 680px;
+  --wide: 960px;
+  --full: 1200px;
+  --gutter: 24px;
+  --edge: max(20px, env(safe-area-inset-left, 0px));
+  --edge-r: max(20px, env(safe-area-inset-right, 0px));
+
+  /* 间距 */
+  --s-4: 4px; --s-8: 8px; --s-12: 12px; --s-16: 16px; --s-20: 20px; --s-24: 24px;
+  --s-32: 32px; --s-40: 40px; --s-56: 56px; --s-64: 64px; --s-88: 88px;
+
+  /* 字级：size / line-height */
+  --t-title: 46px; --t-title-lh: 56px;
+  --t-feature: 32px; --t-feature-lh: 42px;
+  --t-h2: 30px; --t-h2-lh: 40px;
+  --t-h3: 24px; --t-h3-lh: 34px;
+  --t-h4: 18px; --t-h4-lh: 30px;
+  --t-dek: 20px; --t-dek-lh: 34px;
+  --t-body: 17px; --t-body-lh: 32px;
+  --t-card: 20px; --t-card-lh: 29px;
+  --t-quote-l: 27px; --t-quote-l-lh: 40px;
+  --t-quote-hero: 30px; --t-quote-hero-lh: 44px;
+  --t-quote-m: 19px; --t-quote-m-lh: 32px;
+  --t-verdict: 25px; --t-verdict-lh: 40px;
+  --t-cap1: 15px; --t-cap1-lh: 24px;
+  --t-cap2: 13px; --t-cap2-lh: 20px;
+  --t-kind: 12px; --t-kind-lh: 16px;
+}
+
+@media (min-width: 760px) {
+  :root { --edge: max(32px, env(safe-area-inset-left, 0px)); --edge-r: max(32px, env(safe-area-inset-right, 0px)); }
+}
+@media (min-width: 1200px) {
+  :root { --edge: max(48px, env(safe-area-inset-left, 0px)); --edge-r: max(48px, env(safe-area-inset-right, 0px)); }
+}
+@media (max-width: 620px) {
+  :root {
+    --t-title: 31px; --t-title-lh: 41px;
+    --t-feature: 26px; --t-feature-lh: 36px;
+    --t-h2: 24px; --t-h2-lh: 34px;
+    --t-h3: 20px; --t-h3-lh: 31px;
+    --t-h4: 17px; --t-h4-lh: 29px;
+    --t-dek: 18px; --t-dek-lh: 31px;
+    --t-body-lh: 31px;
+    --t-quote-l: 23px; --t-quote-l-lh: 35px;
+    --t-quote-hero: 25px; --t-quote-hero-lh: 37px;
+    --t-quote-m: 16px; --t-quote-m-lh: 28px;
+    --t-verdict: 21px; --t-verdict-lh: 34px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111112; --ink: #eeeeea; --ink-2: #b4b4ae; --muted: #85857f;
+    --line: #2a2a2c; --wash: #1b1b1d; --shot-edge: transparent;
+    color-scheme: dark;
+  }
+}

@@ -1,0 +1,51 @@
+---
+import Shot from './Shot.astro';
+
+type Cell = { text: string; img?: { src: ImageMetadata; alt: string; crop?: string; light?: boolean; focus?: number } };
+export interface Props {
+  n: number;
+  what: string;
+  stages: string[];
+  rows: { name: string; product: 'spotify' | 'qq'; cells: Cell[] }[];
+}
+const { n, what, stages, rows } = Astro.props;
+---
+<figure class="matrix">
+  <div class="scroll" tabindex="0" role="region" aria-label={what}>
+    <table>
+      <thead>
+        <tr><td></td>{stages.map((s) => <th scope="col">{s}</th>)}</tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <th scope="row"><i style={`background:var(--${r.product})`}></i>{r.name}</th>
+            {r.cells.map((c) => (
+              <td>
+                {c.img && <Shot {...c.img} ratio="9/16" sizes="160px" widths={[160, 320]} />}
+                <p>{c.text}</p>
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption>
+    <p class="what"><span class="n">图 {n}</span><span>{what}</span></p>
+  </figcaption>
+</figure>
+
+<style>
+  .matrix { max-width: var(--full); margin: var(--s-56) auto 0; }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: separate; border-spacing: 16px 12px; min-width: 820px; width: 100%; table-layout: fixed; margin: -12px -16px; width: calc(100% + 32px); }
+  thead th { text-align: left; font-size: var(--t-kind); font-weight: 700; padding-bottom: var(--s-8); border-bottom: 1px solid var(--ink); }
+  tbody th { width: 110px; text-align: left; vertical-align: top; font-size: 13px; font-weight: 700; padding-top: 2px; white-space: nowrap; }
+  tbody th i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: 2px; }
+  td { vertical-align: top; padding: 0; }
+  td p { font-size: 12px; line-height: 18px; color: var(--muted); margin-top: 6px; }
+  figcaption { margin-top: var(--s-16); max-width: var(--read); }
+  .what { font-size: var(--t-cap1); line-height: var(--t-cap1-lh); font-weight: 500; }
+  .what .n { font-weight: 700; margin-right: 10px; }
+</style>

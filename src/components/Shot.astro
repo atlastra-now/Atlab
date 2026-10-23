@@ -1,0 +1,33 @@
+---
+// Figure / HeroFigure / StageMatrix 共用的单张截图：只裁切，不重绘；点击放大由 lightbox.ts 处理。
+import { Image, getImage } from 'astro:assets';
+export interface Props {
+  src: ImageMetadata;
+  alt: string;
+  ratio?: string;
+  crop?: string;
+  focus?: number;
+  emphasis?: boolean;
+  light?: boolean;
+  sizes?: string;
+  widths?: number[];
+  eager?: boolean;
+}
+const { src, alt, ratio = '9/16', crop = 'top', focus, emphasis = false, light = false, sizes = '340px', widths = [340, 680], eager = false } = Astro.props;
+const full = await getImage({ src, width: Math.min(1200, src.width), format: 'webp', quality: 82 });
+---
+<div class:list={['shot', { light, emphasis }]} style={`aspect-ratio:${ratio}`}>
+  <Image
+    src={src}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    format="webp"
+    quality={82}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    style={`object-position:${crop.replace(/^(top|bottom)$/, (m) => (m === 'top' ? '50% 0%' : '50% 100%'))}`}
+    data-full={full.src}
+    data-focus={focus}
+  />
+</div>
