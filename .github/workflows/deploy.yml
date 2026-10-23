@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: withastro/action@v3
+        with:
+          node-version: 24
         env:
           # 自定义域名：把下面两行改成 SITE_URL: https://<domain>、BASE_PATH: /
           SITE_URL: https://${{ github.repository_owner }}.github.io
