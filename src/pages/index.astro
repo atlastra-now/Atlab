@@ -15,7 +15,7 @@ const lead = articles[0];
     {lead && (
       <a class="feat" href={url(`articles/${lead.id}/`)}>
         <div class="img r43">
-          <Image src={lead.data.cover} alt={lead.data.coverAlt} widths={[700, 1180]} sizes="(min-width: 900px) 590px, 100vw" loading="eager" />
+          <Image src={lead.data.cover} alt={lead.data.coverAlt} widths={[700, 1180]} sizes="(min-width: 900px) 560px, 100vw" loading="eager" />
         </div>
         <div class="txt">
           <span class="kind">{lead.data.kind} {String(lead.data.issue).padStart(2, '0')}</span>

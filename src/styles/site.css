@@ -6,7 +6,7 @@ a.feat{text-decoration:none}
 .img img{width:100%;height:100%;object-fit:cover;display:block}
 .r43{aspect-ratio:4/3}
 .home{padding-block:56px 96px}
-.feat{display:grid;grid-template-columns:minmax(0,590px) minmax(0,1fr);gap:48px;align-items:center;max-width:1060px;margin-inline:auto}
+.feat{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:40px;align-items:center;max-width:var(--full);margin-inline:auto}
 .feat h2{font-family:var(--quote);font-weight:700;font-size:46px;line-height:58px;letter-spacing:-.01em;margin-top:14px}
 .feat .dek{font-size:18px;line-height:31px;color:var(--ink-2);margin-top:18px}
 .feat .by{font-size:14px;line-height:20px;color:var(--muted);margin-top:22px}

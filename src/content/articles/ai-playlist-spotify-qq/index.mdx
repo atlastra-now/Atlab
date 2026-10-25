@@ -17,6 +17,8 @@ findings:
 ---
 
 import ArticleHeader from '../../../components/ArticleHeader.astro';
+import ArticleCover from '../../../components/ArticleCover.astro';
+import cover from './images/cover.webp';
 import IconList from '../../../components/IconList.astro';
 import SectionBreak from '../../../components/SectionBreak.astro';
 import Verdict from '../../../components/Verdict.astro';
@@ -40,6 +42,8 @@ import ValuePaths from './diagrams/ValuePaths.astro';
 <div class="pad">
 
 <ArticleHeader {...frontmatter} />
+
+<ArticleCover src={cover} alt={frontmatter.coverAlt} />
 
 <HeroFigure />
 
