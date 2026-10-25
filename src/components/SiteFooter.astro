@@ -1,10 +1,12 @@
 ---
-import { url } from '../utils/url';
-// 作者名与联系方式待作者提供；提供前只显示返回首页。
+// 作者名与联系方式待作者提供（docs/HANDOFF.md §12）。提供之前不渲染任何内容，也不编造。
+const { author = '', contact = '' } = Astro.props;
 ---
-<footer class="site-foot pad">
-  <div class="full">
-    <span>Product Lab</span>
-    <a href={url()}>返回首页</a>
-  </div>
-</footer>
+{(author || contact) && (
+  <footer class="site-foot pad">
+    <div class="full">
+      {author && <span>{author}</span>}
+      {contact && <span>{contact}</span>}
+    </div>
+  </footer>
+)}

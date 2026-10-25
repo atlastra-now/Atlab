@@ -1,11 +1,4 @@
 ---
-import Ast from './Ast.astro';
 import { url } from '../utils/url';
-const { current } = Astro.props;
 ---
-<header class="site pad">
-  <div class="full">
-    <a class="mark" href={url()}>Product Lab<Ast /></a>
-    <nav aria-label="主导航"><a href={url()} aria-current={current === 'home' ? 'page' : undefined}>文章</a></nav>
-  </div>
-</header>
+<header class="site pad"><div class="full"><a class="mark" href={url()}>Product Lab<svg class="ast"><use href="#ast"/></svg></a><nav><a href={url()}>文章</a></nav></div></header>

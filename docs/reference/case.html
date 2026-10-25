@@ -1,0 +1,1323 @@
+<title>当音乐发现可以被 Prompt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Noto+Serif+SC:wght@500&display=swap">
+<style>
+/* 功能色 --acc：只标记「变化与决策的落点」，每章最多一处。浅底通栏 --band 只用于 03 矩阵与 06 决策门槛。
+   Layout：两级宽度——文字 700（正文、标题、短引用），视觉 1000（信息图、截图、对照）。文字解释原因与判断，图形表达关系与变化，截图位提供证据。
+   编码规则：实线 = 实测观察；虚线 = 待验证假设；「判断」块 = 作者结论；宋体 = 逐字原话。 */
+:root{
+  --bg:#FFFFFF; --ink:#111111; --ink-2:#55554F; --muted:#8C8C86; --line:#E6E6E1; --wash:#F4F4F1; --wash-2:#ECECE8;
+  --spotify:#1DB954; --qq:#F0B400;
+  --acc:#2F5BEA; --acc-soft:rgba(47,91,234,.07); --band:#F6F6F3;
+  --sans:"Schibsted Grotesk","PingFang SC","HarmonyOS Sans SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --quote:"Noto Serif SC","Songti SC","STSong",serif;
+  --read:700px; --wide:1000px; --full:1000px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#111112;--ink:#EEEEEA;--ink-2:#B4B4AE;--muted:#85857F;--line:#2C2C2E;--wash:#1B1B1D;--wash-2:#242427;--acc:#8EA6FF;--acc-soft:rgba(142,166,255,.1);--band:#18181A;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#111112;--ink:#EEEEEA;--ink-2:#B4B4AE;--muted:#85857F;--line:#2C2C2E;--wash:#1B1B1D;--wash-2:#242427;--acc:#8EA6FF;--acc-soft:rgba(142,166,255,.1);--band:#18181A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3,h4,p,figure,ol,ul,blockquote,dl,dd{margin:0;padding:0}
+ol,ul{list-style:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.tn{font-variant-numeric:tabular-nums}
+.say{font-family:var(--quote);font-weight:500}
+.pad{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+@media (min-width:760px){.pad{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}}
+@media (min-width:1200px){.pad{padding-left:max(48px,env(safe-area-inset-left,0px));padding-right:max(48px,env(safe-area-inset-right,0px))}}
+.read{max-width:var(--read);margin-inline:auto}
+.wide{max-width:var(--wide);margin-inline:auto}
+.full{max-width:var(--full);margin-inline:auto}
+.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ast{width:14px;height:14px}
+
+/* ---------- 页眉 ---------- */
+.site{border-bottom:1px solid var(--ink)}
+.site .full{display:flex;justify-content:space-between;align-items:center;height:60px}
+.mark{font-weight:700;font-size:19px;letter-spacing:-.03em;display:flex;align-items:center;gap:3px;text-decoration:none}
+.mark .ast{width:12px;height:12px;margin-top:-10px}
+.site nav{font-size:14px;font-weight:500;color:var(--ink-2)}
+
+/* ---------- 共用文字 ---------- */
+.kind{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.02em}
+.kind span{font-weight:400;color:var(--muted);margin-left:8px}
+.h2{font-size:28px;line-height:38px;font-weight:700;letter-spacing:-.015em;margin-top:14px;text-wrap:balance}
+.h3{font-size:22px;line-height:32px;font-weight:700;letter-spacing:-.01em;margin-top:12px;text-wrap:balance}
+.dek{font-size:18px;line-height:31px;color:var(--ink-2);margin-top:16px}
+.body p{font-size:15px;line-height:26px;text-wrap:pretty}
+.body p + p{margin-top:14px}
+.body .lead{font-family:var(--quote);font-weight:500;font-size:18.5px;line-height:33px;color:var(--ink)}
+.body .lead .say{font-family:inherit}
+.body .lead + p{margin-top:24px}
+.body .pull{font-size:18px;line-height:30px;font-weight:500;margin-block:40px}
+.body .pull::before{content:"";display:block;width:24px;border-top:1.5px solid var(--ink);margin-bottom:16px}
+.body .turn{margin-top:28px}
+.body .close{margin-top:32px}
+.hang{margin-left:-.5em}
+.lbl{font-size:12px;line-height:18px;font-weight:700;letter-spacing:.02em}
+.small{font-size:13px;line-height:20px;color:var(--muted)}
+.ev{font-weight:500;color:var(--ink-2)}
+.hyp{color:var(--muted)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:1px}
+.dot.sp{background:var(--spotify)}.dot.qq{background:var(--qq)}
+.cap{margin-top:16px;max-width:var(--read)}
+.cap .w{font-size:15px;line-height:24px;font-weight:500}
+.cap .w b{font-weight:700;margin-right:10px}
+.cap .n{font-size:13px;line-height:20px;color:var(--muted);margin-top:2px}
+.cap .n b{font-weight:500;color:var(--ink-2)}
+.m-top{margin-top:56px}
+.m-top-s{margin-top:32px}
+
+/* 截图占位 */
+.shot{background:var(--wash);border-radius:3px;position:relative;overflow:hidden}
+.shot span{position:absolute;left:10px;right:10px;bottom:8px;font-size:11px;line-height:15px;color:var(--muted)}
+.r916{aspect-ratio:9/16}.r45{aspect-ratio:4/5}.r34{aspect-ratio:3/4}
+
+/* 章节 */
+.ch{padding-top:20px}
+.brk{display:flex;justify-content:center;padding-block:88px 68px;color:var(--ink)}
+.brk .ast{width:15px;height:15px}
+
+/* 判断块 */
+.verdict{border-top:1px solid var(--ink);padding-top:16px;margin-top:56px}
+.verdict .v{font-size:20px;line-height:32px;font-weight:700;letter-spacing:-.01em;margin-top:10px;text-wrap:pretty}
+.verdict .h{font-size:13px;line-height:21px;color:var(--muted);margin-top:14px;padding-left:12px;border-left:1px dashed var(--muted)}
+
+/* 图标 + 短句 */
+.iconrow{display:grid;gap:28px 32px}
+.iconrow.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.iconrow.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.it{display:grid;grid-template-columns:22px 1fr;gap:4px 12px;align-items:start}
+.it .ic{grid-row:span 2;margin-top:2px}
+.it b{font-size:15px;line-height:24px;font-weight:700}
+.it p{font-size:14px;line-height:23px;color:var(--ink-2)}
+.it.hyp-it b::after{content:"待验证";font-size:11px;font-weight:500;color:var(--muted);margin-left:8px;padding:0 6px;border:1px dashed var(--muted);border-radius:2px;vertical-align:2px}
+
+/* ================= Hero ================= */
+.hero-h{padding-top:64px}
+.hero-h h1{font-size:42px;line-height:52px;font-weight:700;letter-spacing:-.025em;margin-top:20px;text-wrap:balance}
+.byline{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;line-height:20px;color:var(--muted)}
+.byline b{color:var(--ink);font-weight:700;margin-right:10px}
+.hero-fig{margin-top:56px;display:grid;grid-template-columns:minmax(0,3.2fr) minmax(0,2fr) minmax(0,3.2fr) minmax(0,2.6fr);gap:24px;align-items:end}
+.hero-fig .p{align-self:start}
+.hero-fig .p .say{display:block;font-size:30px;line-height:44px;margin-top:10px}
+.hero-fig .p .small{margin-top:12px;max-width:17em}
+.hero-fig .tag{display:block;font-size:12px;line-height:16px;font-weight:500;color:var(--ink-2);margin-bottom:8px}
+.map{margin-top:56px;border-top:1px solid var(--ink);padding-top:14px}
+.map-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:12px}
+.map-seg{border-top:3px solid var(--ink);padding-top:8px;font-size:12px;line-height:17px}
+.map-seg b{display:block;font-weight:700}
+.map-seg span{color:var(--muted)}
+.map-seg.lite{border-top-color:var(--line)}
+.map-grp{display:grid;grid-template-columns:3fr 1fr 2fr 1fr;gap:4px;margin-top:6px;font-size:11px;color:var(--muted)}
+.finds{margin-top:40px}
+
+/* ================= 01 ================= */
+.qs{border-top:1px solid var(--line)}
+.q{display:grid;grid-template-columns:44px minmax(0,1fr) 120px;gap:16px;padding-block:16px;border-bottom:1px solid var(--line);align-items:baseline}
+.q .k{font-weight:700;font-size:14px}
+.q p{font-size:17px;line-height:29px}
+.q .to{font-size:13px;color:var(--muted);text-align:right}
+.q .to a{color:var(--ink);font-weight:500;text-decoration:none;border-bottom:1px solid var(--line)}
+
+/* ================= 02 ================= */
+.cov li{display:grid;grid-template-columns:150px minmax(0,1fr) 190px;gap:16px;padding-block:12px;border-bottom:1px solid var(--line);align-items:baseline;font-size:15px;line-height:25px}
+.cov li:first-child{border-top:1px solid var(--line)}
+.cov b{font-weight:700}
+.cov .ex{color:var(--ink-2)}
+.cov .st{font-size:13px;display:flex;align-items:center;gap:8px}
+.pip{width:10px;height:10px;border-radius:50%;flex:none;background:var(--ink)}
+.pip.o{background:none;border:1.5px dashed var(--muted)}
+.acct{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--ink)}
+.acct > div{padding:14px 0 0}
+.acct > div + div{padding-left:24px;border-left:1px solid var(--line)}
+.acct dl{display:grid;grid-template-columns:72px 1fr;gap:6px 12px;margin-top:10px;font-size:14px;line-height:22px}
+.acct dt{color:var(--muted)}
+.acct-out{margin-top:14px;font-size:14px;line-height:23px;display:flex;gap:10px;align-items:baseline}
+.legend{display:flex;flex-wrap:wrap;gap:12px 28px;padding-block:14px;border-block:1px solid var(--line);font-size:13px;line-height:20px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.lg-solid{width:28px;border-top:1.5px solid var(--ink)}
+.lg-dash{width:28px;border-top:1.5px dashed var(--muted)}
+.lg-v{font-weight:700;color:var(--ink);border-top:1px solid var(--ink);padding-top:1px}
+.cannot li{display:flex;gap:10px;align-items:baseline;font-size:15px;line-height:25px;padding-block:6px;color:var(--ink-2)}
+.cannot li::before{content:"×";color:var(--muted);font-weight:700}
+
+/* ================= 03 矩阵 ================= */
+.mx-wrap{overflow-x:auto;padding-bottom:6px}
+.mx{display:grid;grid-template-columns:96px repeat(5,minmax(150px,1fr));min-width:860px;column-gap:16px}
+.mx .st{position:relative;padding-top:22px;font-size:13px;font-weight:700;line-height:18px}
+.mx .st::before{content:"";position:absolute;left:0;right:-16px;top:7px;border-top:1px solid var(--ink)}
+.mx .st:last-child::before{right:0}
+.mx .st i{position:absolute;left:0;top:2px;width:11px;height:11px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink)}
+.mx .rl{font-size:13px;font-weight:700;padding-top:14px}
+.mx .c{padding-block:14px;border-bottom:1px solid var(--line);font-size:14px;line-height:22px;color:var(--ink-2)}
+.mx .diff{padding-top:12px;font-size:13px;line-height:20px}
+.mx .diff b{font-weight:700}
+.mx .diff.same{color:var(--muted)}
+.mx .diff.same b{font-weight:500}
+.bridge{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;border-top:1px solid var(--line);padding-top:18px}
+.bridge a{display:grid;grid-template-columns:22px 1fr;gap:12px;text-decoration:none;font-size:15px;line-height:24px}
+.bridge small{display:block;color:var(--muted);font-size:12px;font-weight:700}
+
+/* ================= 04.1 蝶形对照 ================= */
+.bf{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1fr);border-top:1px solid var(--ink)}
+.bf .hd{padding:14px 0 12px;display:flex;gap:10px;align-items:center;font-size:17px;font-weight:700}
+.bf .hd.r{justify-content:flex-end;text-align:right}
+.bf .rk{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:14px 6px;border-top:1px solid var(--line)}
+.bf .cl,.bf .cr{padding:12px 0;border-top:1px solid var(--line);font-size:14px;line-height:23px;color:var(--ink-2)}
+.bf .cr{text-align:right}
+.bf .say{font-size:17px;line-height:28px;color:var(--ink)}
+.bf .crit{font-weight:700;color:var(--ink);font-size:15px}
+.bf .shots{display:flex;gap:12px;padding-top:16px}
+.bf .shots .shot{width:120px}
+.bf .cr .shots{justify-content:flex-end}
+.bf .cr.hy{border-right:0}
+.bf .note-h{display:inline-block;margin-top:6px;font-size:12px;color:var(--muted);border-bottom:1px dashed var(--muted)}
+
+/* ================= 04.2 对话时间线 ================= */
+.tl{display:grid;grid-template-columns:28px 92px minmax(0,1fr) 118px 118px;column-gap:14px}
+.tl .rail{position:relative}
+.tl .rail::before{content:"";position:absolute;left:13px;top:0;bottom:0;border-left:1px solid var(--line)}
+.tl .rail i{position:absolute;left:7px;top:24px;width:13px;height:13px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink)}
+.tl .rail.u i{background:var(--ink)}
+.tl .rail.lis i{width:9px;height:9px;left:9px;top:16px;border-color:var(--muted)}
+.tl .who{padding-top:18px;font-size:12px;line-height:18px;color:var(--muted)}
+.tl .who b{display:block;font-size:13px;color:var(--ink);font-weight:700}
+.tl .t{padding-block:16px}
+.tl .u .say,.tl .t.u .say{font-size:27px;line-height:40px}
+.tl .t.a .say{font-size:19px;line-height:32px;color:var(--ink-2)}
+.tl .t.a small{display:block;font-size:12px;color:var(--muted)}
+.tl .t.lis{padding-block:6px 10px;font-size:14px;line-height:22px;color:var(--ink-2);display:flex;gap:8px;align-items:center}
+.tl .t.lis .ic{width:18px;height:18px;color:var(--muted)}
+.tl .t.turn .say{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:8px}
+.tl .bk{border-left:1.5px solid var(--ink);padding-left:10px;margin-block:30px 26px;font-size:12px;line-height:18px;color:var(--ink-2);position:relative}
+.tl .bk::before,.tl .bk::after{content:"";position:absolute;left:-1.5px;width:6px;border-top:1.5px solid var(--ink)}
+.tl .bk::before{top:0}.tl .bk::after{bottom:0}
+.tl .bk b{display:block;color:var(--ink);font-weight:700;font-size:13px}
+.tl .bk.ai{border-color:var(--muted)}
+.tl .bk.ai::before,.tl .bk.ai::after{border-color:var(--muted)}
+.tl-m{display:none}
+
+.two-ways{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.way{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start}
+.way .lbl{display:block;margin-bottom:6px}
+.way p{font-size:14px;line-height:23px;color:var(--ink-2)}
+
+.tri{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:40px;align-items:center}
+.tri svg{width:100%;height:auto;display:block}
+.tri svg text{font-family:var(--sans)}
+.split li{padding-block:12px;border-top:1px solid var(--line);font-size:14px;line-height:23px;color:var(--ink-2)}
+.split li b{display:block;color:var(--ink);font-size:15px}
+.sidenote{font-size:13px;line-height:20px;color:var(--muted);border-left:1px solid var(--line);padding-left:14px;margin-top:20px}
+.sidenote b{color:var(--ink-2);font-weight:500}
+@media (min-width:1180px){.body .sidenote,.read > .sidenote{float:right;clear:right;width:220px;margin:4px -260px 0 0;border:0;padding:0}}
+
+/* ================= 04.3 分支 ================= */
+.branch{display:grid;grid-template-columns:auto 44px minmax(0,1fr);align-items:center;border:1px dashed var(--muted);border-radius:4px;padding:28px 24px;position:relative}
+.branch > .tagh{position:absolute;top:-10px;left:16px;background:var(--bg);padding:0 8px;font-size:12px;color:var(--muted)}
+.node{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);border-radius:999px;padding:5px 12px;font-size:14px;font-weight:500;line-height:20px;background:var(--bg);white-space:nowrap}
+.node .ic{width:16px;height:16px}
+.node.end{background:var(--ink);color:var(--bg)}
+.node.warn{border-width:2px}
+.arr{display:inline-block;width:22px;height:1px;background:var(--ink);position:relative;vertical-align:middle;margin-inline:6px;flex:none}
+.arr::after{content:"";position:absolute;right:-1px;top:-4px;border:4.5px solid transparent;border-left:7px solid var(--ink);border-right:0}
+.stem{display:flex;align-items:center}
+.fork{align-self:stretch;position:relative}
+.fork svg{position:absolute;inset:0;width:100%;height:100%}
+.paths{display:flex;flex-direction:column;gap:30px}
+.path{display:flex;flex-direction:column;gap:10px}
+.path .ph{font-size:13px;line-height:20px}
+.path .ph b{font-size:15px;font-weight:700;margin-right:8px}
+.path .ph span{color:var(--muted)}
+.path .flow{display:flex;flex-wrap:wrap;align-items:center;row-gap:8px}
+.path .ok{font-size:13px;line-height:20px;color:var(--ink-2)}
+.path .ok b{font-weight:700;color:var(--ink)}
+.loopback{font-size:13px;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;margin-left:10px}
+.warnline{font-size:13px;line-height:20px;color:var(--ink);display:flex;gap:8px;align-items:center}
+.warnline a{color:var(--ink);font-weight:700}
+.obs{display:grid;grid-template-columns:150px minmax(0,1fr);gap:24px;align-items:start}
+.obs .lines p{font-size:15px;line-height:25px}
+.obs .lines p + p{margin-top:10px}
+.qline{font-size:19px;line-height:31px;font-weight:700;margin-top:16px}
+
+/* ================= 05 机会 ================= */
+.opp{display:grid;grid-template-columns:110px repeat(3,minmax(0,1fr));column-gap:20px;border-top:1px solid var(--ink)}
+.opp .oh{padding:14px 0 16px}
+.opp .oh small{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+.opp .oh b{display:block;font-size:16px;line-height:25px;margin-top:4px}
+.opp .oh p{font-size:13px;line-height:21px;color:var(--ink-2);margin-top:6px}
+.opp .rk{font-size:12px;font-weight:700;color:var(--muted);padding:10px 0;border-top:1px solid var(--line)}
+.opp .cv{font-size:14px;line-height:22px;padding:10px 0;border-top:1px solid var(--line);color:var(--ink-2)}
+.opp .dec{font-weight:700;color:var(--ink)}
+.opp .sel{position:relative}
+.opp .sel.top::before{content:"";position:absolute;left:-10px;right:-10px;top:-1px;border-top:3px solid var(--ink)}
+.opp .colbg{background:var(--wash)}
+.opp .pick{display:inline-block;margin-top:4px;font-size:12px;background:var(--ink);color:var(--bg);padding:1px 8px;border-radius:2px}
+.dq{font-size:21px;line-height:34px;font-weight:700;margin-top:10px}
+
+/* ================= 06 决策流 ================= */
+.step6{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:20px;padding-top:28px}
+.step6 + .step6{border-top:1px solid var(--line);margin-top:32px}
+.step6 .k{font-size:13px;font-weight:700;line-height:24px}
+.step6 .k span{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.step6 h4{font-size:19px;line-height:28px;font-weight:700}
+.step6 .sub{font-size:15px;line-height:26px;color:var(--ink-2);margin-top:6px}
+.kn{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px}
+.kn > div{padding:14px 16px;border:1px solid var(--ink);border-radius:3px}
+.kn > div.u{border:1px dashed var(--muted)}
+.kn .lbl{display:block;margin-bottom:6px}
+.kn li{font-size:14px;line-height:23px;padding-left:14px;position:relative;color:var(--ink-2)}
+.kn li + li{margin-top:6px}
+.kn li::before{content:"";position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:var(--ink)}
+.kn .u li::before{background:none;border:1px solid var(--muted)}
+.gates{margin-top:18px;display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,1fr) 40px minmax(0,1fr) 40px minmax(0,.95fr);row-gap:0}
+.gate{border:1px dashed var(--muted);border-radius:3px;padding:12px 14px}
+.gate b{display:block;font-size:15px}
+.gate p{font-size:13px;line-height:20px;color:var(--ink-2);margin-top:4px}
+.yes{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;color:var(--muted);gap:2px}
+.yes .arr{width:26px;margin:0}
+.gate-go{background:var(--ink);color:var(--bg);border-radius:3px;padding:12px 14px;display:flex;flex-direction:column;justify-content:center}
+.gate-go b{font-size:15px}
+.gate-go p{font-size:13px;line-height:20px;opacity:.8;margin-top:4px}
+.drop{height:26px;position:relative}
+.drop::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px solid var(--muted)}
+.drop span{position:absolute;left:calc(50% + 6px);top:4px;font-size:11px;color:var(--muted)}
+.stopbar{grid-column:1 / 6;border-top:1px solid var(--muted);padding-top:10px;font-size:14px;line-height:22px;color:var(--ink-2);display:flex;gap:8px;align-items:center}
+.stopbar .ic{color:var(--muted);width:18px;height:18px}
+.mech{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:18px}
+.mech .lbl{display:block}
+.mech h5{font-size:16px;line-height:25px;margin:4px 0 6px;font-weight:700}
+.mech p{font-size:14px;line-height:23px;color:var(--ink-2)}
+.rulecopy{margin-top:12px;padding:12px 14px;background:var(--wash);border-radius:3px;font-size:14px;line-height:22px}
+.rulecopy small{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+.sch{display:grid;grid-template-columns:1fr 34px 1fr;align-items:center;gap:6px;margin-top:12px}
+.sch ul{display:flex;flex-direction:column;gap:4px}
+.sch li{font-size:12.5px;line-height:18px;padding:5px 8px;border-radius:2px;background:var(--wash);display:flex;justify-content:space-between;gap:6px;color:var(--ink-2)}
+.sch li.k{background:none;box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink);font-weight:500}
+.sch li.n{background:none;box-shadow:inset 0 0 0 1px var(--line)}
+.sch li .ic{width:13px;height:13px}
+.sch .mid{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;color:var(--muted)}
+.sch .mid .arr{width:20px;margin:0}
+.sch .h{font-size:11px;color:var(--muted);margin-bottom:2px}
+.scope{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px;font-size:13px;line-height:20px;color:var(--ink-2)}
+.scope b{font-weight:700;color:var(--ink);margin-right:6px}
+.scope .no{color:var(--muted)}
+.scope .no b{color:var(--muted)}
+.nest{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:24px;margin-top:18px;align-items:stretch}
+.ring{border:1px solid var(--line);border-radius:4px;padding:12px 14px 14px}
+.ring .ring{margin-top:12px;border-color:var(--ink-2)}
+.ring .ring .ring{border:1.5px solid var(--ink);background:var(--wash)}
+.ring .lbl{display:block;color:var(--muted)}
+.ring b{display:block;font-size:15px;line-height:24px;margin-top:2px}
+.ring .ring .ring .lbl{color:var(--ink)}
+.guard{border-left:1px solid var(--ink);padding-left:16px;display:flex;flex-direction:column;justify-content:center;gap:6px}
+.guard b{font-size:15px}
+.guard p{font-size:13px;line-height:20px;color:var(--ink-2)}
+.trade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:22px}
+.tr .pair{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}
+.tr .pair i{flex:1;height:1px;background:var(--ink);position:relative}
+.tr .pair i::before,.tr .pair i::after{content:"";position:absolute;top:-3px;width:7px;height:7px;border-radius:50%;background:var(--ink)}
+.tr .pair i::before{left:0}.tr .pair i::after{right:0}
+.tr p{font-size:13px;line-height:21px;color:var(--ink-2);margin-top:8px}
+
+/* ================= 07 ================= */
+.vp li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:20px;padding-block:16px;border-top:1px solid var(--line)}
+.vp li:last-child{border-bottom:1px solid var(--line)}
+.vp .vh{display:flex;gap:10px;align-items:flex-start;font-weight:700;font-size:15px;line-height:22px}
+.vp .flow{display:flex;flex-wrap:wrap;align-items:center;row-gap:8px}
+.vp .node{border-style:dashed;border-color:var(--ink-2)}
+.vp .met{font-size:12.5px;line-height:19px;color:var(--muted);margin-top:8px}
+.share{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.share svg{width:100%;height:auto;display:block}
+.share svg text{font-family:var(--sans)}
+.share .lbl{display:block;margin-bottom:10px}
+.share p{font-size:14px;line-height:22px;color:var(--ink-2);margin-top:10px}
+.pull{font-size:20px;line-height:32px;font-weight:700;letter-spacing:-.01em;text-wrap:pretty}
+.next{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.next .lim li{font-size:14px;line-height:23px;color:var(--ink-2);padding-block:8px;border-top:1px solid var(--line)}
+.steps3 li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding-bottom:16px;position:relative}
+.steps3 li::before{content:"";position:absolute;left:10px;top:24px;bottom:0;border-left:1px solid var(--line)}
+.steps3 li:last-child::before{display:none}
+.steps3 .n{width:21px;height:21px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--bg);position:relative}
+.steps3 b{display:block;font-size:15px;line-height:22px}
+.steps3 p{font-size:13px;line-height:20px;color:var(--ink-2)}
+.endspace{height:72px}
+
+@media (min-width:1100px){.tl-shift{transform:translateX(118px)}}
+/* ---------- 精修 ---------- */
+.band{background:var(--band);padding-block:56px 60px;margin-top:40px}
+.band .cap{margin-top:20px}
+.acc{color:var(--acc)}
+/* 03 品牌条 */
+.mx .rl{border-left:3px solid var(--c);padding-left:8px;margin-top:12px;padding-top:2px;align-self:start}
+/* 03 视觉修整：单元格做成白卡，正文加深；差异行用功能色括线 */
+.mx{row-gap:10px;column-gap:12px}
+.mx .st{font-size:14px;padding-top:24px}
+.mx .st::before{right:-12px}
+.mx .c{background:var(--bg);border:1px solid var(--line);padding:14px 14px 16px;color:var(--ink);font-size:14px;line-height:23px;border-bottom:1px solid var(--line)}
+.mx .c:nth-child(n+8):nth-child(-n+12){border-top:2px solid var(--spotify)}
+.mx .c:nth-child(n+14):nth-child(-n+18){border-top:2px solid var(--qq)}
+.mx .rl{margin-top:16px}
+.mx .diff{border-top:2px solid var(--acc);margin-top:10px;padding-top:10px;color:var(--acc);font-size:13.5px}
+.mx .diff b{color:var(--acc)}
+.mx .diff.same{border-top:0;color:var(--muted)}
+.mx .diff.same b{color:var(--muted)}
+.mx .rl[style*="transparent"]{border-left:0;margin-top:20px;padding-left:11px}
+/* 04.2 反馈落点 */
+.tl .t.turn .say{color:var(--acc);text-decoration-color:var(--acc)}
+.tl .rail.turnr i{background:var(--acc);border-color:var(--acc)}
+/* 04.3 冲突落点 */
+.node.warn{border-color:var(--acc);color:var(--acc)}
+.warnline .ic,.warnline a{color:var(--acc)}
+/* 04.3 局部放大 */
+.zoom{display:grid;grid-template-columns:118px 64px minmax(0,1fr);align-items:start}
+.z-src .shot{position:relative}
+.z-box{position:absolute;left:6%;right:6%;top:56%;height:20%;border:1.5px solid var(--ink);border-radius:2px}
+.z-lines{width:64px;height:210px;display:block}
+.z-big .shot{height:210px}
+.z-big .tagz{display:block;font-size:12px;line-height:16px;font-weight:700;margin-bottom:8px}
+.zoom-wrap .tagz0{display:block;font-size:12px;line-height:16px;font-weight:700;margin-bottom:8px}
+.zoom-text{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-top:24px}
+.zoom-text p{font-size:15px;line-height:25px}
+/* 05 主次 */
+.opp{grid-template-columns:96px minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.35fr)}
+.opp .cv{color:var(--muted)}
+.opp .oh:not(.sel) b{font-size:15px;color:var(--ink-2)}
+.opp .oh:not(.sel) p{color:var(--muted)}
+.opp .colbg{background:var(--acc-soft);color:var(--ink)!important}
+.opp .sel.top::before{border-top:3px solid var(--acc)}
+.opp .oh.sel b{font-size:20px;line-height:29px}
+.opp .dec{color:var(--muted)}
+.opp .dec.colbg{color:var(--acc)!important;font-size:16px}
+.opp .flag{display:inline-block;font-size:12px;font-weight:700;color:var(--acc);margin-bottom:6px}
+/* 06 焦点 */
+.gates .gate{padding:16px 16px 18px;background:var(--bg)}
+.gates .gate b{font-size:18px;line-height:26px}
+.gates .gate .qm{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:2px}
+.gate-go{background:var(--acc)!important;color:#fff!important}
+.gate-go b{font-size:18px}
+.stopbar{color:var(--muted)}
+.h-big{font-size:26px!important;line-height:36px!important;letter-spacing:-.01em}
+.sch li.k{box-shadow:inset 0 0 0 1.5px var(--acc)!important;color:var(--acc)!important}
+.sch li.k .ic{color:var(--acc)}
+.sch-big{margin-top:24px}
+.sch-big .sch{grid-template-columns:1fr 60px 1fr;gap:10px;max-width:520px}
+.sch-big .sch li{font-size:14px;line-height:20px;padding:8px 12px}
+.step6.lite h4{font-size:17px}
+.step6.lite .sub{font-size:14px;line-height:24px}
+/* 02 合并 */
+.duo{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:start}
+.duo .legend{flex-direction:column;align-items:flex-start;gap:10px;border-bottom:0}
+/* 07 Prompt 节点 */
+.share .pnode rect{stroke:var(--acc)}
+.share .pnode text{fill:var(--acc)}
+
+.cannot.plain li{display:block;padding-block:8px;border-top:1px solid var(--line)}
+.cannot.plain li::before{content:none}
+.finds .it p{color:var(--ink)}
+sup.ref{font-size:10px;line-height:0;vertical-align:super;margin-left:1px}
+sup.ref a{color:var(--muted);text-decoration:none;font-weight:500}
+sup.ref a:hover{color:var(--ink)}
+.refs{margin-top:28px;padding-top:12px;border-top:1px solid var(--line)}
+.refs li{display:grid;grid-template-columns:16px 1fr;gap:4px;font-size:12px;line-height:19px;color:var(--muted);padding-block:2px}
+.refs a{color:var(--muted);text-decoration:none}
+.refs a:hover{color:var(--ink);text-decoration:underline}
+/* ---------- 响应式 ---------- */
+@media (max-width:1099px){
+  .tl{grid-template-columns:28px 80px minmax(0,1fr)}
+  .tl .bk{display:none}
+  .tl-m{display:block}
+}
+@media (max-width:900px){
+  .hero-fig{grid-template-columns:minmax(0,2fr) minmax(0,3.2fr) minmax(0,2.6fr)}
+  .hero-fig .p{grid-column:1 / -1;margin-bottom:8px}
+  .map-row{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .map-seg{font-size:11px}
+  .map-seg span{display:none}
+  .iconrow.c3{grid-template-columns:1fr}
+  .opp{grid-template-columns:repeat(3,minmax(200px,1fr))!important;min-width:660px}
+  .opp .rk{display:none}
+  .opp-wrap{overflow-x:auto}
+  .gates{grid-template-columns:1fr;row-gap:8px}
+  .gates .yes{flex-direction:row;padding-block:2px}
+  .gates .yes .arr{transform:rotate(90deg)}
+  .drop{display:none}
+  .gates > span:empty{display:none}
+  .opp > span:first-child{display:none}
+  .stopbar{grid-column:1}
+  .tri{grid-template-columns:1fr;gap:24px}
+  .tri svg{max-width:360px}
+}
+@media (max-width:700px){
+  .body p{font-size:15px;line-height:26px}
+  .body .lead{font-size:17px;line-height:30px}
+  .body .pull{font-size:17px;line-height:28px;margin-block:32px}
+  .hang{margin-left:0}
+  .zoom{grid-template-columns:96px 40px minmax(0,1fr)}
+  .z-lines{width:40px}
+  .zoom-text{grid-template-columns:1fr;gap:12px}
+  .duo{grid-template-columns:1fr;gap:24px}
+  .opp{grid-template-columns:repeat(3,minmax(200px,1fr))}
+  .h-big{font-size:21px!important;line-height:31px!important}
+  .sch-big .sch{grid-template-columns:1fr 36px 1fr}
+  .hero-h h1{font-size:31px;line-height:41px}
+  .dek{font-size:18px;line-height:31px}
+  .h2{font-size:24px;line-height:34px}
+  .h3{font-size:20px;line-height:31px}
+  .hero-fig .p .say{font-size:25px;line-height:37px}
+  .hero-fig{gap:10px}
+  .q{grid-template-columns:32px minmax(0,1fr)}
+  .q .to{grid-column:2;text-align:left;margin-top:-6px}
+  .cov li{grid-template-columns:1fr;gap:2px}
+  .acct{grid-template-columns:1fr}
+  .acct > div + div{padding-left:0;border-left:0;border-top:1px solid var(--line);margin-top:14px}
+  .bridge{grid-template-columns:1fr}
+  .bf{grid-template-columns:1fr 1fr}
+  .bf .rk{grid-column:1 / -1;text-align:left;padding:10px 0 0;border-top:1px solid var(--line)}
+  .bf .cl,.bf .cr{border-top:0;padding-top:4px}
+  .bf .cr{text-align:left}
+  .bf .hd.r{justify-content:flex-start;text-align:left}
+  .bf .cr .shots{justify-content:flex-start}
+  .bf .shots .shot{width:100%}
+  .bf .hd-mid{display:none}
+  .tl .t.u .say{font-size:23px;line-height:35px}
+  .two-ways{grid-template-columns:1fr}
+  .way{grid-template-columns:96px minmax(0,1fr)}
+  .branch{grid-template-columns:1fr;padding:24px 16px}
+  .fork{display:none}
+  .stem{margin-bottom:18px}
+  .obs{grid-template-columns:110px minmax(0,1fr);gap:16px}
+  .kn,.mech{grid-template-columns:1fr}
+  .nest{grid-template-columns:1fr}
+  .guard{border-left:0;border-top:1px solid var(--ink);padding:12px 0 0}
+  .trade{grid-template-columns:1fr}
+  .vp li{grid-template-columns:1fr;gap:10px}
+  .share{grid-template-columns:1fr}
+  .next{grid-template-columns:1fr}
+  .iconrow.c2{grid-template-columns:1fr}
+  .pull{font-size:20px;line-height:33px}
+  .verdict .v{font-size:20px;line-height:33px}
+}
+/* ---------- 03 新版：横排流程线 + 三栏差异 ---------- */
+.c3-scroll{overflow-x:auto;padding-bottom:6px}
+.c3-in{min-width:560px}
+.c3-flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));column-gap:14px;position:relative}
+.c3-flow::before{content:"";position:absolute;left:10%;right:10%;top:17px;border-top:1px solid var(--line)}
+.c3-sp{position:relative;text-align:center}
+.c3-sp i{display:flex;width:34px;height:34px;border-radius:50%;margin:0 auto 12px;align-items:center;justify-content:center;background:var(--ink);color:var(--bg);box-shadow:0 0 0 6px var(--bg);position:relative}
+.c3-sp.s i{background:var(--bg);color:var(--muted);border:1.5px solid var(--line)}
+.c3-sp b{display:block;font-size:15px;line-height:22px;font-weight:700}
+.c3-sp.s b{color:var(--muted);font-weight:500}
+.c3-sp .tg{display:inline-block;margin-top:6px;font-size:11px;line-height:16px;font-weight:700;color:var(--acc);letter-spacing:.02em}
+.c3-sp em{display:block;font-style:normal;font-size:12px;line-height:18px;color:var(--muted);margin-top:6px}
+.c3-tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:40px;margin-top:44px}
+.c3-df{border-top:2px solid var(--acc);padding-top:14px}
+.c3-df small{display:block;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--acc)}
+.c3-df h3{font-size:15px;line-height:24px;font-weight:700;margin:2px 0 0}
+.c3-df .p{margin-top:16px;font-size:14px;line-height:23px}
+.c3-df .p h4{margin:0 0 4px;font-size:12px;line-height:16px;font-weight:700;color:var(--ink-2);display:flex;gap:7px;align-items:center}
+.c3-df .p h4 i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.c3-df .p p{margin:0}
+.c3-det{margin-top:32px;margin-bottom:28px;border-top:1px solid var(--line);padding-top:14px}
+.c3-det summary{font-size:13px;line-height:20px;font-weight:700;cursor:pointer;list-style:none;display:flex;gap:8px;align-items:center}
+.c3-det summary::-webkit-details-marker{display:none}
+.c3-det summary::before{content:"+";display:inline-block;width:14px;color:var(--muted);font-weight:400}
+.c3-det[open] summary::before{content:"–"}
+.c3-det summary span{font-weight:400;color:var(--muted)}
+.c3-all{list-style:none;margin:16px 0 0;padding:0}
+.c3-all li{display:grid;grid-template-columns:116px minmax(0,1fr) minmax(0,1fr);gap:20px;padding-block:12px;border-top:1px solid var(--line);font-size:13px;line-height:21px;color:var(--ink-2)}
+.c3-all li.h{border-top:0;font-size:12px;font-weight:700;color:var(--ink);padding-block:0 8px}
+.c3-all li.h i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.c3-all li b{color:var(--ink);font-weight:700}
+@media (max-width:820px){.c3-tri{grid-template-columns:1fr;row-gap:32px}.c3-all li{grid-template-columns:1fr;gap:4px}.c3-all li.h{display:none}}
+
+
+/* ---------- 04.1 新版：700 正文列内。先两栏图（Prompt + 手机截图），再接完整正文与 Product Insight ---------- */
+.c4-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:repeat(4,auto);column-gap:48px;margin-top:40px}
+.c4-col{display:grid;grid-row:span 4;grid-template-rows:subgrid;border-top:1px solid var(--ink);padding-top:14px}
+.c4-hd{margin:0;display:flex;gap:10px;align-items:center;font-size:15px;line-height:24px;font-weight:700}
+.c4-q{margin:16px 0 0;font-family:var(--quote);font-weight:500;font-size:17px;line-height:28px;color:var(--ink)}
+.c4-q span{display:block}
+.c4-q span + span{margin-top:2px}
+.c4-shot{margin-top:18px}
+.c4-shot{display:flex;gap:12px}
+.c4-shot .shot{flex:1 1 0;min-width:0;max-width:158px;aspect-ratio:9/19}
+.c4-shot .shot span{left:8px;right:8px}
+.c4-ev{margin:16px 0 0;display:flex;gap:8px;align-items:baseline;font-size:12.5px;line-height:20px;color:var(--ink-2)}
+.c4-ev.o{color:var(--muted)}
+.c4-ev .pip{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ink);transform:translateY(-1px)}
+.c4-ev .pip.o{background:none;border:1.2px dashed var(--muted)}
+.c4-cap{margin-top:24px}
+.c4-body{margin-top:48px}
+.c4-body h4{margin:40px 0 0;font-size:18px;line-height:28px;font-weight:700;letter-spacing:-.005em}
+.c4-body h4:first-child{margin-top:0}
+.c4-body p{margin:14px 0 0;font-size:15px;line-height:26px;text-wrap:pretty}
+.c4-body h4 + p{margin-top:16px}
+.c4-body .pi{margin-top:48px;font-size:15px;line-height:26px;font-weight:700}
+.c4-body .pi + p{margin-top:12px}
+.c4-body p.b{font-weight:700}
+.c4-body strong{font-weight:700}
+@media (max-width:640px){.c4-two{grid-template-columns:1fr;grid-template-rows:none;row-gap:40px}.c4-col{display:block;grid-row:auto}}
+.c4-two3{grid-template-rows:repeat(3,auto)}
+.c4-two3 .c4-col{grid-row:span 3}
+.c4-two3 .c4-hd i.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.c4-d{margin:14px 0 0;font-size:14px;line-height:24px;color:var(--ink-2)}
+.c4-body p.muted{font-size:13.5px;line-height:23px;color:var(--muted)}
+.c4-body p.muted b{color:var(--ink-2);font-weight:700}
+@media (max-width:640px){.c4-two3{grid-template-rows:none}.c4-two3 .c4-col{grid-row:auto}}
+.c4-body p.hyp{font-size:14px;line-height:25px;color:var(--ink-2);border-left:1px dashed var(--muted);padding-left:14px}
+.c4-body p.hyp .lb{display:block;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--ink-2);margin-bottom:2px}
+.c4-ph{margin:20px 0 0;border:1px dashed var(--muted);padding:22px 18px;font-size:12.5px;line-height:20px;color:var(--muted);text-align:center}
+/* ===== 方案 C 精简：图 + 三行紧凑说明 ===== */
+.E{max-width:700px;margin:0 auto}
+.E svg{display:block;width:min(340px,100%);height:auto;margin:0 auto}
+.Er{margin-top:12px;border-top:1px solid var(--ink)}
+.Er li{display:grid;grid-template-columns:132px minmax(0,1fr) minmax(0,1fr);column-gap:20px;padding-block:9px;border-bottom:1px solid var(--line);align-items:baseline}
+.Er b{font-size:14px;line-height:22px}
+.Er .of{font-size:13.5px;line-height:22px;color:var(--ink)}
+.Er .in{font-size:12.5px;line-height:20px;color:var(--muted);border-left:1px dashed var(--muted);padding-left:12px}
+@media (max-width:700px){.Er li{grid-template-columns:1fr;row-gap:2px}.Er .in{border-left:1px dashed var(--muted)}}
+
+/* 图7：三者一致（三角） */
+.c4-T{max-width:700px;margin:0 auto}.c4-T svg{width:100%;height:auto;display:block}
+.c4-T text{font-family:var(--sans)}
+.c4-T .ln{stroke:var(--ink);stroke-width:1.2}.c4-T .bgf{fill:var(--bg)}
+.c4-T .tick{stroke:var(--acc);stroke-width:2;stroke-linecap:round}
+.c4-T .node rect{fill:var(--bg);stroke:var(--ink);stroke-width:1.2}
+.c4-T .node text{font-size:16px;font-weight:700;fill:var(--ink)}
+.c4-T .mid{font-size:13px;fill:var(--muted);letter-spacing:.04em}
+.c4-T .t1{font-size:14.5px;font-weight:700;fill:var(--ink)}.c4-T .t2{font-size:14px;fill:var(--ink-2)}
+.c4-T .lg{display:flex;gap:18px;flex-wrap:wrap;justify-content:center;margin-top:6px;font-size:13px;line-height:18px;color:var(--ink-2)}
+.c4-T .lg s{display:inline-block;width:18px;border-top:1.2px solid var(--ink);margin-right:8px;vertical-align:4px;text-decoration:none}
+.c4-T .lg i{display:inline-block;width:14px;border-top:2px solid var(--acc);transform:rotate(-45deg);margin-right:8px;vertical-align:3px}
+.c4-T .m,.c4-T .mn{display:none}
+.c4-T .bn{font-size:15px;font-weight:700;fill:var(--acc)}
+.c4-T .mn{margin:14px 0 0;padding:0;list-style:none}
+.c4-T .mn li{display:grid;grid-template-columns:22px 1fr;column-gap:6px;padding:8px 0;border-top:1px solid var(--line);font-size:14px;line-height:22px}
+.c4-T .mn b{color:var(--acc)}
+.c4-T .mn em{display:block;font-style:normal;font-weight:700;color:var(--ink)}
+.c4-T .mn span{color:var(--ink-2)}
+@media (max-width:560px){.c4-T .d{display:none}.c4-T .m{display:block;max-width:360px;margin:0 auto}.c4-T .mn{display:block}.c4-T .node text{font-size:16px}.c4-T .mid{font-size:13px}}
+
+/* 图8：三种收听目的（宽度同正文；无箭头，字段名只在首栏显示） */
+.c5{max-width:700px;margin:0 auto}
+.c5-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,auto);column-gap:28px}
+.c5-c{display:grid;grid-row:1 / span 3;grid-template-rows:subgrid}
+.c5-c i{display:block;visibility:hidden;font-style:normal;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--muted);margin-bottom:3px}
+.c5-c:first-child i{visibility:visible}
+.c5-c .h{border-top:1px solid var(--ink);padding:14px 0 20px}
+.c5-c .h b{display:flex;align-items:center;gap:8px;font-size:16px;line-height:24px}
+.c5-c .h .ic{width:20px;height:20px;color:var(--ink)}
+.c5-c .h span{display:block;font-size:13.5px;line-height:21px;color:var(--ink-2);margin-top:6px}
+.c5-c .a,.c5-c .v{padding:0 0 20px;font-size:15px;line-height:24px}
+@media (max-width:700px){.c5-g{display:block}.c5-c{display:block;margin-top:28px}.c5-c:first-child{margin-top:0}.c5-c i,.c5-c:first-child i{visibility:visible}.c5-c .h{padding-bottom:14px}.c5-c .a,.c5-c .v{padding-bottom:14px}}
+.c4-body div.hypb{font-size:14.5px;line-height:25px;color:var(--ink-2);border-left:1px dashed var(--muted);padding-left:14px}
+.c4-body div.hypb p{font-size:14.5px;line-height:25px;color:var(--ink-2)}
+.c4-body div.hypb .lb{display:block;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--ink-2);margin-bottom:4px}
+.c4-body b.ev{color:var(--ink-2)}
+.c4-body a.xr{font-size:14px;line-height:24px;color:var(--acc);text-decoration:none;border-bottom:1px solid transparent}
+.c4-body a.xr:hover{border-bottom-color:var(--acc)}
+
+
+/* ---------- 02 新版：三类任务列表、局限（限定在 #ch-02，避免影响其他章节） ---------- */
+#ch-02 .sub{font-size:13px;line-height:20px;font-weight:700;margin-top:56px;margin-bottom:12px}
+#ch-02 .cov li{display:grid;grid-template-columns:132px minmax(0,1fr) 200px;gap:20px;padding-block:14px;border-bottom:1px solid var(--line);align-items:baseline;font-size:inherit}
+#ch-02 .cov li:first-child{border-top:1px solid var(--line)}
+#ch-02 .cov b{font-size:15px;line-height:24px;font-weight:700}
+#ch-02 .cov .ex{font-size:14px;line-height:23px;color:var(--ink-2)}
+#ch-02 .cov .ex .say{color:var(--ink)}
+#ch-02 .cov .st{font-size:12.5px;line-height:20px;color:var(--ink-2);display:flex;gap:8px;align-items:baseline}
+#ch-02 .cov .st.dim{color:var(--muted)}
+#ch-02 .pip{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ink);transform:translateY(-1px)}
+#ch-02 .pip.o{background:none;border:1.2px dashed var(--muted)}
+#ch-02 .limits{margin-top:40px;font-size:12.5px;line-height:21px;color:var(--muted)}
+#ch-02 .limits b{font-weight:500;color:var(--muted);margin-right:8px}
+@media (max-width:620px){#ch-02 .cov li{grid-template-columns:1fr;gap:4px}}
+
+/* 05 评估表：700 栏内三栏，行标题只在首栏显示，选中项浅底 */
+.c6{max-width:700px;margin:0 auto}
+.c6-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(6,auto);column-gap:28px}
+.c6-c{display:grid;grid-row:1 / span 6;grid-template-rows:subgrid}
+.c6-c i{display:block;visibility:hidden;font-style:normal;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--muted);margin-bottom:3px}
+.c6-c:first-child i{visibility:visible}
+.c6-c .h{border-top:1px solid var(--ink);padding:14px 0 20px}
+.c6-c .h small{display:block;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+.c6-c .h b{display:block;font-size:16px;line-height:24px;margin-top:4px}
+.c6-c .h p{font-size:13.5px;line-height:21px;color:var(--ink-2);margin-top:8px}
+.c6-c .r,.c6-c .d{padding:0 0 18px;font-size:14px;line-height:22px}
+.c6-c .d{font-weight:700;font-size:14.5px}
+.c6-c:not(.sel) .h b{color:var(--ink-2)}
+.c6-c:not(.sel) .h p,.c6-c:not(.sel) .r,.c6-c:not(.sel) .d{color:var(--muted)}
+.c6-c.sel{background:var(--acc-soft);padding-inline:12px;margin-inline:-12px}
+.c6-c.sel .h{border-top:3px solid var(--acc)}
+.c6-c.sel .h small,.c6-c.sel .d{color:var(--acc)}
+.c6-c.sel .d{font-size:16px}
+@media (max-width:700px){.c6-g{display:block}.c6-c{display:block;margin-top:28px}.c6-c:first-child{margin-top:0}.c6-c.sel{padding-block:0 4px}.c6-c i,.c6-c:first-child i{visibility:visible}.c6-c .h{padding-bottom:14px}.c6-c .r,.c6-c .d{padding-bottom:12px}}
+
+/* Hero 新版：一个 Prompt + 两个结果 */
+.hero-fig2{margin-top:56px;max-width:700px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:40px;align-items:center}
+.hero-fig2 .p .say{display:block;font-size:28px;line-height:42px;margin-top:10px}
+.hero-fig2 .p .small{margin-top:12px;max-width:17em}
+.hero-fig2 .p .to{margin-top:28px;height:0;border-top:1px solid var(--ink);position:relative;max-width:120px}
+.hero-fig2 .p .to::after{content:"";position:absolute;right:-1px;top:-5px;border:4.5px solid transparent;border-left:7px solid var(--ink);border-right:0}
+.hero-fig2 .pair{display:flex;gap:16px}
+.hero-fig2 .pair>div{width:176px}
+.hero-fig2 .tag{display:flex;align-items:center;gap:8px;font-size:12px;line-height:16px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
+.hero-fig2 .shot{aspect-ratio:9/17}
+@media (max-width:900px){.hero-fig2{grid-template-columns:1fr;row-gap:28px}.hero-fig2 .pair{gap:12px}.hero-fig2 .pair>div{flex:1 1 0;width:auto;max-width:200px}.hero-fig2 .p .to{display:none}.hero-fig2 .p .say{font-size:25px;line-height:37px}}
+
+/* 06 Go / No-Go：收进 700 正文栏，标签移到标题上方 */
+.step6.gatewrap{grid-template-columns:1fr}
+.step6.gatewrap .k{display:flex;gap:8px;align-items:baseline;margin-bottom:6px}
+.step6.gatewrap .k span{display:inline}
+.step6.gatewrap .h-big{font-size:21px;line-height:31px}
+.step6.gatewrap .gates{grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,.95fr)}
+.step6.gatewrap .gates .gate{padding:12px 12px 14px}
+.step6.gatewrap .gates .gate b{font-size:16px;line-height:24px}
+.step6.gatewrap .gate p,.step6.gatewrap .gate-go p{font-size:12.5px;line-height:19px}
+.step6.gatewrap .gate-go{padding:12px}
+.step6.gatewrap .gate-go b{font-size:16px;line-height:24px}
+@media (max-width:900px){.step6.gatewrap .gates{grid-template-columns:1fr}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ast" viewBox="0 0 20 20"><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"><line x1="10" y1="2" x2="10" y2="18"/><line x1="3.1" y1="6" x2="16.9" y2="14"/><line x1="3.1" y1="14" x2="16.9" y2="6"/></g></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5M9 12h6"/></symbol>
+  <symbol id="i-loop" viewBox="0 0 24 24"><path d="M4 11a7 7 0 0 1 12.5-4.3L19 9"/><path d="M19 4v5h-5"/><path d="M20 13a7 7 0 0 1-12.5 4.3L5 15"/><path d="M5 20v-5h5"/></symbol>
+  <symbol id="i-fork" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><path d="M7 12h4c2 0 3-1.5 4-3.5S17 5 19 5"/><path d="M11 12c2 0 3 1.5 4 3.5S17 19 19 19"/><path d="M17 3l2 2-2 2M17 17l2 2-2 2"/></symbol>
+  <symbol id="i-task" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="1.5"/><path d="M8.5 9l1.5 1.5L13 7.5M8.5 15l1.5 1.5L13 13.5"/><path d="M15 9h1M15 15h1"/></symbol>
+  <symbol id="i-compare" viewBox="0 0 24 24"><rect x="3.5" y="4" width="7" height="16" rx="1"/><rect x="13.5" y="4" width="7" height="16" rx="1"/><path d="M6 8h2M16 8h2M6 12h2M16 12h2"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h11v8H9l-3 3v-3H4z"/><path d="M15 9h5v8h-2v3l-3-3h-4v-2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2.2"/><circle cx="17" cy="16" r="2.2"/></symbol>
+  <symbol id="i-steer" viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"/><circle cx="9" cy="6" r="2" fill="var(--bg)"/><circle cx="15" cy="12" r="2" fill="var(--bg)"/><circle cx="8" cy="18" r="2" fill="var(--bg)"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M15 5l4 4L9 19H5v-4z"/><path d="M13 7l4 4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.1-5"/><path d="M19 4v5h-5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M6.5 6.5l11 11"/></symbol>
+  <symbol id="i-head" viewBox="0 0 24 24"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="17" y="14" width="4" height="6" rx="1"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.6 12 19 12 19z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M8 11l8-4M8 13l8 4"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 12V9a3 3 0 0 1 3-3h12"/><path d="M16 3l3 3-3 3"/><path d="M20 12v3a3 3 0 0 1-3 3H5"/><path d="M8 21l-3-3 3-3"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></symbol>
+</svg>
+
+<header class="site pad"><div class="full"><a class="mark" href="#top">Product Lab<svg class="ast"><use href="#ast"/></svg></a><nav>文章</nav></div></header>
+
+<main id="top">
+<!-- ======================= Hero ======================= -->
+<div class="pad">
+  <header class="read hero-h">
+    <p class="kind">Case Study 01<span>Spotify × QQ 音乐 AI 歌单产品分析</span></p>
+    <h1>当音乐发现可以被 Prompt</h1>
+    <p class="dek">「陌生城市的周日下午」，AI 会如何理解？从 Spotify 与 QQ 音乐的实际体验出发，看看自然语言如何改变音乐发现，以及歌单生成之后还会发生什么。</p>
+    <p class="byline">独立产品分析 · 2026</p>
+  </header>
+
+  <div class="full">
+    <div class="hero-fig2">
+      <div class="p">
+        <span class="lbl">同一句测试 Prompt</span>
+        <span class="say">「陌生城市的<br>周日下午」</span>
+        <p class="small">一种难以用固定标签定义的氛围。</p>
+        <p class="to" aria-hidden="true"></p>
+      </div>
+      <div class="pair">
+        <div><span class="tag"><i class="dot sp"></i>Spotify</span><div class="shot"><span>S1 歌单简介与逐首说明</span></div></div>
+        <div><span class="tag"><i class="dot qq"></i>QQ 音乐</span><div class="shot"><span>S2 智能歌单简介与逐首说明</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="read">
+    <div class="map" aria-label="本文结构">
+      <p class="lbl">本文结构</p>
+      <div class="map-row">
+        <a class="map-seg lite" href="#ch-01" style="text-decoration:none"><b>01</b><span>背景</span></a>
+        <a class="map-seg lite" href="#ch-02" style="text-decoration:none"><b>02</b><span>研究方法与范围</span></a>
+        <a class="map-seg lite" href="#ch-03" style="text-decoration:none"><b>03</b><span>体验路径对照</span></a>
+        <a class="map-seg" href="#ch-04" style="text-decoration:none"><b>04</b><span>三个核心发现</span></a>
+        <a class="map-seg" href="#ch-05" style="text-decoration:none"><b>05</b><span>产品设计机会</span></a>
+        <a class="map-seg" href="#ch-06" style="text-decoration:none"><b>06</b><span>Mini PRD</span></a>
+        <a class="map-seg lite" href="#ch-07" style="text-decoration:none"><b>07</b><span>商业价值与反思</span></a>
+      </div>
+    </div>
+
+    <div class="finds iconrow c3">
+      <a class="it" href="#f-041" style="text-decoration:none"><svg class="ic"><use href="#i-expand"/></svg><b>04.1</b><p>从固定分类到主动探索：AI 扩展了音乐发现的边界</p></a>
+      <a class="it" href="#f-042" style="text-decoration:none"><svg class="ic"><use href="#i-loop"/></svg><b>04.2</b><p>从一次性推荐到双向意图修正：让音乐探索成为持续对话</p></a>
+      <a class="it" href="#f-043" style="text-decoration:none"><svg class="ic"><use href="#i-fork"/></svg><b>04.3</b><p>从一次性生成到持续使用：AI 歌单如何融入日常听歌习惯</p></a>
+    </div>
+  </div>
+</div>
+
+<div class="brk" aria-hidden="true"><svg class="ast"><use href="#ast"/></svg></div>
+
+<!-- ======================= 01 ======================= -->
+<section class="pad ch" id="ch-01">
+  <div class="read">
+    <p class="kind">01</p>
+    <h2 class="h2">背景</h2>
+    <div class="body m-top-s">
+      <p class="lead"><span class="say hang">「想象我散步在陌生城市的周日下午」</span>是一种难以用固定标签定义的氛围；<span class="say">「找回过去经常听、但最近一周没有播放的歌曲」</span>则涉及多个个人历史数据条件。音乐推荐已经高度个性化，但这两类需求，用户都很难通过歌名、歌手或曲风表达出来。好的音乐发现，既需要对情绪和场景做开放式的解释，也需要准确理解和执行复杂的筛选规则。</p>
+      <p>长期以来，音乐平台的个性化主要来自推荐系统的预测，Discover Weekly、Release Radar 和各平台的每日推荐，都在替用户猜测可能喜欢的音乐。2025 年底，Spotify 测试 Prompted Playlist，并将它定位为第一次让用户能够引导算法：用户用自己的话描述想听的音乐，系统再参考完整的收听历史生成歌单<sup class="ref"><a href="#ref-1">1</a></sup>。</p>
+      <p>这一转变发生在推荐体验趋同的背景下。有研究发现，算法驱动的收听与较低的消费多样性相关<sup class="ref"><a href="#ref-2">2</a></sup>；也有行业分析认为，推荐算法趋同让用户体验逐渐陷入瓶颈，AI 则被视为从被动推荐走向主动陪伴的机会<sup class="ref"><a href="#ref-3">3</a></sup>。国内平台同样在跟进：QQ 音乐推出了智能歌单，腾讯音乐早在将大模型接入 AI 音乐助手等更多入口<sup class="ref"><a href="#ref-3">3</a></sup>。</p>
+      <p>然而，有了自然语言入口，是否就意味着推荐方式真的改变了？第三方对 Spotify 早期 AI 歌单功能的测试发现，简单需求能得到流畅的结果，约束一旦叠加，结果就容易绕回熟悉的曲目或偏离主题<sup class="ref"><a href="#ref-4">4</a></sup>。</p>
+      <p class="pull">AI 歌单改变的，究竟只是交互方式，还是底层的发现逻辑？它到底能否真正改变我们发现音乐的方式。</p>
+      <p>如果说传统推荐已经比较擅长根据收听历史猜测用户可能喜欢什么。但如果我想听的是一种很难准确描述的情绪、某个具体场景里的音乐，或者想跳出平时的听歌习惯，AI 能不能提供不一样的结果？而对于偏小众的音乐喜好，它又能理解到什么程度？</p>
+      <p class="turn">从产品角度看，我也关心另一个问题：生成一份歌单很容易让用户尝鲜，但什么会让他们愿意继续使用？ 用户可能只想发现几首新歌，也可能反复使用同一个 Prompt，或者长期维护一份歌单。这些不同的使用方式，决定了 AI 歌单究竟只是一个有趣的新功能，还是能真正融入用户日常听歌的产品体验。</p>
+      <p class="close">带着这些问题，我体验并比较了 Spotify Prompted Playlist 和 QQ 音乐智能歌单，希望从实际使用出发，看看 AI 音乐推荐目前做到了什么，还有哪些值得继续改善的地方。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 02 ======================= -->
+<section class="pad ch" id="ch-02" style="margin-top:96px">
+  <div class="read">
+    <p class="kind">02<span>Research Approach</span></p>
+    <h2 class="h2">研究方法与范围</h2>
+    <div class="body m-top-s">
+      <p>本次选择 Spotify Prompted Playlist 与 QQ 音乐智能歌单作为主要对照对象。两者都支持通过自然语言描述音乐需求、生成歌单并进一步调整结果，但在提示词辅助、生成结果展示及后续编辑方式上存在差异。这使它们适合用于分析 AI 音乐发现中的需求表达、探索反馈与用户控制。</p>
+      <p>研究聚焦于 AI 歌单的实际使用体验，而非比较两家平台底层推荐算法的性能。我围绕三类音乐发现需求设计体验任务，并以需求表达、歌单生成、试听与判断、调整优化、保存与持续使用五个关键阶段，整理两款产品的体验路径；同时结合 Spotify 官方产品介绍与 Reddit 社区讨论，作为补充的定性线索。Spotify AI Chat、QQ 音乐元宝及 AI DJ 的部分体验仅作为补充观察，不纳入主要功能对照。</p>
+    </div>
+    <p class="sub">三类体验任务</p>
+    <ul class="cov">
+      <li><b>场景与情绪探索</b><span class="ex">例如<span class="say">「陌生城市的周日下午」</span>，观察 AI 如何理解抽象描述，以及用户如何进一步调整推荐方向</span><span class="st"><i class="pip"></i>包含实际产品体验</span></li>
+      <li><b>精确条件控制</b><span class="ex">例如时长、曲风、歌曲数量与场景要求的组合，观察需求表达与结果执行之间的关系</span><span class="st"><i class="pip"></i>包含实际产品体验</span></li>
+      <li><b>个人数据驱动</b><span class="ex">通过历史收听、近期播放及排除条件等规则重新发现音乐</span><span class="st dim"><i class="pip o"></i>主要来自官方提示词示例和社区反馈，未逐项验证执行准确性</span></li>
+    </ul>
+    <p class="sub">测试条件</p>
+    <div class="body" style="margin-top:0">
+      <p>本次体验使用的账号条件并不完全一致：Spotify 为长期使用的 Premium 账号，具有较丰富的历史收听记录；QQ 音乐为非长期使用的免费账号，历史行为数据相对有限。账号的使用历史、个性化数据积累及订阅权限差异，均可能影响推荐结果与可使用的产品功能。因此，本研究主要比较两款产品的交互设计、需求表达与结果控制机制，不将生成歌曲的差异直接解释为推荐算法能力的优劣。</p>
+    </div>
+    <p class="limits"><b>局限</b>本次研究属于探索性产品体验分析，主要基于个人操作、有限任务样例和公开社区资料，并非正式的多用户可用性研究；社区内容仅作定性线索，不用于推断用户规模。文中的体验差异属于观察，用户动机与业务影响属于待验证假设。</p>
+  </div>
+</section>
+
+<!-- ======================= 03 ======================= -->
+<section class="pad ch" id="ch-03" style="margin-top:96px">
+  <div class="read">
+    <p class="kind">03<span>Experience Comparison</span></p>
+    <h2 class="h2">AI 歌单体验路径对照</h2>
+    <div class="body m-top-s"><p>为了观察 AI 如何参与音乐发现过程，本次将 Spotify Prompted Playlist 与 QQ 音乐智能歌单的体验拆解为五个阶段。两款产品都支持通过自然语言创建歌单，并允许用户在生成后继续调整结果，但具体交互方式存在差异。</p></div>
+  </div>
+  <figure class="wide m-top">
+    <div class="c3-scroll"><div class="c3-in">
+      <div class="c3-flow" role="list" aria-label="五阶段体验路径，两款产品共用"><div class="c3-sp" role="listitem"><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/></svg></i><b>需求表达</b><span class="tg">① 差异</span></div><div class="c3-sp" role="listitem"><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h11M4 12h11M4 17h6"/><path d="M19 15V5l-4 1.2"/><circle cx="17" cy="16" r="2.2"/></svg></i><b>歌单生成</b><span class="tg">② 差异</span></div><div class="c3-sp s" role="listitem"><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15v-2a8 8 0 0 1 16 0v2"/><rect x="3.5" y="14" width="4" height="6" rx="1.5"/><rect x="16.5" y="14" width="4" height="6" rx="1.5"/></svg></i><b>试听与判断</b><em>基本一致</em></div><div class="c3-sp" role="listitem"><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></i><b>调整优化</b><span class="tg">③ 差异</span></div><div class="c3-sp" role="listitem"><i><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v16l-5-3.5L7 20z"/></svg></i><b>保存与持续使用</b><span class="tg">③ 差异</span></div></div>
+    </div></div>
+    <div class="c3-tri">
+      <div class="c3-df"><small>差异 ① · 阶段 01</small><h3>需求表达的辅助方式</h3><div class="p"><h4><i style="--c:var(--spotify)"></i>Spotify</h4><p>提供不同用途的提示词示例，鼓励探索收听历史、音乐场景和文化趋势等需求</p></div><div class="p"><h4><i style="--c:var(--qq)"></i>QQ 音乐</h4><p>提供编排思路、语种、多样性、歌曲数量等选项，并将选择组织成可编辑的提示词</p></div></div>
+      <div class="c3-df"><small>差异 ② · 阶段 02</small><h3>推荐说明</h3><div class="p"><h4><i style="--c:var(--spotify)"></i>Spotify</h4><p>歌单简介与逐首说明呈现对需求的音乐诠释，关注音乐流派与类型</p></div><div class="p"><h4><i style="--c:var(--qq)"></i>QQ 音乐</h4><p>部分体验中更贴近原始提示词，偏向词曲内容的场景化</p></div></div>
+      <div class="c3-df"><small>差异 ③ · 阶段 04–05</small><h3>用户对结果的调整与维护方式</h3><div class="p"><h4><i style="--c:var(--spotify)"></i>Spotify</h4><p>支持自然语言优化与单曲保留，另有编辑撤销等机制</p></div><div class="p"><h4><i style="--c:var(--qq)"></i>QQ 音乐</h4><p>支持提示词修改，并提供历史版本查看入口</p></div></div>
+    </div>
+    <details class="c3-det"><summary>查看五阶段完整对照 <span>含试听与判断</span></summary><ul class="c3-all"><li class="h"><span></span><span><i style="--c:var(--spotify)"></i>Spotify</span><span><i style="--c:var(--qq)"></i>QQ 音乐</span></li><li><b>01 需求表达</b><span>提供不同用途的提示词示例，鼓励探索收听历史、音乐场景和文化趋势等需求</span><span>提供编排思路、语种、多样性、歌曲数量等选项，并将选择组织成可编辑的提示词</span></li><li><b>02 歌单生成</b><span>通过歌单简介与逐首说明呈现对需求的音乐诠释</span><span>同样提供歌单简介与逐首说明，部分体验中更贴近原始提示词</span></li><li><b>03 试听与判断</b><span>用户可边听边判断声音、氛围与场景是否符合预期</span><span>用户同样能够试听并判断结果，实际推荐差异受到账号历史等条件影响</span></li><li><b>04 调整优化</b><span>支持自然语言优化、编辑提示词及单曲保留或移除</span><span>支持提示词修改、更新歌单及删除单曲</span></li><li><b>05 保存与持续使用</b><span>支持不更新、每日和每周更新，另有编辑撤销等机制</span><span>支持相同的更新周期，并提供历史版本查看入口</span></li></ul></details>
+    <figcaption class="cap read" style="margin-left:auto;margin-right:auto"><p class="w"><b>图 1</b>Spotify × QQ 音乐五阶段体验路径对照</p><p class="n"><b>观察｜</b>两款产品的阶段划分一致，①②③ 对应流程线上标出的阶段</p></figcaption>
+  </figure>
+  <div class="read m-top">
+    <div class="body">
+      <p>两款产品都已经覆盖 AI 歌单从生成到修改的主要流程，差异并不简单体现为功能的有无，而更多体现在需求表达的辅助方式、推荐说明，以及用户对结果的调整与维护方式。</p>
+      <p>这些差异引出了三个值得进一步分析的问题：AI 扩展了哪些音乐需求？用户如何在探索中逐渐明确偏好？以及生成的歌单怎样转化为持续的音乐消费？</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 04 ======================= -->
+<section class="pad ch" id="ch-04" style="margin-top:96px">
+  <div class="read">
+    <p class="kind">04<span>Key Findings</span></p>
+    <h2 class="h2">三个核心产品发现</h2>
+  </div>
+  <div class="read" id="f-041" style="margin-top:56px">
+    <p class="kind">04.1</p>
+    <h3 class="h3">当音乐需求难以用歌手和曲风表达</h3>
+    <p class="dek">AI 不只是让用户用自然语言搜索音乐，而是让过去难以描述的感受、难以操作的复杂规则，变成可以主动探索的推荐需求。</p>
+  </div>
+
+  <div class="read c4-body" style="margin-top:40px">
+    <p>传统音乐搜索擅长处理歌名、歌手和曲风等明确需求，但用户想听什么，<strong>并不总能通过固定标签表达</strong>。有时，我们想找的是一种说不清的情绪或氛围；有时目标很明确，却需要组合历史收听、时间范围和排除条件，常规界面很难一次完成。</p>
+  </div>
+
+  <figure class="read c4-fig" style="margin:48px auto 0">
+    <div class="c4-two" style="margin-top:0">
+      <div class="c4-col">
+        <p class="c4-hd"><svg class="ic"><use href="#i-spark"/></svg>01 · 抽象的音乐感受</p>
+        <p class="c4-q"><span>「陌生城市的周日下午」</span><span>「听起来像蓝色的音乐」</span></p>
+        <div class="c4-shot"><div class="shot"><span>S1 Spotify 输入</span></div><div class="shot"><span>S2 生成结果</span></div></div>
+        <p class="c4-ev"><i class="pip"></i>包含实际产品体验</p>
+      </div>
+      <div class="c4-col">
+        <p class="c4-hd"><svg class="ic"><use href="#i-steer"/></svg>02 · 复杂的个人推荐条件</p>
+        <p class="c4-q"><span>「找回过去反复听过、但一年没有播放的歌曲，排除最近听过的内容，再从不同年代和曲风中选择十首。」</span></p>
+        <div class="c4-shot"><div class="shot"><span>S3 Spotify 提示词示例</span></div><div class="shot"><span>S4 QQ 音乐结构化选项</span></div></div>
+        <p class="c4-ev o"><i class="pip o"></i>Spotify 为官方示例，执行准确性未独立验证</p>
+      </div>
+    </div>
+    <figcaption class="cap c4-cap"><p class="w"><b>图 2</b>抽象感受与复杂规则两类需求，以及两款产品的输入引导</p><p class="n"><b>观察｜</b>左侧包含实际产品体验；右侧 Spotify 的复杂规则主要来自官方提示词示例和社区反馈，未逐项验证执行准确性。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body">
+    <h4>让抽象的音乐感受变得可探索</h4>
+    <p>例如<span class="say">「陌生城市的周日下午」</span>或<span class="say">「听起来像蓝色的音乐」</span>，它们并不对应某个确定的曲风，而是<strong>留给系统一定的解释空间</strong>。</p>
+    <p>在 Spotify Prompted Playlist 的体验中，开放式描述可以成为音乐探索的起点。同一个意象也可能产生不同的理解：「蓝色」可以意味着忧郁、平静，也可能让人联想到冷色调的电子音乐。用户无需预先指定一种曲风，而是可以通过试听结果，发现哪些音乐方向更接近自己的想象。</p>
+    <p>Spotify 在产品介绍中也强调了 Prompt 的灵活性：既可以宽泛，也可以具体，并结合个人收听历史及音乐文化趋势生成推荐。Reddit 社区中，用户也会尝试以虚构故事、情绪变化和叙事场景构思 Prompt。</p>
+    <p>这些例子让我觉得，开放式 Prompt 的价值不只是让输入更方便，<strong>它还扩大了用户能够向推荐系统提出的需求范围</strong>。</p>
+
+    <h4>让复杂的个人推荐条件更容易组织</h4>
+    <p>另一类需求恰好相反：用户已经有明确目标，困难在于操作过程。例如，想找回过去反复听过、却很久没有播放的歌曲，同时排除近期收听的内容，再限定年代、曲风和歌曲数量。</p>
+    <p>这类任务涉及多个条件之间的组合。用户并不一定缺少表达能力，而是现有的分类、筛选和历史记录入口未必能够支持如此复杂的操作。</p>
+    <p>在输入设计上，Spotify 与 QQ 音乐采取了不同的方式。</p>
+    <p>Spotify 主要通过开放式 Prompt 和提示词示例，引导用户描述自己的音乐需求。用户可以从一种情绪或场景出发，也可以加入更明确的个人收听历史、年代或曲风约束。</p>
+    <p>QQ 音乐则在自然语言输入之外，提供语种、编排思路、多样性和歌曲数量等结构化选项。这种设计带有 Slot-filling（槽位引导）的交互特征：用户无需一次写出完整的 Prompt，而可以借助界面提供的选项，逐步组织需求。</p>
+    <p>两种方式并非完全对立。Spotify 同样提供输入引导，QQ 音乐也允许用户自由描述。但它们在交互引导上的侧重点不同：Spotify 更强调让用户发现<strong>「原来我还可以这样提需求」</strong>，QQ 音乐则进一步帮助用户明确<strong>「我具体有哪些要求」</strong>。</p>
+    <p>这也让我想到一个值得进一步比较的产品问题：对于不熟悉 Prompt 的用户，究竟应该提供更多自由表达的空间，还是通过结构化选项帮助他们逐步明确需求？</p>
+
+    <h4>表达能力的提升，不等于推荐结果一定更好</h4>
+    <p>从产品设计角度看，这两类需求还需要不同的评价方式。</p>
+    <p>对于情绪、场景等开放式探索，重点不仅在于推荐是否贴合描述，也在于结果能否带来有意义的新发现。允许一定的意外性，可能恰好是这类体验吸引人的地方。</p>
+    <p>但对于明确提出历史范围、排除条件与数量限制的任务，成功标准就不同了。<strong>用户更关心系统是否真正遵守要求</strong>，而不是给出一份看起来合理的歌单。</p>
+    <p>目前的实际体验可以说明自然语言与结构化选项如何支持用户提出需求，但<strong>不足以证明复杂条件都能被准确执行</strong>。</p>
+    <p>自然语言降低了表达需求的门槛，而产品交互设计进一步决定了用户能否把模糊想法或复杂目标整理成可用的输入。至于最终推荐是否令人满意，还需要回到实际歌曲和试听体验中判断。</p>
+  </div>
+</section>
+<!-- ======================= 04.2 ======================= -->
+<section class="pad ch" id="f-042" style="margin-top:120px">
+  <div class="read">
+    <p class="kind">04.2</p>
+    <h3 class="h3">从首次推荐到逐步明确音乐偏好</h3>
+  </div>
+
+  <div class="read c4-body" style="margin-top:28px">
+    <p>对于情绪、氛围等主观的音乐需求，用户未必能在第一次输入时就准确表达自己的偏好。有时，<strong>只有听到实际结果，才能发现自己真正想要的是什么。</strong></p>
+    <p>在测试 Spotify Prompted Playlist 时，我输入了「陌生城市的周日下午」。Spotify 最初将其理解为安静、略带忧郁的城市漫步，并生成了相应的歌曲。试听后，我发现这个方向与自己的预期并不完全一致：我更想要明亮、乐观一些的氛围。于是，我选择优化并输入「更明亮、乐观一点」。Spotify 随后调整了推荐方向，新的歌曲描述也转向了更积极的情绪与更丰富的曲风。</p>
+  </div>
+
+  <figure class="wide" style="margin-top:40px">
+    <p class="lbl read" style="margin-bottom:6px">在 Spotify 的实际体验中</p>
+    <div class="tl tl-shift" style="max-width:var(--read);margin-inline:auto">
+      <div class="rail u" style="grid-row:1"><i></i></div><p class="who" style="grid-row:1"><b>我</b>输入</p><div class="t u" style="grid-row:1"><span class="say">陌生城市的周日下午</span></div>
+      <div class="rail" style="grid-row:2"><i></i></div><p class="who" style="grid-row:2"><b>Spotify</b>最初的理解</p><div class="t a" style="grid-row:2"><span class="say">安静、略带忧郁的城市漫步</span><small>据歌单简介概括</small></div>
+      <div class="rail lis" style="grid-row:3"><i></i></div><p class="who" style="grid-row:3"></p><div class="t lis" style="grid-row:3"><svg class="ic"><use href="#i-head"/></svg>试听后，我发现自己期待的其实是更明亮、乐观的氛围</div>
+      <div class="rail u turnr" style="grid-row:4"><i></i></div><p class="who" style="grid-row:4"><b>我</b>自然语言优化</p><div class="t u turn" style="grid-row:4"><span class="say">更明亮、乐观一点</span></div>
+      <div class="rail" style="grid-row:5"><i></i></div><p class="who" style="grid-row:5"><b>Spotify</b>调整后的推荐</p><div class="t a" style="grid-row:5"><span class="say">更积极的情绪和更丰富的曲风</span><small>据歌单简介概括</small></div>
+      <p class="bk" style="grid-column:4;grid-row:1 / 5"><b>用户</b>通过结果了解自己的偏好</p>
+      <p class="bk ai" style="grid-column:5;grid-row:4 / 6"><b>AI</b>通过反馈获得更明确的推荐方向</p>
+    </div>
+    <p class="tl-m small read" style="margin-top:10px">意图修正是双向的：用户通过结果了解自己的偏好，AI 通过反馈获得更明确的推荐方向。</p>
+    <figcaption class="cap read" style="margin-left:auto;margin-right:auto"><p class="w"><b>图 3</b>「陌生城市的周日下午」的一次自然语言优化</p><p class="n"><b>观察｜</b>Spotify 单人实测，截图位 S3、S4、S5。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body" style="margin-top:40px">
+    <p>这次体验让我注意到，初始推荐不一定只是一个需要被接受或拒绝的结果，它也可以成为用户判断偏好的参照。通过试听，我能更具体地辨认原本模糊的期待，再用自然语言继续调整。这不仅是系统在修正推荐方向，也是<strong>用户逐步明确自己想听什么的过程。</strong></p>
+
+    <h4>AI Prompt 参考了什么，又如何向用户描述？</h4>
+    <p>除了可以修改 Prompt，我还想知道，系统为什么会把我的描述理解成这样的音乐方向。</p>
+    <p>根据 Spotify 官方介绍，Prompted Playlist 不只参考当前输入，还会结合用户从加入平台以来的收听历史，以及音乐趋势、榜单和文化信息<sup class="ref"><a href="#ref-5">5</a></sup>。这意味着，同一段描述可能在不同用户或不同音乐环境下产生不同结果。不过，具体信号如何参与选曲、各自占多大权重，官方并未披露。</p>
+  </div>
+
+  <figure class="read c4-fig" style="margin:36px auto 0">
+    <div class="E">
+      <svg viewBox="0 0 340 330" role="img" aria-label="提示词、完整收听历史、趋势与文化信息三个等大的圆，围绕中央的 Prompted Playlist 均匀排列">
+        <g stroke="var(--ink)" stroke-width="1.2" fill="none">
+          <path d="M228 165 H208"/>
+          <path d="M141 115 L151 132"/>
+          <path d="M141 215 L151 198"/>
+        </g>
+        <g fill="var(--bg)" stroke="var(--ink)" stroke-width="1.4">
+          <circle cx="278" cy="165" r="50"/>
+          <circle cx="116" cy="71.5" r="50"/>
+          <circle cx="116" cy="258.5" r="50"/>
+        </g>
+        <circle cx="170" cy="165" r="38" fill="var(--ink)"/>
+        <g text-anchor="middle" font-weight="700" fill="var(--ink)" font-size="12.5">
+          <text x="278" y="163">趋势与</text><text x="278" y="180">文化信息</text>
+          <text x="116" y="76">Prompt</text>
+          <text x="116" y="263">完整收听历史</text>
+        </g>
+        <g text-anchor="middle" font-weight="700" fill="var(--bg)" font-size="10.5">
+          <text x="170" y="162">Prompted</text><text x="170" y="177">Playlist</text>
+        </g>
+      </svg>
+      <ul class="Er">
+        <li><b>Prompt</b><span class="of">可宽泛，也可具体</span><span class="in">同一描述存在不同理解空间</span></li>
+        <li><b>完整收听历史</b><span class="of">参考加入平台以来的收听记录</span><span class="in">不同用户可能得到不同结果</span></li>
+        <li><b>趋势与文化信息</b><span class="of">参考趋势、榜单与文化信息</span><span class="in">推荐可能随音乐环境变化</span></li>
+      </ul>
+    </div>
+    <figcaption class="cap c4-cap"><p class="w"><b>图 4</b>Spotify Prompted Playlist 官方提及的推荐参考信息<sup class="ref"><a href="#ref-5">5</a></sup></p><p class="n"><b>观察｜</b>仅展示 Spotify 官方明确提及的参考信息；具体计算方式、各因素权重及是否存在其他输入，尚无法从公开资料确认。圆的大小与位置不代表优先级。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body" style="margin-top:40px">
+    <p>但用户看不到这些信息如何被实际组合。对用户来说，更直接的理解入口是歌单简介与逐首推荐理由。</p>
+    <p>Spotify 和 QQ 音乐都提供了这样的解释。在我的体验中，Spotify 的部分说明会联系歌曲的声音特征、节奏和整体听感，解释它如何回应原始场景；QQ 音乐的一些推荐理由则更贴近原始 Prompt，或围绕歌词与歌曲内容展开。</p>
+  </div>
+
+  <figure class="read c4-fig" style="margin:40px auto 0">
+    <div class="c4-two c4-two3" style="margin-top:0">
+      <div class="c4-col">
+        <p class="c4-hd"><i class="dot" style="background:var(--spotify)"></i>Spotify</p>
+        <p class="c4-d">在本次体验中，Spotify 更常将原始 Prompt 转化为具体的音乐氛围，并通过声音特征、节奏和聆听感受解释歌曲与需求的关系。</p>
+        <div class="c4-shot"><div class="shot"><span>S6 歌单简介</span></div><div class="shot"><span>S7 逐首推荐理由</span></div></div>
+      </div>
+      <div class="c4-col">
+        <p class="c4-hd"><i class="dot" style="background:var(--qq)"></i>QQ 音乐</p>
+        <p class="c4-d">QQ 音乐在部分测试中则更倾向于直接复述提示词，或围绕歌词和歌曲内容展开描述。</p>
+        <div class="c4-shot"><div class="shot"><span>S8 歌单简介</span></div><div class="shot"><span>S9 逐首推荐理由</span></div></div>
+      </div>
+    </div>
+    <figcaption class="cap c4-cap"><p class="w"><b>图 5</b>Spotify 与 QQ 音乐的歌单简介和逐首推荐理由</p><p class="n"><b>观察｜</b>本次体验中的差异。<b>比较范围｜</b>只比较解释方式，不比较推荐质量。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body">
+    <p>这两种呈现方式都可以帮助用户理解推荐，但提供的判断线索有所不同：声音与氛围的描述，可以帮助用户预判一首陌生歌曲是否值得试听；与歌词、主题或 Prompt 相关的说明，则让用户看到歌曲与需求之间的语义联系。</p>
+    <p class="hyp" style="margin-top:32px"><span class="lb">待验证假设</span>Spotify 的解释更偏向声音特征，这可能与它处理 Prompt 的方式有关。有第三方行业文章推测，Prompted Playlist 会把 Prompt 转化为 BPM、能量、情绪效价等声学目标<sup class="ref"><a href="#ref-6">6</a></sup>，但 Spotify 没有披露更多机制。QQ 音乐一侧，我没有找到可核实的公开资料。这一解释仅作为后续验证的方向。</p>
+    <p class="muted" style="margin-top:36px"><b>补充观察｜</b>除了情绪和场景类需求，我还在聊天入口尝试提出一些涉及真实事件的音乐问题，例如围绕 Met Gala 争议事件寻找相关音乐。以下是在有限次尝试中的情况：</p>
+    <p class="muted" style="margin-top:8px"><b>Spotify｜</b>部分回答会说明证据限制并附上可点击的来源链接，对没有找到对应信息的问题也会明确说明，而不是给出看似合理的答案。</p>
+    <p class="muted" style="margin-top:8px"><b>QQ 音乐元宝（聊天入口）｜</b>整体文字回答能够回应用户的问题，进一步追问时有时会提到相关新闻作为信息来源，但没有提供可直接访问的原始链接；下方可播放歌曲未必完整对应文字回答中的描述。</p>
+    <p class="muted" style="margin-top:8px"><b>QQ 音乐智能歌单｜</b>在歌单本身中，逐首推荐理由与歌单简介对需求的解释，也未必一致。</p>
+    <div class="c4-shot" style="justify-content:center"><div class="shot"><span>S10 Spotify 回答中的来源链接</span></div><div class="shot"><span>S11 QQ 音乐元宝的文字回答与下方歌曲</span></div></div>
+    <p style="margin-top:36px">这些观察来自有限次尝试，并不直接构成两款 AI 歌单功能的性能比较，却提示了一个值得注意的设计问题：<strong>「解释用户的需求」「选择实际歌曲」「说明推荐依据」应当相互一致。</strong></p>
+  </div>
+
+  <figure class="wide" style="margin-top:36px">
+    <div class="c4-T"><svg class="d" viewBox="0 0 700 340" role="img" aria-label="解释用户的需求、选择实际歌曲、说明推荐依据三者应相互一致；在 QQ 音乐元宝的有限次尝试中，文字回答与歌曲之间观察到一处脱节">
+<line x1="350" y1="48" x2="150" y2="300" class="ln"/><line x1="350" y1="48" x2="550" y2="300" class="ln"/><line x1="150" y1="300" x2="550" y2="300" class="ln"/>
+<circle cx="250" cy="174" r="12" class="bgf"/><line x1="260.6" y1="173.5" x2="244.4" y2="168.2" class="tick"/><line x1="255.6" y1="179.8" x2="239.4" y2="174.5" class="tick"/>
+<circle cx="450" cy="174" r="12" class="bgf"/><line x1="451.9" y1="163.5" x2="443.1" y2="178.2" class="tick"/><line x1="456.9" y1="169.8" x2="448.1" y2="184.5" class="tick"/>
+<text x="350" y="222" class="mid" text-anchor="middle">三者应相互一致</text>
+<g class="node"><rect x="255" y="26" width="190" height="44" rx="22"/><text x="350" y="53" text-anchor="middle">解释用户的需求</text></g>
+<g class="node"><rect x="55" y="278" width="190" height="44" rx="22"/><text x="150" y="305" text-anchor="middle">选择实际歌曲</text></g>
+<g class="node"><rect x="455" y="278" width="190" height="44" rx="22"/><text x="550" y="305" text-anchor="middle">说明推荐依据</text></g>
+<text x="226" y="160" text-anchor="end" class="t1">QQ 音乐元宝 · 聊天入口</text>
+<text x="226" y="180" text-anchor="end" class="t2">文字回答与下方歌曲</text>
+<text x="226" y="198" text-anchor="end" class="t2">未必对应</text>
+<text x="474" y="160" class="t1">QQ 音乐智能歌单</text>
+<text x="474" y="180" class="t2">逐首推荐理由与歌单简介</text>
+<text x="474" y="198" class="t2">对需求的解释未必一致</text>
+</svg>
+      <svg class="m" viewBox="0 0 360 290" role="img" aria-label="三者应相互一致；QQ 音乐元宝聊天入口与智能歌单各有一处脱节">
+<line x1="180" y1="30" x2="85" y2="250" class="ln"/><line x1="180" y1="30" x2="275" y2="250" class="ln"/><line x1="85" y1="250" x2="275" y2="250" class="ln"/>
+<circle cx="132.5" cy="140" r="12" class="bgf"/><line x1="142.6" y1="136.7" x2="125.6" y2="135.9" class="tick"/><line x1="139.4" y1="144.1" x2="122.4" y2="143.3" class="tick"/><circle cx="227.5" cy="140" r="12" class="bgf"/><line x1="232.1" y1="130.4" x2="219.8" y2="142.3" class="tick"/><line x1="235.2" y1="137.7" x2="222.9" y2="149.6" class="tick"/>
+<text x="106" y="147" text-anchor="end" class="bn">1</text><text x="254" y="147" class="bn">2</text>
+<text x="180" y="190" class="mid" text-anchor="middle">三者应相互一致</text>
+<g class="node"><rect x="95" y="8" width="170" height="44" rx="22"/><text x="180" y="36" text-anchor="middle">解释用户的需求</text></g>
+<g class="node"><rect x="8" y="228" width="150" height="44" rx="22"/><text x="83" y="256" text-anchor="middle">选择实际歌曲</text></g>
+<g class="node"><rect x="202" y="228" width="150" height="44" rx="22"/><text x="277" y="256" text-anchor="middle">说明推荐依据</text></g>
+</svg>
+<ol class="mn"><li><b>1</b><span><em>QQ 音乐元宝 · 聊天入口</em>文字回答与下方歌曲未必对应</span></li><li><b>2</b><span><em>QQ 音乐智能歌单</em>逐首推荐理由与歌单简介对需求的解释未必一致</span></li></ol>
+      <div class="lg"><span><s></s>应保持一致的关系</span><span><i></i>本次观察到脱节的位置</span></div>
+    </div>
+    <figcaption class="cap c4-cap" style="margin-inline:auto"><p class="w"><b>图 6</b>文字回答、歌曲列表与推荐依据应当相互一致</p><p class="n"><b>观察｜</b>有限次尝试；左侧来自聊天入口，右侧来自 AI 歌单本身，Spotify 未观察到类似脱节。<b>比较范围｜</b>只标出观察到的位置，不比较两款产品的整体表现。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body" style="margin-top:36px">
+    <p>对于情绪与场景探索，解释可以保留主观联想和创造性；对于舆论事件、历史数据等事实驱动的需求，则更需要<strong>可核查的依据与适当的不确定性说明</strong>。仅仅告诉用户「信息来自某篇新闻」，与真正提供核查入口，仍然是两种不同的体验。</p>
+    <p style="margin-top:32px">从产品角度看，我认为推荐解释至少有三方面的价值：</p>
+    <p style="margin-top:14px"><strong>帮助用户了解 AI 如何理解自己的需求，</strong>从而判断是否需要调整 Prompt。</p>
+    <p style="margin-top:12px"><strong>降低试听陌生音乐时的不确定性。</strong>声音特征、歌词或歌曲背景等线索，让用户在点开之前就有预期。</p>
+    <p style="margin-top:12px"><strong>减少推荐过程的黑盒感，</strong>并在涉及客观事实时进一步核查信息来源。</p>
+    <p style="margin-top:32px">然而，<strong>解释合理不代表实际选曲一定符合要求</strong>，最终仍需要通过试听判断；AI 解释能否支持这一判断，取决于用户能不能看懂推荐方向，在不满意时作出调整，并从新的试听结果中确认调整是否有效。</p>
+    <p style="margin-top:22px">这也是 AI 探索歌曲值得继续探索的地方：推荐不是一次生成就结束，而可以成为一个由试听和反馈推动的持续调整过程。</p>
+
+  </div>
+</section>
+
+<!-- ======================= 04.3 ======================= -->
+<section class="pad ch" id="f-043" style="margin-top:120px">
+  <div class="read">
+    <p class="kind">04.3</p>
+    <h3 class="h3">生成之后，AI 歌单如何融入日常听歌？</h3>
+    <p class="dek">AI 歌单的价值并不只体现在生成时的体验。用户带着不同的收听目的进入产品，也可能以不同的方式使用生成结果。</p>
+  </div>
+
+  <figure class="read" style="margin:40px auto 0">
+    <div class="c5">
+      <div class="c5-g">
+        <div class="c5-c">
+          <div class="h"><b><svg class="ic"><use href="#i-spark"/></svg>尝新探索</b><span>发现几首符合当下心情的新歌</span></div>
+          <div class="a"><i>可能的行为</i>试听，收藏喜欢的歌曲</div>
+          <div class="v"><i>价值实现于</i>找到几首喜欢的新歌，原歌单未必再被打开</div>
+        </div>
+        <div class="c5-c">
+          <div class="h"><b><svg class="ic"><use href="#i-repeat"/></svg>高频场景</b><span>重复满足相似的听歌需求，如健身、通勤、学习</span></div>
+          <div class="a"><i>可能的行为</i>保存重播、复用 Prompt，或定期更新</div>
+          <div class="v"><i>价值实现于</i>再次找到适合当前场景的音乐</div>
+        </div>
+        <div class="c5-c">
+          <div class="h"><b><svg class="ic"><use href="#i-steer"/></svg>精细调整</b><span>逐步保留个人认可的歌曲选择</span></div>
+          <div class="a"><i>可能的行为</i>修改 Prompt，用 Keep、Remove 筛选歌曲</div>
+          <div class="v"><i>价值实现于</i>留下自己认可的歌曲，形成满意的歌单</div>
+        </div>
+      </div>
+    </div>
+    <figcaption class="cap c4-cap"><p class="w"><b>图 7</b>不同收听目的与生成后的使用情境</p><p class="n"><b>待验证｜</b>三种使用情境根据产品功能和可能的听歌目的整理，并非互斥分类；具体行为仍需用户数据验证。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body" style="margin-top:40px">
+    <p style="margin-top:0">对于<strong>尝新探索</strong>，用户可能只想发现几首符合当下心情的新歌。试听后，将喜欢的歌曲加入收藏或其他常听歌单，这次探索就可能已经完成。即使原 AI 歌单没有被再次打开，<strong>也不代表推荐没有产生价值。</strong></p>
+    <p>对于健身、通勤、学习等<strong>高频场景</strong>，需求则可能反复出现。用户既可以保存并重复播放已有歌单，也可以重新使用相似的 Prompt，或者通过定期更新获得不同的歌曲。这里重要的不只是歌单被保存了多久，<strong>而是用户能否方便地再次找到适合当前场景的音乐。</strong></p>
+    <p>而在<strong>精细调整</strong>的情境中，用户可能投入更多时间修改 Prompt、挑选歌曲，并通过 Keep、Remove 等操作逐步形成自己满意的歌单。</p>
+    <p>与传统个性化推荐主要根据历史行为推断偏好不同，AI 歌单允许用户主动设定推荐方向，并在生成后继续调整结果。这可能带来更强的<strong>掌控感</strong>：用户能够告诉系统自己想听什么、不想听什么，而不必完全依赖平台自动推断。另一方面，这里可以引入<strong>心理所有权（Psychological Ownership）</strong>的概念<sup class="ref"><a href="#ref-8">8</a></sup>：当用户能够控制、修改并投入精力维护一个数字对象时，可能逐渐产生「这是我自己的作品」的感受。该理论认为，控制对象、深入了解对象，以及把自我（时间、精力）投入对象，是形成心理所有权的主要途径；而实验研究发现，数字物品往往比实体物品更难引发这种感受<sup class="ref"><a href="#ref-9">9</a></sup>。但这一机制是否适用于 AI 歌单，以及能否带来更强的持续使用意愿，还需要用户研究验证。</p>
+    <p style="margin-top:28px">这几种使用方式并不是互斥的用户类型，也不能直接视为已观察到的典型行为。它们更重要的启发是：<strong>AI 歌单未必只有「生成—保存—长期复听」这一条成功路径。</strong>一次新歌发现、一个反复使用的场景，以及一份经过个人调整的歌单，都可能产生不同的产品价值。</p>
+    <p>从平台角度看，这意味着不能只用歌单保存率或复听率衡量功能表现。对于探索型需求，可以关注用户是否试听并采纳了此前不熟悉的歌曲；对于反复出现的场景，可以关注再次播放、Prompt 复用与更新后的使用；对于精细调整，则可以观察用户的编辑行为，以及修改后的歌曲是否真正被继续收听。这些指标需要在实际用户行为数据中进一步定义与验证，而不是简单认为编辑次数越多、使用时间越长就越成功。</p>
+    <p style="margin-top:28px">其中，<strong>持续更新是一个值得进一步研究的设计问题。</strong>Spotify 与 QQ 音乐都提供定期更新能力，Spotify 官方也明确支持按日或按周刷新 Prompted Playlist<sup class="ref"><a href="#ref-7">7</a></sup>。对于希望持续获得新内容的用户，这可能减少反复创建歌单的操作成本。</p>
+    <p>但当一份歌单已经经过多次修改，用户可能同时希望它保持新鲜，又希望自己明确保留的歌曲不被改变。在我的 Spotify 体验中，手动更新可能覆盖此前的部分调整，而 Revert 主要用于撤销最近一次变更。</p>
+  </div>
+
+  <figure class="read" style="margin:32px auto 0">
+    <div class="c4-shot" style="justify-content:center;margin-top:0"><div class="shot"><span>S12 Spotify 个人体验：完整界面</span></div><div class="shot"><span>S12 局部放大：手动更新的覆盖提示与 Revert 入口</span></div></div>
+    <figcaption class="cap c4-cap"><p class="w"><b>图 8</b>Spotify 手动更新及 Revert 操作</p><p class="n"><b>观察｜</b>我的 Spotify 个人体验，截图为手机界面。</p></figcaption>
+  </figure>
+
+  <div class="read c4-body" style="margin-top:36px">
+    <p class="hyp" style="margin-top:0"><span class="lb">待验证</span>目前尚未验证单曲 Keep 在自动更新后是否始终有效，因此不能认定系统已经存在普遍的选择丢失问题。</p>
+    <p style="margin-top:24px">但这个观察提出了一个更具体的产品问题：如果用户一边希望歌单自动更新，一边又希望积累个人认可的歌曲，<strong>产品如何清楚说明哪些内容会发生变化、哪些选择可以保留？</strong></p>
+    <p>这不是要让所有歌单都变成需要精心维护的私人作品。主动控制并不意味着完全摆脱推荐算法，也不能证明用户因此更容易发现不同风格的音乐。<strong>真正值得关注的是，用户能否根据自己的使用目的和当前需求，决定把多少选择权交给系统，以及哪些部分由自己保留。</strong>后续是否值得为这种需求增加新的保护机制，还需要结合用户规模、现有功能覆盖情况与真实使用行为判断。</p>
+    <p style="margin-top:22px"><a class="xr" href="#ch-06">延伸至第 06 章：如何在歌单更新中保留用户已确认的选择 →</a></p>
+
+  </div>
+</section>
+
+<!-- ======================= 05 ======================= -->
+<section class="pad ch" id="ch-05">
+  <div class="read">
+    <p class="kind">05<span>Product Opportunities</span></p>
+    <h2 class="h2">从研究发现到产品设计机会</h2>
+    <div class="body m-top-s">
+      <p>前三项发现表明，AI 音乐发现的价值不仅在于快速生成歌单，还包括支持开放式探索、帮助用户逐步明确偏好，以及让用户主动调整自己的收听体验。</p>
+      <p>但这些能力也带来了新的产品设计取舍：AI 应该在多大程度上自由解释用户需求？如何确保推荐结果与解释一致？当用户开始维护 AI 生成的歌单后，系统又应该如何尊重他们已经做出的选择？基于体验观察，我归纳了三个潜在的优化方向。</p>
+    </div>
+  </div>
+  <figure class="read" style="margin:48px auto 0">
+    <div class="c6">
+      <div class="c6-g">
+        <div class="c6-c">
+          <div class="h"><small>机会一</small><b>AI 对复杂需求的理解与确认</b><p>生成前识别并展示关键约束，让用户检查、修正 AI 对需求的理解。</p></div>
+          <div class="r"><i>现有体验证据</i>已有输入引导；复杂条件识别及执行准确性尚未验证</div>
+          <div class="r"><i>问题范围</i>相对集中：多条件理解、确认与修正</div>
+          <div class="r"><i>方案可控性</i>中等：界面可设计，识别与执行依赖系统能力</div>
+          <div class="r"><i>业务价值关联</i>复杂任务完成率、重新生成率、修正成本</div>
+          <div class="d"><i>当前决策</i>保留为待验证机会</div>
+        </div>
+        <div class="c6-c">
+          <div class="h"><small>机会二</small><b>推荐解释如何与实际结果保持一致</b><p>涉及推荐依据、结果解释及事实验证之间的协同，可能需要推荐系统和 AI 生成链路的共同支持。</p></div>
+          <div class="r"><i>现有体验证据</i>有观察，分别来自聊天入口和歌单本身，次数有限</div>
+          <div class="r"><i>问题范围</i>涉及推荐与解释链路</div>
+          <div class="r"><i>方案可控性</i>较低，可能依赖底层能力</div>
+          <div class="r"><i>业务价值关联</i>信任、有效试听</div>
+          <div class="d"><i>当前决策</i>后续验证</div>
+        </div>
+        <div class="c6-c sel">
+          <div class="h"><small>机会三 · Mini PRD 候选</small><b>如何在持续更新中保留用户的个人选择</b><p>让用户能够预测更新行为，并在持续获得新内容时，保留自己明确希望继续收听的歌曲。</p></div>
+          <div class="r"><i>现有体验证据</i>有具体更新提示与编辑行为</div>
+          <div class="r"><i>问题范围</i>相对集中</div>
+          <div class="r"><i>方案可控性</i>相对较高</div>
+          <div class="r"><i>业务价值关联</i>持续收听、歌单复访</div>
+          <div class="d"><i>当前决策</i>选择为 Mini PRD 候选</div>
+        </div>
+      </div>
+    </div>
+    <figcaption class="cap c4-cap"><p class="w"><b>图 9</b>Opportunity Prioritization：三个优化方向的评估</p><p class="n"><b>判断｜</b>定性评估，不代表已证明的用户规模或商业收益。</p></figcaption>
+  </figure>
+  <div class="read body m-top">
+    <p>三个方向都值得继续研究，但目前的材料还不足以根据用户规模或商业收益作出明确排序。我最终选择「可预期的歌单更新」作为 Mini PRD 候选，主要因为已有较具体的更新与撤销操作观察，能够围绕用户选择的保留与变化提出可检验的问题。</p>
+    <p>设计新机制之前仍需确认现有 Keep、更新及 Revert 功能是否已经满足这些需求。如果现有能力足够则无需重复设计。接下来的第六章将围绕这一前提进一步展开。</p>
+    <div class="verdict">
+      <p class="lbl">Design Direction｜可预期的 AI 歌单更新 · Predictable Playlist Refresh</p>
+      <p class="v">当用户希望定期发现新音乐时，如何让 AI 尊重他们已确认的歌曲选择，同时保持歌单的新鲜度？</p>
+      <p class="h" style="border-left-style:solid;border-left-color:var(--line)">后续 Mini PRD 将围绕更新规则的可理解性与用户选择的保护展开，而不是重新设计已有的单曲保留或自然语言优化功能。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 06 ======================= -->
+<section class="pad ch" id="ch-06" style="margin-top:120px">
+  <div class="read">
+    <p class="kind">06<span>Mini PRD</span></p>
+    <h2 class="h2">Product Proposal：From Prompt to Playback</h2>
+    <p class="dek">AI 歌单的价值并不都来自长期复访。对于一次性探索，成功可能意味着找到几首喜欢的歌曲；对于重复使用，价值可能来自再次调用相似需求或持续收听已有歌单。因此，本案例先区分不同的价值路径，再评估歌单更新是否构成值得投入的产品机会。</p>
+    <p class="small" style="margin-top:14px"><b class="ev">本次总体产品机会｜</b>如何让不同类型的 AI 音乐需求真正转化为有效收听，而不仅停留在生成行为？</p>
+
+    <div class="step6 lite">
+      <p class="k">01<span>Opportunity</span></p>
+      <div><h4>为什么要关注重复使用，但不假设它是主流</h4><p class="sub">对于重复场景型和持续维护型需求，用户可能希望在同一音乐方向下不断获得新推荐，而不必每次从头描述需求。但目前没有真实用户行为数据说明这些使用情境的占比，因此不能预设重复使用是 AI 歌单的主要消费方式。</p></div>
+    </div>
+
+    <div class="step6 lite">
+      <p class="k">02<span>Evidence &amp; Gaps</span></p>
+      <div><h4>现有产品观察支持什么，还有什么不知道</h4>
+        <div class="kn">
+          <div><span class="lbl">已观察到</span><ul><li>两款产品都支持每日、每周更新</li><li>在个人体验中，Spotify 的手动更新曾提示此前的修改可能丢失</li><li>Revert 可撤销最近一次改变</li></ul></div>
+          <div class="u"><span class="lbl" style="color:var(--muted)">尚不知道</span><ul><li>用户再次使用相同 Prompt 或相似音乐意图的比例</li><li>自动更新是否延续用户明确保留的单曲选择</li><li>更新相关问题是否真正影响用户后续收听</li></ul></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="band" style="margin-top:48px"><div class="read">
+    <div class="step6 gatewrap" style="padding-top:0">
+      <p class="k">03<span>Go / No-Go</span></p>
+      <div><h4 class="h-big">用户规模、问题严重性和已有功能的验证门槛</h4>
+        <div class="gates">
+          <div class="gate"><span class="qm">条件 1</span><b>用户规模</b><p>重复场景与持续维护需求的覆盖范围足够</p></div>
+          <div class="yes"><span class="arr"></span>是</div>
+          <div class="gate"><span class="qm">条件 2</span><b>问题严重性</b><p>更新确实破坏用户明确保留的选择，并影响后续收听</p></div>
+          <div class="yes"><span class="arr"></span>是</div>
+          <div class="gate"><span class="qm">条件 3</span><b>已有功能</b><p>现有单曲编辑、更新和恢复能力尚未满足这些用户</p></div>
+          <div class="yes"><span class="arr"></span>是</div>
+          <div class="gate-go"><b>进入候选 MVP</b><p>Predictable Playlist Refresh</p></div>
+          <div class="drop"><span>否</span></div><span></span><div class="drop"><span>否</span></div><span></span><div class="drop"><span>否</span></div><span></span><span></span>
+          <div class="stopbar"><svg class="ic"><use href="#i-stop"/></svg>不优先开发更新功能，重新评估生成、试听与单次需求完成环节的优化机会</div>
+        </div>
+        <p class="small" style="margin-top:10px">虚线框表示三项条件目前都待验证。</p>
+      </div>
+    </div>
+  </div></div>
+
+  <div class="read">
+    <div class="step6">
+      <p class="k">04<span>Candidate MVP</span></p>
+      <div><h4 class="h-big">让用户明确知道更新会改变什么，并确保已确认的选择不会被意外覆盖</h4>
+        <div class="mech">
+          <div>
+            <span class="lbl">机制一</span><h5>明确更新规则</h5>
+            <p>用户设置定期更新时，说明歌曲可能发生怎样的变化、哪些已有选择会受到影响。不要求用户在每次自动更新前进行确认。</p>
+            <div class="rulecopy"><small>文案示意</small>每周一更新：标记 Keep 的歌曲会保留，其余替换为新的推荐。</div>
+          </div>
+          <div>
+            <span class="lbl">机制二</span><h5>延续用户明确的选择</h5>
+            <p>优先复用现有单曲编辑能力。只有确认现有机制无法可靠保留用户选择时，才考虑增加跨更新保护逻辑。</p>
+          </div>
+        </div>
+        <div class="sch-big">
+          <p class="lbl" style="margin-bottom:4px">机制二示意</p>
+          <div class="sch" role="img" aria-label="示意：两首标记 Keep 的歌在更新后保留，其余替换为新推荐">
+            <div><p class="h">更新前</p><ul><li class="k">曲目 A<svg class="ic"><use href="#i-lock"/></svg></li><li>曲目 B</li><li class="k">曲目 C<svg class="ic"><use href="#i-lock"/></svg></li><li>曲目 D</li></ul></div>
+            <div class="mid"><span class="arr"></span>更新</div>
+            <div><p class="h">更新后</p><ul><li class="k">曲目 A<svg class="ic"><use href="#i-lock"/></svg></li><li class="n">新推荐</li><li class="k">曲目 C<svg class="ic"><use href="#i-lock"/></svg></li><li class="n">新推荐</li></ul></div>
+          </div>
+        </div>
+        <div class="scope"><span><b>辅助</b>更新发生后，提供简洁的变化摘要</span><span><b>后续迭代</b>历史版本恢复</span><span class="no"><b>不在 MVP 范围内</b>重新设计推荐算法、复杂多版本管理、完整 Prompt 记忆系统、社交协作编辑，以及新增一套与现有单曲操作重复的控制组件</span></div>
+      </div>
+    </div>
+
+    <div class="step6">
+      <p class="k">05<span>Success &amp; Trade-offs</span></p>
+      <div><h4>核心指标、护栏与主要风险</h4>
+        <div class="nest">
+          <div class="ring"><span class="lbl">整体 AI 歌单</span><b>生成后有效收听率</b>
+            <div class="ring"><span class="lbl">机会规模验证</span><b>有多少用户重复使用 Prompt 或歌单、实际开启更新</b>
+              <div class="ring"><span class="lbl">候选 MVP 效果</span><b>更新后有效收听及用户已确认选择的保留情况</b></div>
+            </div>
+          </div>
+          <div class="guard"><span class="lbl">护栏指标</span><b>新歌有效收听率、新歌收藏率</b><p>防止过度保留已有歌曲，损害音乐探索价值。</p></div>
+        </div>
+        <p class="small" style="margin-top:10px">更新后复访只适用于对应目标群体，不代表整个 AI 歌单功能的成功程度。</p>
+        <div class="trade">
+          <div class="tr"><div class="pair">新鲜度<i></i>稳定性</div><p>保留太多旧歌可能使更新失去意义；变化过大也可能破坏用户认可的音乐方向。</p></div>
+          <div class="tr"><div class="pair">控制<i></i>操作复杂度</div><p>更多控制选项不一定改善体验，尤其可能增加即时探索用户的操作负担。</p></div>
+          <div class="tr"><div class="pair">重复生成<i></i>结果归因</div><p>重复生成可能源于不满意，也可能是创意探索；复访变化还会受到实际场景发生频率影响。</p></div>
+        </div>
+        <p class="small" style="margin-top:16px">另外两项风险：目标群体可能有限，并非所有 AI 歌单都用于重复收听；现有能力可能重叠，必须先确认 Spotify 当前的单曲编辑、更新和恢复能力。</p>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <p class="lbl">Product Decision</p>
+      <p class="v">AI 歌单不仅需要让用户方便地调整当前结果，还应该让用户能够预期这些选择在后续更新中会如何被处理。</p>
+      <p class="h" style="border-left-style:solid;border-left-color:var(--line)">本方案并不试图让用户控制推荐算法的全部细节，而是让系统在自动化与用户自主选择之间建立更明确的交互规则。</p>
+    </div>
+  </div>
+</section>
+
+<div class="brk" aria-hidden="true"><svg class="ast"><use href="#ast"/></svg></div>
+
+<!-- ======================= 07 ======================= -->
+<section class="pad ch" id="ch-07">
+  <div class="read">
+    <p class="kind">07<span>Business Impact &amp; Reflection</span></p>
+    <h2 class="h2">AI 音乐发现的三条潜在价值路径</h2>
+    <div class="body m-top-s"><p>AI 歌单不只是新的内容生成入口。不同的使用目的，可能让它为音乐平台创造不同的价值。</p></div>
+    <ul class="vp m-top-s">
+      <li><span class="vh"><svg class="ic"><use href="#i-spark"/></svg>探索新音乐</span><div><div class="flow"><span class="node">探索新音乐</span><span class="arr"></span><span class="node">有效试听</span><span class="arr"></span><span class="node">歌曲收藏</span></div><p class="met">通过创意场景和复杂需求发现陌生歌曲 · 可关注：新歌有效试听率、收藏率、收藏后继续播放</p></div></li>
+      <li><span class="vh"><svg class="ic"><use href="#i-repeat"/></svg>融入日常收听</span><div><div class="flow"><span class="node">重复收听场景</span><span class="arr"></span><span class="node">歌单再次使用</span><span class="arr"></span><span class="node">有效收听</span></div><p class="met">在健身、学习等重复场景中持续获得合适的音乐 · 可关注：歌单复访率、有效收听时长、更新后继续收听</p></div></li>
+      <li><span class="vh"><svg class="ic"><use href="#i-share"/></svg>分享探索创意</span><div><div class="flow"><span class="node">分享创意 Prompt</span><span class="arr"></span><span class="node">他人尝试</span><span class="arr"></span><span class="node">个性化生成</span></div><p class="met">分享有趣的 Prompt，让他人体验自己的个性化结果 · 可关注：Prompt 分享转化率、二次生成率、后续有效收听</p></div></li>
+    </ul>
+    <p class="small" style="margin-top:10px">虚线节点表示待验证的价值路径，没有使用任何实际数据。</p>
+  </div>
+
+  <figure class="read m-top">
+    <p class="lbl" style="margin-bottom:14px">其中，Prompt 分享提供了一条不同于传统歌单分享的增长路径</p>
+    <div class="share">
+      <div>
+        <span class="lbl">传统歌单分享</span>
+        <svg viewBox="0 0 300 150" role="img" aria-label="一份歌单分享给三个人，三人听到相同的歌曲">
+          <g fill="none" stroke="var(--ink)" stroke-width="1.2"><rect x="16" y="45" width="54" height="60" rx="3"/><path d="M26 60h34M26 72h34M26 84h34M26 96h22"/><path d="M78 75 C120 75 120 30 160 30 M78 75 H160 M78 75 C120 75 120 120 160 120"/></g>
+          <g fill="none" stroke="var(--ink-2)" stroke-width="1.2"><rect x="168" y="14" width="36" height="32" rx="2"/><rect x="168" y="59" width="36" height="32" rx="2"/><rect x="168" y="104" width="36" height="32" rx="2"/><path d="M174 24h24M174 32h24M174 69h24M174 77h24M174 114h24M174 122h24"/></g>
+          <text x="214" y="34" font-size="12" fill="var(--muted)">相同</text><text x="214" y="79" font-size="12" fill="var(--muted)">相同</text><text x="214" y="124" font-size="12" fill="var(--muted)">相同</text>
+        </svg>
+        <p>一份固定的歌曲列表。</p>
+      </div>
+      <div>
+        <span class="lbl">Prompt 分享</span>
+        <svg viewBox="0 0 300 150" role="img" aria-label="一条 Prompt 分享给三个人，各自生成不同的个性化歌单">
+          <g class="pnode" fill="none" stroke="var(--ink)" stroke-width="1.2"><rect x="10" y="58" width="66" height="34" rx="17" stroke-width="1.6"/></g><g fill="none" stroke="var(--ink)" stroke-width="1.2"><path d="M84 75 C120 75 120 30 160 30 M84 75 H160 M84 75 C120 75 120 120 160 120"/></g>
+          <g class="pnode"><text x="43" y="79" text-anchor="middle" font-size="12" font-weight="700">Prompt</text></g>
+          <g fill="none" stroke="var(--ink-2)" stroke-width="1.2"><rect x="168" y="14" width="36" height="32" rx="2"/><rect x="168" y="59" width="36" height="32" rx="2"/><rect x="168" y="104" width="36" height="32" rx="2"/><path d="M174 24h24M174 32h14M174 69h10M174 77h24M174 114h18M174 122h24"/></g>
+          <text x="214" y="34" font-size="12" fill="var(--muted)">个性化版本</text><text x="214" y="79" font-size="12" fill="var(--muted)">个性化版本</text><text x="214" y="124" font-size="12" fill="var(--muted)">个性化版本</text>
+        </svg>
+        <p>一种可复用、可改写的音乐探索方式。</p>
+      </div>
+    </div>
+    <figcaption class="cap"><p class="w"><b>图 10</b>传统歌单分享与 Prompt 分享</p><p class="n"><b>观察｜</b>Reddit 社区中已有用户交流创意提示词，例如利用收听历史生成趣味性的音乐品味分析，或通过虚构故事构建主题歌单；Spotify 也支持分享 Prompted Playlist，让其他用户根据自身音乐偏好生成个性化版本。<b>待验证｜</b>社区个案尚不足以证明它能够形成规模化增长。</p></figcaption>
+  </figure>
+
+  <div class="read" style="margin-top:96px">
+    <p class="kind">7.2<span>Reflection</span></p>
+    <h3 class="h3">AI 应该拓展探索，而不是替代用户的选择</h3>
+    <p class="pull" style="margin-top:20px">本次研究中，我最大的认识是：AI 音乐发现的价值，并不在于让系统替用户决定听什么，而在于让用户既能探索原本想不到的音乐，也能掌控自己最终留下的内容。</p>
+    <div class="body m-top-s">
+      <p>对于开放式需求，AI 可以通过具有方向性的解释带来新的发现；而当用户逐渐明确偏好时，产品则需要提供可靠、直接且可预期的控制方式。</p>
+      <p>这也意味着，评估 AI 音乐产品不能只关注模型生成了什么，还需要关注用户是否真正从结果中获得价值，以及系统能否尊重用户在后续使用中做出的选择。</p>
+      <p><b>用户主导，而非情绪驱动。</b>AI 可以理解情绪，但不应为了延长使用时间而刻意放大情绪；可以支持音乐探索，但不应强迫用户持续生成、持续优化；可以提供个性化推荐，同时让用户决定什么时候停止探索。好的音乐发现，不应该让用户在平台上花尽可能多的时间，而应该让用户更容易找到真正想听的音乐。即使用户找到几首喜欢的歌之后离开，这也可以是一次成功的体验。</p>
+    </div>
+
+    <div class="next m-top">
+      <div class="lim"><p class="lbl" style="margin-bottom:6px">局限</p><ul>
+        <li>本案例主要基于单人探索性体验、产品界面观察和公开社区反馈。</li>
+        <li>Spotify 与 QQ 音乐测试账号在使用历史、订阅状态和个性化数据积累方面存在差异，因此不能据此判断两款产品底层推荐算法的优劣。</li>
+        <li>尚无真实漏斗与用户规模数据；自动更新时 Keep 是否生效仍不确定；提出的可控更新方案也尚未经过开发和真实用户验证。</li>
+      </ul></div>
+      <div><p class="lbl" style="margin-bottom:12px">后续验证</p><ol class="steps3">
+        <li><span class="n">1</span><div><b>核实现有自动更新机制</b><p>是否保留用户的 Keep 选择</p></div></li>
+        <li><span class="n">2</span><div><b>目标用户测试</b><p>判断问题规模与用户需求</p></div></li>
+        <li><span class="n">3</span><div><b>小流量实验</b><p>判断实际业务价值</p></div></li>
+      </ol></div>
+    </div>
+  </div>
+  <div class="endspace"></div>
+</section>
+<section class="pad" id="refs" style="margin-top:24px">
+  <div class="read">
+    <p class="lbl" style="color:var(--muted)">参考来源</p>
+    <ol class="refs">
+      <li id="ref-1"><span>1</span><a href="https://newsroom.spotify.com/2025-12-10/spotify-prompted-playlists-algorithm-gustav-soderstrom" target="_blank" rel="noopener">Spotify Newsroom，You’re in Control: Spotify Lets You Steer the Algorithm，2025-12-10</a></li>
+      <li id="ref-2"><span>2</span><a href="https://www.cs.utoronto.ca/~ashton/pubs/alg-effects-spotify-www2020.pdf" target="_blank" rel="noopener">Anderson et al.，Algorithmic Effects on the Diversity of Consumption on Spotify，WWW 2020</a></li>
+      <li id="ref-3"><span>3</span>国元证券（香港），《腾讯音乐（TME.US）：AI 重构用户听歌体验，打造第二增长曲线》，2025-04-24</li>
+      <li id="ref-4"><span>4</span><a href="https://music-tomorrow.com/blog/chatting-with-the-algorithm-spotify-ai-playlists-music-discovery" target="_blank" rel="noopener">Music Tomorrow，Chatting with the Algorithm: What Spotify’s AI Playlists Really Change，2025-12-17</a></li>
+      <li id="ref-5"><span>5</span><a href="https://newsroom.spotify.com/2026-01-22/prompted-playlists-expansion/" target="_blank" rel="noopener">Spotify Newsroom，Prompted Playlist in Beta Coming to Premium Listeners in More Markets，2026-01-22</a></li>
+      <li id="ref-6"><span>6</span><a href="https://soundplate.com/spotify-prompted-playlists-guide/" target="_blank" rel="noopener">Soundplate，Spotify Prompted Playlists guide，2026-02-06（第三方博客，非官方，未给出来源）</a></li>
+      <li id="ref-7"><span>7</span><a href="https://support.spotify.com/us/article/prompted-playlists-ios/" target="_blank" rel="noopener">Spotify Support，Prompted Playlists（“Set your playlist to refresh daily or weekly”），2026-10-25 查阅</a></li>
+      <li id="ref-8"><span>8</span><span>Pierce, Kostova &amp; Dirks (2001), Toward a theory of psychological ownership in organizations, <i>Academy of Management Review</i>, 298–310；Pierce, Kostova &amp; Dirks (2003), The state of psychological ownership, <i>Review of General Psychology</i> 7(1), 84–107</span></li>
+      <li id="ref-9"><span>9</span><span>Atasoy &amp; Morewedge (2018), Digital goods are valued less than physical goods, <i>Journal of Consumer Research</i> 44(6)</span></li>
+    </ol>
+  </div>
+</section>
+</main>
