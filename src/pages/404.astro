@@ -1,19 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { url } from '../utils/url';
+import '../styles/site.css';
 ---
-<BaseLayout title="页面不存在" description="这个页面不存在。">
+<BaseLayout title="404">
   <main class="nf pad">
     <div class="full">
-      <span class="kind">404</span>
-      <h1>这个页面不存在</h1>
-      <p><a href={url()}>返回首页</a></p>
+      <h1>404</h1>
+      <a href={url()}>返回首页</a>
     </div>
   </main>
 </BaseLayout>
-<style>
-  .nf { padding-block: var(--s-88) var(--s-64); }
-  h1 { font-size: var(--t-title); line-height: var(--t-title-lh); font-weight: 700; letter-spacing: -0.025em; margin-top: 14px; }
-  p { margin-top: var(--s-20); }
-  a { text-decoration: underline; text-underline-offset: 4px; display: inline-flex; min-height: 44px; align-items: center; }
-</style>

@@ -1,8 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
-import { getImage } from 'astro:assets';
+import { url } from '../../utils/url';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
-import { readingMinutes } from '../../utils/reading-time';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles', ({ data }) => !data.draft);
@@ -10,8 +9,8 @@ export async function getStaticPaths() {
 }
 const { article } = Astro.props;
 const { Content } = await render(article);
-const og = await getImage({ src: article.data.cover, width: 1200, format: 'jpg' });
+// 分享图：作者提供的 1200×630 public/og.png。
 ---
-<ArticleLayout data={article.data} minutes={readingMinutes(article.body ?? '')} image={og.src}>
+<ArticleLayout title={article.data.title} description={article.data.dek} image={url('og.png')}>
   <Content />
 </ArticleLayout>

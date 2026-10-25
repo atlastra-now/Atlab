@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
+    "subset-font": "node scripts/subset-quote-font.mjs",
     "build": "node scripts/subset-quote-font.mjs && astro check && astro build",
-    "preview": "astro preview",
-    "subset-font": "node scripts/subset-quote-font.mjs"
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/check": "latest",

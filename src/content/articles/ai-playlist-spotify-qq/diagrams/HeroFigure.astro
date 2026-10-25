@@ -1,0 +1,21 @@
+---
+// Hero：一个测试 Prompt + 两个结果（S1、S2 真实截图；已模糊用户名、去掉状态栏）。
+// 结构与类名取自 docs/reference/case.html，不改动；样式在 src/styles/prose.css。
+import { Image } from 'astro:assets';
+import spotify from '../images/spotify-s1.webp';
+import qq from '../images/qq-s2.webp';
+---
+<div class="full">
+<div class="hero-fig2">
+<div class="p">
+<span class="lbl">同一句测试 Prompt</span>
+<span class="say">「陌生城市的<br>周日下午」</span>
+<p class="small">一种难以用固定标签定义的氛围。</p>
+<p class="to" aria-hidden="true"></p>
+</div>
+<div class="pair">
+<div><span class="tag"><i class="dot sp"></i>Spotify</span><div class="shot"><Image src={spotify} alt="Spotify 的 AI 歌单页面：歌单简介与逐首说明" widths={[352, 704]} sizes="176px" /></div></div>
+<div><span class="tag"><i class="dot qq"></i>QQ 音乐</span><div class="shot"><Image src={qq} alt="QQ 音乐的智能歌单页面：歌单简介与逐首说明" widths={[352, 704]} sizes="176px" /></div></div>
+</div>
+</div>
+</div>

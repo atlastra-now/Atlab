@@ -1,29 +1,10 @@
 ---
-export interface Props {
-  kind: string;
-  issue: number;
-  topic: string;
-  title: string;
-  dek: string;
-  minutes: number;
-}
-const { kind, issue, topic, title, dek, minutes } = Astro.props;
+export interface Props { kind: string; issue: number; topic: string; title: string; dek: string; byline: string }
+const { kind, issue, topic, title, dek, byline } = Astro.props;
 ---
-<header class="head">
-  <span class="kind">{kind} {String(issue).padStart(2, '0')} · <span class="sub">{topic}</span></span>
+<header class="read hero-h">
+  <p class="kind">{kind} {String(issue).padStart(2, '0')}<span>{topic}</span></p>
   <h1>{title}</h1>
   <p class="dek">{dek}</p>
-  <p class="byline"><b>独立研究</b><span>约 {minutes} 分钟</span></p>
+  <p class="byline">{byline}</p>
 </header>
-
-<style>
-  .head { max-width: var(--read); margin: 0 auto; padding-top: 72px; }
-  .kind { display: block; margin-bottom: 22px; }
-  h1 { font-size: var(--t-title); line-height: var(--t-title-lh); font-weight: 700; letter-spacing: -0.025em; }
-  .dek { font-size: var(--t-dek); line-height: var(--t-dek-lh); color: var(--ink-2); margin-top: var(--s-20); }
-  .byline { display: flex; gap: var(--s-12); margin-top: var(--s-32); padding-top: var(--s-20); border-top: 1px solid var(--line); font-size: 14px; line-height: 20px; }
-  .byline b { font-weight: 700; }
-  .byline span { color: var(--muted); }
-  .byline span::before { content: '· '; }
-  @media (max-width: 620px) { .head { padding-top: 44px; } }
-</style>

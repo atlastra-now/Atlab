@@ -1,543 +1,570 @@
 ---
 title: 当音乐发现可以被 Prompt
+titleLines: [当音乐发现, 可以被 Prompt]
 kind: Case Study
 issue: 1
-topic: AI 音乐发现
-dek: Spotify Prompted Playlist 与 QQ 音乐智能歌单的产品研究：自然语言如何改变人们表达、修正和保留自己的音乐需求。
+topic: Spotify × QQ 音乐 AI 歌单产品分析
+dek: 「陌生城市的周日下午」，AI 会如何理解？从 Spotify 与 QQ 音乐的实际体验出发，看看自然语言如何改变音乐发现，以及歌单生成之后还会发生什么。
+byline: 独立产品分析 · 2026
 date: 2026-10
-cover: ./images/hero-qq-playlist.webp
-coverAlt: QQ 音乐智能歌单界面
+cover: ./images/cover.webp
+coverAlt: 对话气泡里的黑胶唱机和声波
 draft: false
-heroPrompt: 陌生城市的周日下午
-heroPromptNote: 一个无法用曲风标签描述的需求。图中是另外两次测试：「让人想哭的快乐」与「雨天下午写代码」。
 findings:
-  - { n: "04.1", href: "#f-04-1", text: "AI 让难以描述的感受和难以操作的规则，都变成可以探索的需求。" }
-  - { n: "04.2", href: "#f-04-2", text: "用户通过结果发现偏好，AI 通过反馈理解需求，修正是双向的。" }
-  - { n: "04.3", href: "#f-04-3", text: "AI 歌单没有单一终点。收藏几首歌就离开，也可能是一次成功。" }
+  - { n: "04.1", href: "#f-041", icon: i-expand, text: "从固定分类到主动探索：AI 扩展了音乐发现的边界" }
+  - { n: "04.2", href: "#f-042", icon: i-loop, text: "从一次性推荐到双向意图修正：让音乐探索成为持续对话" }
+  - { n: "04.3", href: "#f-043", icon: i-fork, text: "从一次性生成到持续使用：AI 歌单如何融入日常听歌习惯" }
 ---
 
-import HeroFigure from '../../../components/HeroFigure.astro';
-import Figure from '../../../components/Figure.astro';
-import StageMatrix from '../../../components/StageMatrix.astro';
-import Log from '../../../components/Log.astro';
-import Sidenote from '../../../components/Sidenote.astro';
-import Verdict from '../../../components/Verdict.astro';
+import ArticleHeader from '../../../components/ArticleHeader.astro';
+import ArticleCover from '../../../components/ArticleCover.astro';
+import cover from './images/cover.webp';
+import IconList from '../../../components/IconList.astro';
 import SectionBreak from '../../../components/SectionBreak.astro';
-import spotifyRefine from './images/spotify-refine.webp';
-import qqPlaylist from './images/qq-playlist.webp';
-import qqChat from './images/qq-chat.webp';
-import spotifyPromptHints from './images/spotify-prompt-hints.webp';
-import qqStructuredOptions from './images/qq-structured-options.webp';
-import spotifyUpdateFrequency from './images/spotify-update-frequency.webp';
-import spotifyOverwriteWarning from './images/spotify-overwrite-warning.webp';
-import spotifyRevert from './images/spotify-revert.webp';
-import qqHistoryVersions from './images/qq-history-versions.webp';
+import Verdict from '../../../components/Verdict.astro';
+import ConsistencyTriangle from './diagrams/ConsistencyTriangle.astro';
+import DecisionGates from './diagrams/DecisionGates.astro';
+import ExplainCompare from './diagrams/ExplainCompare.astro';
+import FiveStages from './diagrams/FiveStages.astro';
+import HeroFigure from './diagrams/HeroFigure.astro';
+import IntentTimeline from './diagrams/IntentTimeline.astro';
+import MetricNest from './diagrams/MetricNest.astro';
+import OpportunityCompare from './diagrams/OpportunityCompare.astro';
+import PromptInputs from './diagrams/PromptInputs.astro';
+import RefreshSchematic from './diagrams/RefreshSchematic.astro';
+import ShareCompare from './diagrams/ShareCompare.astro';
+import StructureMap from './diagrams/StructureMap.astro';
+import TwoNeeds from './diagrams/TwoNeeds.astro';
+import UpdateShots from './diagrams/UpdateShots.astro';
+import UsageContexts from './diagrams/UsageContexts.astro';
+import ValuePaths from './diagrams/ValuePaths.astro';
 
-<HeroFigure
-  n={1}
-  what="两款产品的 AI 歌单与对话入口"
-  captionNote="观察｜个人账号实测截图，用户名已打码。三张图来自不同 Prompt，只用于呈现产品形态。"
-  prompt={frontmatter.heroPrompt}
-  note={frontmatter.heroPromptNote}
-  findings={frontmatter.findings}
-  images={[
-    { src: spotifyRefine, alt: 'Spotify 中用对话优化歌单：用户输入雨天下午写代码的需求，随后反馈不喜欢电子音乐', product: 'spotify', label: '对话优化', weight: 2 },
-    { src: qqPlaylist, alt: 'QQ 音乐智能歌单「想哭的快乐」，显示 AI 提示词和逐首推荐理由', product: 'qq', label: '智能歌单', weight: 3.4, ratio: '9/15' },
-    { src: qqChat, alt: 'QQ 音乐 AI 对话中按段落推荐的歌曲与说明', product: 'qq', label: 'AI 对话推荐', weight: 2.5, light: true },
-  ]}
-/>
+<div class="pad">
 
-<h2 id="ch-01">01｜研究背景与问题</h2>
+<ArticleHeader {...frontmatter} />
 
-音乐推荐已经高度个性化，但用户并不总能通过歌名、歌手或曲风表达自己的收听需求。
+<ArticleCover src={cover} alt={frontmatter.coverAlt} />
 
-例如，「陌生城市的周日下午」是一种难以用固定标签定义的氛围；「找回过去经常听、但一年没有播放的歌曲」则涉及多个个人历史数据条件。前者需要对情绪和场景进行开放式解释，后者需要对复杂筛选规则进行理解和执行。
+<HeroFigure />
 
-Spotify Prompted Playlist 与 QQ 音乐智能歌单提供了一种新的音乐发现方式：用户能够通过自然语言主动定义推荐方向，并根据生成结果进一步调整歌单。
+<div class="read">
 
-但自然语言是否真的改善了音乐发现体验？哪些任务适合交给 AI，哪些仍然更适合明确的筛选与操作？当用户开始主动维护 AI 歌单后，产品又该如何平衡音乐探索与个人控制？
+<StructureMap />
 
-本案例基于两款产品的探索性体验、实际任务对照与公开社区反馈，分析 AI 音乐发现的用户价值、交互边界与产品机会，并提出一项可进一步验证的优化方案。
+<IconList class="finds iconrow c3" items={frontmatter.findings} />
 
-<SectionBreak />
+</div>
 
-<h2 id="ch-02">02｜Research Approach：研究方法与范围</h2>
-
-### 研究对象
-
-本次选择 Spotify **Prompted Playlist** 与 QQ 音乐 **智能歌单**作为主要对照对象。
-
-两者都支持通过自然语言描述音乐需求、生成歌单并进一步调整结果，但在提示词辅助、生成结果展示及后续编辑方式上存在差异。这使它们适合用于分析 AI 音乐发现中的需求表达、探索反馈与用户控制。
-
-研究聚焦于 AI 歌单的实际使用体验，而非比较两家平台底层推荐算法的性能。Spotify AI Chat、QQ 音乐元宝及 AI DJ 的部分体验仅作为补充观察，不纳入主要功能对照。
-
-### 研究方法
-
-#### 01｜任务驱动的探索性体验
-
-围绕三类音乐发现需求设计体验任务：
-
-- **场景与情绪探索**：例如「陌生城市的周日下午」，观察 AI 如何理解抽象描述，以及用户如何进一步调整推荐方向。
-- **个人数据驱动**：关注通过历史收听、近期播放及排除条件等规则重新发现音乐的能力。
-- **精确条件控制**：例如时长、曲风、歌曲数量与场景要求的组合，观察需求表达与结果执行之间的关系。
-
-其中，场景与条件组合任务包含实际产品体验；部分依赖个人收听历史的复杂用例主要来自官方提示词示例和社区反馈，未逐项验证执行准确性。
-
-#### 02｜用户路径与交互对照
-
-以五个关键阶段整理两款产品的体验：
-
-需求表达 → 歌单生成 → 试听与判断 → 调整优化 → 保存与持续使用。
-
-记录主要交互入口、提示词辅助方式、歌单说明、逐首推荐理由、编辑功能及更新机制，并通过截图建立产品体验路径对照图。
-
-#### 03｜公开资料与社区反馈
-
-结合 Spotify 官方产品介绍与 Reddit 社区讨论，了解产品定位及用户分享的实际使用方式，重点关注创意提示词、个人历史数据筛选、主动策展和 Prompt 分享。
-
-社区内容作为补充的定性线索，不用于推断整体用户的行为比例或需求规模。
-
-### 局限与测试条件
-
-本次研究属于探索性产品体验分析，主要基于个人操作、有限任务样例和公开社区资料，并非正式的多用户可用性研究。
-
-本次体验使用的账号条件并不完全一致：Spotify 为长期使用的 Premium 账号，具有较丰富的历史收听记录；QQ 音乐为非长期使用的免费账号，历史行为数据相对有限。账号的使用历史、个性化数据积累、订阅权限及地区曲库差异，均可能影响推荐结果与可使用的功能。因此，本研究主要比较两款产品的交互设计、需求表达与结果控制机制，不将生成歌曲的差异解释为推荐算法能力的优劣。
-
-文中的体验差异属于观察，用户动机和业务影响属于待验证假设；Mini PRD 定位为基于这些发现提出的设计机会，而非已验证的需求结论。
+</div>
 
 <SectionBreak />
 
-<h2 id="ch-03">03｜Experience Comparison：AI 歌单体验路径对照</h2>
+<section class="pad ch" id="ch-01">
 
-为了观察 AI 如何参与音乐发现过程，本次将 Spotify Prompted Playlist 与 QQ 音乐智能歌单的体验拆解为五个阶段：
+<div class="read">
 
-**需求表达 → 歌单生成 → 试听与判断 → 调整优化 → 保存与持续使用**
+<p class="kind">01</p>
 
-两款产品都支持通过自然语言创建歌单，并允许用户在生成后继续调整结果，但具体交互方式存在差异。
+<h2 class="h2">背景</h2>
 
-<StageMatrix
-  n={2}
-  what="AI 歌单体验路径：Spotify Prompted Playlist 与 QQ 音乐智能歌单的五个阶段"
-  stages={['需求表达', '歌单生成', '试听与判断', '调整优化', '保存与持续使用']}
-  rows={[
-    {
-      name: 'Spotify Prompted Playlist',
-      product: 'spotify',
-      cells: [
-        { text: '提供不同用途的提示词示例，鼓励探索收听历史、音乐场景和文化趋势等需求', img: { src: spotifyPromptHints, alt: 'Spotify 提示词示例列表', crop: 'top' } },
-        { text: '通过歌单简介与逐首说明呈现对需求的音乐诠释' },
-        { text: '用户可边听边判断声音、氛围与场景是否符合预期' },
-        { text: '支持自然语言优化、编辑提示词及单曲保留或移除', img: { src: spotifyRefine, alt: 'Spotify 自然语言优化', crop: 'top' } },
-        { text: '支持不更新、每日和每周更新，另有编辑撤销等机制', img: { src: spotifyUpdateFrequency, alt: 'Spotify 设置更新频率', crop: 'top' } },
-      ],
-    },
-    {
-      name: 'QQ 音乐智能歌单',
-      product: 'qq',
-      cells: [
-        { text: '提供编排思路、语种、多样性、歌曲数量等选项，并将选择组织成可编辑的提示词', img: { src: qqStructuredOptions, alt: 'QQ 音乐智能歌单的结构化选项与可编辑提示词', crop: 'top', light: true } },
-        { text: '同样提供歌单简介与逐首说明，部分体验中更贴近原始提示词', img: { src: qqPlaylist, alt: 'QQ 音乐智能歌单结果', crop: 'top' } },
-        { text: '用户同样能够试听并判断结果，实际推荐差异受到账号历史等条件影响' },
-        { text: '支持提示词修改、更新歌单及删除单曲' },
-        { text: '支持相同的更新周期，并提供历史版本查看入口', img: { src: qqHistoryVersions, alt: 'QQ 音乐歌单的历史版本列表', crop: 'top' } },
-      ],
-    },
-  ]}
-/>
+<div class="body m-top-s">
 
-### 关键观察
+<p class="lead"><span class="say hang">「想象我散步在陌生城市的周日下午」</span>是一种难以用固定标签定义的氛围；<span class="say">「找回过去经常听、但最近一周没有播放的歌曲」</span>则涉及多个个人历史数据条件。音乐推荐已经高度个性化，但这两类需求，用户都很难通过歌名、歌手或曲风表达出来。好的音乐发现，既需要对情绪和场景做开放式的解释，也需要准确理解和执行复杂的筛选规则。</p>
 
-两款产品都已经覆盖 AI 歌单从生成到修改的主要流程，差异并不简单体现为功能的有无，而更多体现在需求表达的辅助方式、推荐解释，以及用户对结果的调整与维护方式。
+<p>长期以来，音乐平台的个性化主要来自推荐系统的预测，Discover Weekly、Release Radar 和各平台的每日推荐，都在替用户猜测可能喜欢的音乐。2025 年底，Spotify 测试 Prompted Playlist，并将它定位为第一次让用户能够引导算法：用户用自己的话描述想听的音乐，系统再参考完整的收听历史生成歌单<sup class="ref"><a href="#ref-1">1</a></sup>。</p>
 
-这些差异引出了三个值得进一步分析的问题：AI 扩展了哪些音乐需求？用户如何在探索中逐渐明确偏好？以及生成的歌单怎样转化为持续的音乐消费？
+<p>这一转变发生在推荐体验趋同的背景下。有研究发现，算法驱动的收听与较低的消费多样性相关<sup class="ref"><a href="#ref-2">2</a></sup>；也有行业分析认为，推荐算法趋同让用户体验逐渐陷入瓶颈，AI 则被视为从被动推荐走向主动陪伴的机会<sup class="ref"><a href="#ref-3">3</a></sup>。国内平台同样在跟进：QQ 音乐推出了智能歌单，腾讯音乐早在将大模型接入 AI 音乐助手等更多入口<sup class="ref"><a href="#ref-3">3</a></sup>。</p>
+
+<p>然而，有了自然语言入口，是否就意味着推荐方式真的改变了？第三方对 Spotify 早期 AI 歌单功能的测试发现，简单需求能得到流畅的结果，约束一旦叠加，结果就容易绕回熟悉的曲目或偏离主题<sup class="ref"><a href="#ref-4">4</a></sup>。</p>
+
+<p class="pull">AI 歌单改变的，究竟只是交互方式，还是底层的发现逻辑？它到底能否真正改变我们发现音乐的方式。</p>
+
+<p>如果说传统推荐已经比较擅长根据收听历史猜测用户可能喜欢什么。但如果我想听的是一种很难准确描述的情绪、某个具体场景里的音乐，或者想跳出平时的听歌习惯，AI 能不能提供不一样的结果？而对于偏小众的音乐喜好，它又能理解到什么程度？</p>
+
+<p class="turn">从产品角度看，我也关心另一个问题：生成一份歌单很容易让用户尝鲜，但什么会让他们愿意继续使用？ 用户可能只想发现几首新歌，也可能反复使用同一个 Prompt，或者长期维护一份歌单。这些不同的使用方式，决定了 AI 歌单究竟只是一个有趣的新功能，还是能真正融入用户日常听歌的产品体验。</p>
+
+<p class="close">带着这些问题，我体验并比较了 Spotify Prompted Playlist 和 QQ 音乐智能歌单，希望从实际使用出发，看看 AI 音乐推荐目前做到了什么，还有哪些值得继续改善的地方。</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="pad ch" id="ch-02" style={{marginTop:'96px'}}>
+
+<div class="read">
+
+<p class="kind">02<span>Research Approach</span></p>
+
+<h2 class="h2">研究方法与范围</h2>
+
+<div class="body m-top-s">
+
+<p>本次选择 Spotify Prompted Playlist 与 QQ 音乐智能歌单作为主要对照对象。两者都支持通过自然语言描述音乐需求、生成歌单并进一步调整结果，但在提示词辅助、生成结果展示及后续编辑方式上存在差异。这使它们适合用于分析 AI 音乐发现中的需求表达、探索反馈与用户控制。</p>
+
+<p>研究聚焦于 AI 歌单的实际使用体验，而非比较两家平台底层推荐算法的性能。我围绕三类音乐发现需求设计体验任务，并以需求表达、歌单生成、试听与判断、调整优化、保存与持续使用五个关键阶段，整理两款产品的体验路径；同时结合 Spotify 官方产品介绍与 Reddit 社区讨论，作为补充的定性线索。Spotify AI Chat、QQ 音乐元宝及 AI DJ 的部分体验仅作为补充观察，不纳入主要功能对照。</p>
+
+</div>
+
+<p class="sub">三类体验任务</p>
+
+<ul class="cov">
+
+<li><b>场景与情绪探索</b><span class="ex">例如<span class="say">「陌生城市的周日下午」</span>，观察 AI 如何理解抽象描述，以及用户如何进一步调整推荐方向</span><span class="st"><i class="pip"></i>包含实际产品体验</span></li>
+
+<li><b>精确条件控制</b><span class="ex">例如时长、曲风、歌曲数量与场景要求的组合，观察需求表达与结果执行之间的关系</span><span class="st"><i class="pip"></i>包含实际产品体验</span></li>
+
+<li><b>个人数据驱动</b><span class="ex">通过历史收听、近期播放及排除条件等规则重新发现音乐</span><span class="st dim"><i class="pip o"></i>主要来自官方提示词示例和社区反馈，未逐项验证执行准确性</span></li>
+
+</ul>
+
+<p class="sub">测试条件</p>
+
+<div class="body" style={{marginTop:'0'}}>
+
+<p>本次体验使用的账号条件并不完全一致：Spotify 为长期使用的 Premium 账号，具有较丰富的历史收听记录；QQ 音乐为非长期使用的免费账号，历史行为数据相对有限。账号的使用历史、个性化数据积累及订阅权限差异，均可能影响推荐结果与可使用的产品功能。因此，本研究主要比较两款产品的交互设计、需求表达与结果控制机制，不将生成歌曲的差异直接解释为推荐算法能力的优劣。</p>
+
+</div>
+
+<p class="limits"><b>局限</b>本次研究属于探索性产品体验分析，主要基于个人操作、有限任务样例和公开社区资料，并非正式的多用户可用性研究；社区内容仅作定性线索，不用于推断用户规模。文中的体验差异属于观察，用户动机与业务影响属于待验证假设。</p>
+
+</div>
+
+</section>
+
+<section class="pad ch" id="ch-03" style={{marginTop:'96px'}}>
+
+<div class="read">
+
+<p class="kind">03<span>Experience Comparison</span></p>
+
+<h2 class="h2">AI 歌单体验路径对照</h2>
+
+<div class="body m-top-s"><p>为了观察 AI 如何参与音乐发现过程，本次将 Spotify Prompted Playlist 与 QQ 音乐智能歌单的体验拆解为五个阶段。两款产品都支持通过自然语言创建歌单，并允许用户在生成后继续调整结果，但具体交互方式存在差异。</p></div>
+
+</div>
+
+<FiveStages />
+
+<div class="read m-top">
+
+<div class="body">
+
+<p>两款产品都已经覆盖 AI 歌单从生成到修改的主要流程，差异并不简单体现为功能的有无，而更多体现在需求表达的辅助方式、推荐说明，以及用户对结果的调整与维护方式。</p>
+
+<p>这些差异引出了三个值得进一步分析的问题：AI 扩展了哪些音乐需求？用户如何在探索中逐渐明确偏好？以及生成的歌单怎样转化为持续的音乐消费？</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="pad ch" id="ch-04" style={{marginTop:'96px'}}>
+
+<div class="read">
+
+<p class="kind">04<span>Key Findings</span></p>
+
+<h2 class="h2">三个核心产品发现</h2>
+
+</div>
+
+<div class="read" id="f-041" style={{marginTop:'56px'}}>
+
+<p class="kind">04.1</p>
+
+<h3 class="h3">当音乐需求难以用歌手和曲风表达</h3>
+
+<p class="dek">AI 不只是让用户用自然语言搜索音乐，而是让过去难以描述的感受、难以操作的复杂规则，变成可以主动探索的推荐需求。</p>
+
+</div>
+
+<div class="read c4-body" style={{marginTop:'40px'}}>
+
+<p>传统音乐搜索擅长处理歌名、歌手和曲风等明确需求，但用户想听什么，<strong>并不总能通过固定标签表达</strong>。有时，我们想找的是一种说不清的情绪或氛围；有时目标很明确，却需要组合历史收听、时间范围和排除条件，常规界面很难一次完成。</p>
+
+</div>
+
+<TwoNeeds />
+
+<div class="read c4-body">
+
+<h4>让抽象的音乐感受变得可探索</h4>
+
+<p>例如<span class="say">「陌生城市的周日下午」</span>或<span class="say">「听起来像蓝色的音乐」</span>，它们并不对应某个确定的曲风，而是<strong>留给系统一定的解释空间</strong>。</p>
+
+<p>在 Spotify Prompted Playlist 的体验中，开放式描述可以成为音乐探索的起点。同一个意象也可能产生不同的理解：「蓝色」可以意味着忧郁、平静，也可能让人联想到冷色调的电子音乐。用户无需预先指定一种曲风，而是可以通过试听结果，发现哪些音乐方向更接近自己的想象。</p>
+
+<p>Spotify 在产品介绍中也强调了 Prompt 的灵活性：既可以宽泛，也可以具体，并结合个人收听历史及音乐文化趋势生成推荐。Reddit 社区中，用户也会尝试以虚构故事、情绪变化和叙事场景构思 Prompt。</p>
+
+<p>这些例子让我觉得，开放式 Prompt 的价值不只是让输入更方便，<strong>它还扩大了用户能够向推荐系统提出的需求范围</strong>。</p>
+
+<h4>让复杂的个人推荐条件更容易组织</h4>
+
+<p>另一类需求恰好相反：用户已经有明确目标，困难在于操作过程。例如，想找回过去反复听过、却很久没有播放的歌曲，同时排除近期收听的内容，再限定年代、曲风和歌曲数量。</p>
+
+<p>这类任务涉及多个条件之间的组合。用户并不一定缺少表达能力，而是现有的分类、筛选和历史记录入口未必能够支持如此复杂的操作。</p>
+
+<p>在输入设计上，Spotify 与 QQ 音乐采取了不同的方式。</p>
+
+<p>Spotify 主要通过开放式 Prompt 和提示词示例，引导用户描述自己的音乐需求。用户可以从一种情绪或场景出发，也可以加入更明确的个人收听历史、年代或曲风约束。</p>
+
+<p>QQ 音乐则在自然语言输入之外，提供语种、编排思路、多样性和歌曲数量等结构化选项。这种设计带有 Slot-filling（槽位引导）的交互特征：用户无需一次写出完整的 Prompt，而可以借助界面提供的选项，逐步组织需求。</p>
+
+<p>两种方式并非完全对立。Spotify 同样提供输入引导，QQ 音乐也允许用户自由描述。但它们在交互引导上的侧重点不同：Spotify 更强调让用户发现<strong>「原来我还可以这样提需求」</strong>，QQ 音乐则进一步帮助用户明确<strong>「我具体有哪些要求」</strong>。</p>
+
+<p>这也让我想到一个值得进一步比较的产品问题：对于不熟悉 Prompt 的用户，究竟应该提供更多自由表达的空间，还是通过结构化选项帮助他们逐步明确需求？</p>
+
+<h4>表达能力的提升，不等于推荐结果一定更好</h4>
+
+<p>从产品设计角度看，这两类需求还需要不同的评价方式。</p>
+
+<p>对于情绪、场景等开放式探索，重点不仅在于推荐是否贴合描述，也在于结果能否带来有意义的新发现。允许一定的意外性，可能恰好是这类体验吸引人的地方。</p>
+
+<p>但对于明确提出历史范围、排除条件与数量限制的任务，成功标准就不同了。<strong>用户更关心系统是否真正遵守要求</strong>，而不是给出一份看起来合理的歌单。</p>
+
+<p>目前的实际体验可以说明自然语言与结构化选项如何支持用户提出需求，但<strong>不足以证明复杂条件都能被准确执行</strong>。</p>
+
+<p>自然语言降低了表达需求的门槛，而产品交互设计进一步决定了用户能否把模糊想法或复杂目标整理成可用的输入。至于最终推荐是否令人满意，还需要回到实际歌曲和试听体验中判断。</p>
+
+</div>
+
+</section>
+
+<section class="pad ch" id="f-042" style={{marginTop:'120px'}}>
+
+<div class="read">
+
+<p class="kind">04.2</p>
+
+<h3 class="h3">从首次推荐到逐步明确音乐偏好</h3>
+
+</div>
+
+<div class="read c4-body" style={{marginTop:'28px'}}>
+
+<p>对于情绪、氛围等主观的音乐需求，用户未必能在第一次输入时就准确表达自己的偏好。有时，<strong>只有听到实际结果，才能发现自己真正想要的是什么。</strong></p>
+
+<p>在测试 Spotify Prompted Playlist 时，我输入了「陌生城市的周日下午」。Spotify 最初将其理解为安静、略带忧郁的城市漫步，并生成了相应的歌曲。试听后，我发现这个方向与自己的预期并不完全一致：我更想要明亮、乐观一些的氛围。于是，我选择优化并输入「更明亮、乐观一点」。Spotify 随后调整了推荐方向，新的歌曲描述也转向了更积极的情绪与更丰富的曲风。</p>
+
+</div>
+
+<IntentTimeline />
+
+<div class="read c4-body" style={{marginTop:'40px'}}>
+
+<p>这次体验让我注意到，初始推荐不一定只是一个需要被接受或拒绝的结果，它也可以成为用户判断偏好的参照。通过试听，我能更具体地辨认原本模糊的期待，再用自然语言继续调整。这不仅是系统在修正推荐方向，也是<strong>用户逐步明确自己想听什么的过程。</strong></p>
+
+<h4>AI Prompt 参考了什么，又如何向用户描述？</h4>
+
+<p>除了可以修改 Prompt，我还想知道，系统为什么会把我的描述理解成这样的音乐方向。</p>
+
+<p>根据 Spotify 官方介绍，Prompted Playlist 不只参考当前输入，还会结合用户从加入平台以来的收听历史，以及音乐趋势、榜单和文化信息<sup class="ref"><a href="#ref-5">5</a></sup>。这意味着，同一段描述可能在不同用户或不同音乐环境下产生不同结果。不过，具体信号如何参与选曲、各自占多大权重，官方并未披露。</p>
+
+</div>
+
+<PromptInputs />
+
+<div class="read c4-body" style={{marginTop:'40px'}}>
+
+<p>但用户看不到这些信息如何被实际组合。对用户来说，更直接的理解入口是歌单简介与逐首推荐理由。</p>
+
+<p>Spotify 和 QQ 音乐都提供了这样的解释。在我的体验中，Spotify 的部分说明会联系歌曲的声音特征、节奏和整体听感，解释它如何回应原始场景；QQ 音乐的一些推荐理由则更贴近原始 Prompt，或围绕歌词与歌曲内容展开。</p>
+
+</div>
+
+<ExplainCompare />
+
+<div class="read c4-body">
+
+<p>这两种呈现方式都可以帮助用户理解推荐，但提供的判断线索有所不同：声音与氛围的描述，可以帮助用户预判一首陌生歌曲是否值得试听；与歌词、主题或 Prompt 相关的说明，则让用户看到歌曲与需求之间的语义联系。</p>
+
+<p class="hyp" style={{marginTop:'32px'}}><span class="lb">待验证假设</span>Spotify 的解释更偏向声音特征，这可能与它处理 Prompt 的方式有关。有第三方行业文章推测，Prompted Playlist 会把 Prompt 转化为 BPM、能量、情绪效价等声学目标<sup class="ref"><a href="#ref-6">6</a></sup>，但 Spotify 没有披露更多机制。QQ 音乐一侧，我没有找到可核实的公开资料。这一解释仅作为后续验证的方向。</p>
+
+<p class="muted" style={{marginTop:'36px'}}><b>补充观察｜</b>除了情绪和场景类需求，我还在聊天入口尝试提出一些涉及真实事件的音乐问题，例如围绕 Met Gala 争议事件寻找相关音乐。以下是在有限次尝试中的情况：</p>
+
+<p class="muted" style={{marginTop:'8px'}}><b>Spotify｜</b>部分回答会说明证据限制并附上可点击的来源链接，对没有找到对应信息的问题也会明确说明，而不是给出看似合理的答案。</p>
+
+<p class="muted" style={{marginTop:'8px'}}><b>QQ 音乐元宝（聊天入口）｜</b>整体文字回答能够回应用户的问题，进一步追问时有时会提到相关新闻作为信息来源，但没有提供可直接访问的原始链接；下方可播放歌曲未必完整对应文字回答中的描述。</p>
+
+<p class="muted" style={{marginTop:'8px'}}><b>QQ 音乐智能歌单｜</b>在歌单本身中，逐首推荐理由与歌单简介对需求的解释，也未必一致。</p>
+
+<div class="c4-shot" style={{justifyContent:'center'}}><div class="shot"><span>S10 Spotify 回答中的来源链接</span></div><div class="shot"><span>S11 QQ 音乐元宝的文字回答与下方歌曲</span></div></div>
+
+<p style={{marginTop:'36px'}}>这些观察来自有限次尝试，并不直接构成两款 AI 歌单功能的性能比较，却提示了一个值得注意的设计问题：<strong>「解释用户的需求」「选择实际歌曲」「说明推荐依据」应当相互一致。</strong></p>
+
+</div>
+
+<ConsistencyTriangle />
+
+<div class="read c4-body" style={{marginTop:'36px'}}>
+
+<p>对于情绪与场景探索，解释可以保留主观联想和创造性；对于舆论事件、历史数据等事实驱动的需求，则更需要<strong>可核查的依据与适当的不确定性说明</strong>。仅仅告诉用户「信息来自某篇新闻」，与真正提供核查入口，仍然是两种不同的体验。</p>
+
+<p style={{marginTop:'32px'}}>从产品角度看，我认为推荐解释至少有三方面的价值：</p>
+
+<p style={{marginTop:'14px'}}><strong>帮助用户了解 AI 如何理解自己的需求，</strong>从而判断是否需要调整 Prompt。</p>
+
+<p style={{marginTop:'12px'}}><strong>降低试听陌生音乐时的不确定性。</strong>声音特征、歌词或歌曲背景等线索，让用户在点开之前就有预期。</p>
+
+<p style={{marginTop:'12px'}}><strong>减少推荐过程的黑盒感，</strong>并在涉及客观事实时进一步核查信息来源。</p>
+
+<p style={{marginTop:'32px'}}>然而，<strong>解释合理不代表实际选曲一定符合要求</strong>，最终仍需要通过试听判断；AI 解释能否支持这一判断，取决于用户能不能看懂推荐方向，在不满意时作出调整，并从新的试听结果中确认调整是否有效。</p>
+
+<p style={{marginTop:'22px'}}>这也是 AI 探索歌曲值得继续探索的地方：推荐不是一次生成就结束，而可以成为一个由试听和反馈推动的持续调整过程。</p>
+
+</div>
+
+</section>
+
+<section class="pad ch" id="f-043" style={{marginTop:'120px'}}>
+
+<div class="read">
+
+<p class="kind">04.3</p>
+
+<h3 class="h3">生成之后，AI 歌单如何融入日常听歌？</h3>
+
+<p class="dek">AI 歌单的价值并不只体现在生成时的体验。用户带着不同的收听目的进入产品，也可能以不同的方式使用生成结果。</p>
+
+</div>
+
+<UsageContexts />
+
+<div class="read c4-body" style={{marginTop:'40px'}}>
+
+<p style={{marginTop:'0'}}>对于<strong>尝新探索</strong>，用户可能只想发现几首符合当下心情的新歌。试听后，将喜欢的歌曲加入收藏或其他常听歌单，这次探索就可能已经完成。即使原 AI 歌单没有被再次打开，<strong>也不代表推荐没有产生价值。</strong></p>
+
+<p>对于健身、通勤、学习等<strong>高频场景</strong>，需求则可能反复出现。用户既可以保存并重复播放已有歌单，也可以重新使用相似的 Prompt，或者通过定期更新获得不同的歌曲。这里重要的不只是歌单被保存了多久，<strong>而是用户能否方便地再次找到适合当前场景的音乐。</strong></p>
+
+<p>而在<strong>精细调整</strong>的情境中，用户可能投入更多时间修改 Prompt、挑选歌曲，并通过 Keep、Remove 等操作逐步形成自己满意的歌单。</p>
+
+<p>与传统个性化推荐主要根据历史行为推断偏好不同，AI 歌单允许用户主动设定推荐方向，并在生成后继续调整结果。这可能带来更强的<strong>掌控感</strong>：用户能够告诉系统自己想听什么、不想听什么，而不必完全依赖平台自动推断。另一方面，这里可以引入<strong>心理所有权（Psychological Ownership）</strong>的概念<sup class="ref"><a href="#ref-8">8</a></sup>：当用户能够控制、修改并投入精力维护一个数字对象时，可能逐渐产生「这是我自己的作品」的感受。该理论认为，控制对象、深入了解对象，以及把自我（时间、精力）投入对象，是形成心理所有权的主要途径；而实验研究发现，数字物品往往比实体物品更难引发这种感受<sup class="ref"><a href="#ref-9">9</a></sup>。但这一机制是否适用于 AI 歌单，以及能否带来更强的持续使用意愿，还需要用户研究验证。</p>
+
+<p style={{marginTop:'28px'}}>这几种使用方式并不是互斥的用户类型，也不能直接视为已观察到的典型行为。它们更重要的启发是：<strong>AI 歌单未必只有「生成—保存—长期复听」这一条成功路径。</strong>一次新歌发现、一个反复使用的场景，以及一份经过个人调整的歌单，都可能产生不同的产品价值。</p>
+
+<p>从平台角度看，这意味着不能只用歌单保存率或复听率衡量功能表现。对于探索型需求，可以关注用户是否试听并采纳了此前不熟悉的歌曲；对于反复出现的场景，可以关注再次播放、Prompt 复用与更新后的使用；对于精细调整，则可以观察用户的编辑行为，以及修改后的歌曲是否真正被继续收听。这些指标需要在实际用户行为数据中进一步定义与验证，而不是简单认为编辑次数越多、使用时间越长就越成功。</p>
+
+<p style={{marginTop:'28px'}}>其中，<strong>持续更新是一个值得进一步研究的设计问题。</strong>Spotify 与 QQ 音乐都提供定期更新能力，Spotify 官方也明确支持按日或按周刷新 Prompted Playlist<sup class="ref"><a href="#ref-7">7</a></sup>。对于希望持续获得新内容的用户，这可能减少反复创建歌单的操作成本。</p>
+
+<p>但当一份歌单已经经过多次修改，用户可能同时希望它保持新鲜，又希望自己明确保留的歌曲不被改变。在我的 Spotify 体验中，手动更新可能覆盖此前的部分调整，而 Revert 主要用于撤销最近一次变更。</p>
+
+</div>
+
+<UpdateShots />
+
+<div class="read c4-body" style={{marginTop:'36px'}}>
+
+<p class="hyp" style={{marginTop:'0'}}><span class="lb">待验证</span>目前尚未验证单曲 Keep 在自动更新后是否始终有效，因此不能认定系统已经存在普遍的选择丢失问题。</p>
+
+<p style={{marginTop:'24px'}}>但这个观察提出了一个更具体的产品问题：如果用户一边希望歌单自动更新，一边又希望积累个人认可的歌曲，<strong>产品如何清楚说明哪些内容会发生变化、哪些选择可以保留？</strong></p>
+
+<p>这不是要让所有歌单都变成需要精心维护的私人作品。主动控制并不意味着完全摆脱推荐算法，也不能证明用户因此更容易发现不同风格的音乐。<strong>真正值得关注的是，用户能否根据自己的使用目的和当前需求，决定把多少选择权交给系统，以及哪些部分由自己保留。</strong>后续是否值得为这种需求增加新的保护机制，还需要结合用户规模、现有功能覆盖情况与真实使用行为判断。</p>
+
+<p style={{marginTop:'22px'}}><a class="xr" href="#ch-06">延伸至第 06 章：如何在歌单更新中保留用户已确认的选择 →</a></p>
+
+</div>
+
+</section>
+
+<section class="pad ch" id="ch-05">
+
+<div class="read">
+
+<p class="kind">05<span>Product Opportunities</span></p>
+
+<h2 class="h2">从研究发现到产品设计机会</h2>
+
+<div class="body m-top-s">
+
+<p>前三项发现表明，AI 音乐发现的价值不仅在于快速生成歌单，还包括支持开放式探索、帮助用户逐步明确偏好，以及让用户主动调整自己的收听体验。</p>
+
+<p>但这些能力也带来了新的产品设计取舍：AI 应该在多大程度上自由解释用户需求？如何确保推荐结果与解释一致？当用户开始维护 AI 生成的歌单后，系统又应该如何尊重他们已经做出的选择？基于体验观察，我归纳了三个潜在的优化方向。</p>
+
+</div>
+
+</div>
+
+<OpportunityCompare />
+
+<div class="read body m-top">
+
+<p>三个方向都值得继续研究，但目前的材料还不足以根据用户规模或商业收益作出明确排序。我最终选择「可预期的歌单更新」作为 Mini PRD 候选，主要因为已有较具体的更新与撤销操作观察，能够围绕用户选择的保留与变化提出可检验的问题。</p>
+
+<p>设计新机制之前仍需确认现有 Keep、更新及 Revert 功能是否已经满足这些需求。如果现有能力足够则无需重复设计。接下来的第六章将围绕这一前提进一步展开。</p>
+
+<Verdict label="Design Direction｜可预期的 AI 歌单更新 · Predictable Playlist Refresh" v="当用户希望定期发现新音乐时，如何让 AI 尊重他们已确认的歌曲选择，同时保持歌单的新鲜度？" h="后续 Mini PRD 将围绕更新规则的可理解性与用户选择的保护展开，而不是重新设计已有的单曲保留或自然语言优化功能。" />
+
+</div>
+
+</section>
+
+<section class="pad ch" id="ch-06" style={{marginTop:'120px'}}>
+
+<div class="read">
+
+<p class="kind">06<span>Mini PRD</span></p>
+
+<h2 class="h2">Product Proposal：From Prompt to Playback</h2>
+
+<p class="dek">AI 歌单的价值并不都来自长期复访。对于一次性探索，成功可能意味着找到几首喜欢的歌曲；对于重复使用，价值可能来自再次调用相似需求或持续收听已有歌单。因此，本案例先区分不同的价值路径，再评估歌单更新是否构成值得投入的产品机会。</p>
+
+<p class="small" style={{marginTop:'14px'}}><b class="ev">本次总体产品机会｜</b>如何让不同类型的 AI 音乐需求真正转化为有效收听，而不仅停留在生成行为？</p>
+
+<div class="step6 lite">
+
+<p class="k">01<span>Opportunity</span></p>
+
+<div><h3>为什么要关注重复使用，但不假设它是主流</h3><p class="sub">对于重复场景型和持续维护型需求，用户可能希望在同一音乐方向下不断获得新推荐，而不必每次从头描述需求。但目前没有真实用户行为数据说明这些使用情境的占比，因此不能预设重复使用是 AI 歌单的主要消费方式。</p></div>
+
+</div>
+
+<div class="step6 lite">
+
+<p class="k">02<span>Evidence &amp; Gaps</span></p>
+
+<div>
+
+<h3>现有产品观察支持什么，还有什么不知道</h3>
+
+<div class="kn">
+
+<div><span class="lbl">已观察到</span><ul><li>两款产品都支持每日、每周更新</li><li>在个人体验中，Spotify 的手动更新曾提示此前的修改可能丢失</li><li>Revert 可撤销最近一次改变</li></ul></div>
+
+<div class="u"><span class="lbl" style={{color:'var(--muted)'}}>尚不知道</span><ul><li>用户再次使用相同 Prompt 或相似音乐意图的比例</li><li>自动更新是否延续用户明确保留的单曲选择</li><li>更新相关问题是否真正影响用户后续收听</li></ul></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<DecisionGates />
+
+<div class="read">
+
+<RefreshSchematic />
+
+
+
+<MetricNest />
+
+<Verdict label="Product Decision" v="AI 歌单不仅需要让用户方便地调整当前结果，还应该让用户能够预期这些选择在后续更新中会如何被处理。" h="本方案并不试图让用户控制推荐算法的全部细节，而是让系统在自动化与用户自主选择之间建立更明确的交互规则。" />
+
+</div>
+
+</section>
 
 <SectionBreak />
 
-<h2 id="ch-04">04｜Key Findings：三个核心产品发现</h2>
+<section class="pad ch" id="ch-07">
 
-<h3 id="f-04-1">04.1｜从固定分类到主动探索：AI 扩展了音乐发现的边界</h3>
+<div class="read">
 
-<p class="dek">核心发现：AI 不只是让用户用自然语言搜索音乐，而是让过去难以描述的感受、难以操作的复杂规则，变成可以主动探索的推荐需求。</p>
+<p class="kind">07<span>Business Impact &amp; Reflection</span></p>
 
-#### 01｜让抽象的音乐感受变得可探索
+<h2 class="h2">AI 音乐发现的三条潜在价值路径</h2>
 
-传统音乐搜索擅长处理歌名、艺人、曲风等明确需求，但音乐偏好并不总能被固定标签概括。
+<div class="body m-top-s"><p>AI 歌单不只是新的内容生成入口。不同的使用目的，可能让它为音乐平台创造不同的价值。</p></div>
 
-例如，「陌生城市的周日下午」「听起来像蓝色的音乐」，描述的并非某个确定的音乐类别，而是一种个人化的情绪与想象。
+<ValuePaths />
 
-在 Spotify Prompted Playlist 的体验中，这类开放式描述能够被转化为不同的音乐方向。AI 不必寻找唯一正确答案，而是尝试在用户给定的情绪与场景范围内，提供具有一定意外性的推荐。
+</div>
 
-Reddit 社区中也有用户主动分享富有创意的提示词，通过虚构故事、情绪变化和叙事结构探索音乐。
+<ShareCompare />
 
-这提示了 AI 音乐发现的一项独特价值：**让探索既有方向，又不完全受限于预设分类。**
+<div class="read" style={{marginTop:'96px'}}>
 
-#### 02｜让复杂的个人推荐规则变得容易表达
+<p class="kind">7.2<span>Reflection</span></p>
 
-另一类需求恰好相反：用户并不缺少明确目标，而是难以完成复杂的筛选操作。
+<h3 class="h3">AI 应该拓展探索，而不是替代用户的选择</h3>
 
-例如：
+<p class="pull" style={{marginTop:'20px'}}>本次研究中，我最大的认识是：AI 音乐发现的价值，并不在于让系统替用户决定听什么，而在于让用户既能探索原本想不到的音乐，也能掌控自己最终留下的内容。</p>
 
-「找回过去反复听过、但一年没有播放的歌曲，排除最近听过的内容，再从不同年代和曲风中选择十首。」
+<div class="body m-top-s">
 
-这类任务涉及个人收听历史、时间范围、排除条件与数量限制，往往难以通过常规音乐界面一次完成。
+<p>对于开放式需求，AI 可以通过具有方向性的解释带来新的发现；而当用户逐渐明确偏好时，产品则需要提供可靠、直接且可预期的控制方式。</p>
 
-Spotify 提供了利用历史收听行为构建歌单的提示词示例；QQ 音乐则通过语种、编排思路、多样性和歌曲数量等结构化选项，帮助用户组织复杂需求。
+<p>这也意味着，评估 AI 音乐产品不能只关注模型生成了什么，还需要关注用户是否真正从结果中获得价值，以及系统能否尊重用户在后续使用中做出的选择。</p>
 
-<Figure
-  n={3}
-  layout="pair"
-  what="Spotify 给提示词示例，QQ 音乐给结构化选项"
-  note="观察｜Spotify 用示例鼓励用户探索收听历史等需求；QQ 音乐用编排思路、语种、多样性等选项组织需求，并生成可编辑的提示词。比较范围｜两张截图来自不同产品的需求表达环节。"
-  items={[
-    { src: spotifyPromptHints, alt: 'Spotify 提示词示例列表', product: 'spotify', context: '提示词示例', ratio: '9/16', crop: 'top' },
-    { src: qqStructuredOptions, alt: 'QQ 音乐智能歌单的结构化选项与可编辑提示词', product: 'qq', context: '结构化选项', ratio: '9/16', crop: 'top', light: true },
-  ]}
-/>
+<p><b>用户主导，而非情绪驱动。</b>AI 可以理解情绪，但不应为了延长使用时间而刻意放大情绪；可以支持音乐探索，但不应强迫用户持续生成、持续优化；可以提供个性化推荐，同时让用户决定什么时候停止探索。好的音乐发现，不应该让用户在平台上花尽可能多的时间，而应该让用户更容易找到真正想听的音乐。即使用户找到几首喜欢的歌之后离开，这也可以是一次成功的体验。</p>
 
-两种方式分别展示了自然语言交互的不同价值：拓展用户对推荐能力的想象，以及降低多条件组合的操作门槛。
+</div>
 
-但复杂规则能够被表达，并不代表系统一定能够准确执行。
+<div class="next m-top">
 
-#### Product Insight｜开放式探索与精确控制，需要不同的成功标准
+<div class="lim">
 
-对于场景、情绪等主观需求，推荐的价值不完全取决于是否符合预设答案，还包括相关性、意外发现与进一步探索的可能性。
+<p class="lbl" style={{marginBottom:'6px'}}>局限</p>
 
-对于歌曲数量、历史收听和排除条件等明确需求，则应更关注实际执行结果是否满足约束。
+<ul>
 
-<Verdict>因此，AI 的优势并不是全面替代传统搜索，而是在开放式探索与复杂规则表达之间提供新的交互能力；确定性条件仍然需要可靠的执行与验证。</Verdict>
+<li>本案例主要基于单人探索性体验、产品界面观察和公开社区反馈。</li>
 
-<h3 id="f-04-2">04.2｜从一次性推荐到双向意图修正：让音乐探索成为持续对话</h3>
+<li>Spotify 与 QQ 音乐测试账号在使用历史、订阅状态和个性化数据积累方面存在差异，因此不能据此判断两款产品底层推荐算法的优劣。</li>
 
-<p class="dek">核心发现：对于抽象、主观的音乐需求，用户未必能在首次输入时完整表达偏好。AI 推荐的价值不仅在于生成结果，还在于帮助用户通过试听和反馈，逐步明确自己的音乐方向。</p>
+<li>尚无真实漏斗与用户规模数据；自动更新时 Keep 是否生效仍不确定；提出的可控更新方案也尚未经过开发和真实用户验证。</li>
 
-#### 01｜推荐结果也是用户认识自身偏好的过程
+</ul>
 
-在 Spotify 的实际体验中，我输入了「陌生城市的周日下午」，系统最初将其理解为安静、略带忧郁的城市漫步。
+</div>
 
-试听后，我发现自己期待的其实是更明亮、乐观的氛围，于是通过自然语言优化歌单。调整后的推荐呈现出更积极的情绪和更丰富的曲风。
+<div>
 
-<Log
-  turns={[
-    { who: 'user', label: '用户', role: '输入', text: '陌生城市的周日下午' },
-    { who: 'ai', label: 'Spotify', role: '歌单简介', text: '安静、略带忧郁的城市漫步', note: '据简介概括' },
-    { who: 'user', label: '用户', role: '试听后优化', text: '更明亮、乐观一点', emphasis: true },
-    { who: 'ai', label: 'Spotify', role: '优化后简介', text: '更积极的情绪，更丰富的曲风', note: '据简介概括' },
-  ]}
-  summary="用户通过结果发现自己的偏好；AI 通过反馈获得更明确的方向。"
-/>
+<p class="lbl" style={{marginBottom:'12px'}}>后续验证</p>
 
-<Figure
-  n={4}
-  layout="before-after"
-  what="一句否定，让 AI 重新理解需求"
-  note="观察｜同一段 Spotify 对话中的三个时刻：第一次说明、用户的否定反馈、AI 开始理解。比较范围｜同一 Prompt、同一会话。截图只记录到 AI 开始理解反馈，优化后的歌单待补截图。"
-  items={[
-    { src: spotifyRefine, alt: 'Spotify 一段完整的歌单优化对话', product: 'spotify', context: '完整对话', ratio: '1179/2556', crop: 'top', focus: 0.38 },
-    { src: spotifyRefine, alt: 'AI 的第一次说明', label: '之前', context: 'AI 把需求诠释为「轻电子」', ratio: '3.18', crop: '50% 49.7%', focus: 0.43 },
-    { src: spotifyRefine, alt: '用户输入 I don’t like electronic music', label: '反馈', context: '用户否定了这个方向', ratio: '2.98', crop: '50% 67.5%', focus: 0.57, emphasis: true },
-    { src: spotifyRefine, alt: 'AI 显示 Understanding dislike', label: '之后', context: 'AI 开始重新理解需求', ratio: '3.55', crop: '50% 85.1%', focus: 0.74 },
-  ]}
-/>
+<ol class="steps3">
 
-这并不一定意味着第一次推荐失败。对于没有唯一正确答案的需求，初始结果也可以成为用户识别和表达偏好的参照。
+<li><span class="n">1</span><div><b>核实现有自动更新机制</b><p>是否保留用户的 Keep 选择</p></div></li>
 
-**意图修正因此是双向的：用户通过结果了解自己的偏好，AI 通过反馈获得更明确的推荐方向。**
+<li><span class="n">2</span><div><b>目标用户测试</b><p>判断问题规模与用户需求</p></div></li>
 
-#### 02｜推荐解释让 AI 的理解变得可见
+<li><span class="n">3</span><div><b>小流量实验</b><p>判断实际业务价值</p></div></li>
 
-Spotify 与 QQ 音乐都会为生成的歌单提供整体简介和逐首推荐理由。
+</ol>
 
-在本次体验中，Spotify 更常将原始 Prompt 转化为具体的音乐氛围，并通过声音特征、节奏和聆听感受解释歌曲与需求的关系。QQ 音乐在部分测试中则更倾向于直接复述提示词，或围绕歌词和歌曲内容展开描述。
+</div>
 
-<Figure
-  n={5}
-  layout="pair"
-  what="同样是推荐理由，Spotify 写声音，QQ 音乐写歌词"
-  note="观察｜Spotify 描述节奏如何服务场景；QQ 音乐的逐首理由围绕歌词和情绪展开。比较范围｜两张截图来自不同的 Prompt 和不同入口（对话优化、智能歌单）。这里只比较解释的写法，不比较推荐质量。"
-  items={[
-    { src: spotifyRefine, alt: 'Spotify 对话中，AI 用节奏和专注感解释推荐', product: 'spotify', context: '对话优化 ·『雨天下午写代码』', ratio: '9/16', crop: 'top', focus: 0.43 },
-    { src: qqPlaylist, alt: 'QQ 音乐智能歌单，逐首理由围绕歌词与情绪', product: 'qq', context: '智能歌单 ·『让人想哭的快乐』', ratio: '9/16', crop: 'bottom', focus: 0.62 },
-  ]}
-/>
+</div>
 
-这种差异提示了推荐解释的两项潜在价值：
+</div>
 
-- **帮助用户校准需求：** 歌单简介让用户看见 AI 对场景与情绪的解释，从而判断是否需要修正方向。
-- **帮助用户判断歌曲：** 逐首理由为试听陌生歌曲提供线索，降低初次选择的不确定性。
+<div class="endspace"></div>
 
-但推荐理由写得动人，不代表推荐结果一定准确。解释应与实际选曲保持一致，而不是成为独立于推荐结果的修饰性文案。
+</section>
 
-#### 03｜从「被理解感」进一步走向可信的推荐
+<section class="pad" id="refs" style={{marginTop:'24px'}}>
 
-在补充体验中，我还观察到推荐解释与实际结果之间可能出现脱节。<Sidenote n="1">**补充观察｜**QQ 音乐元宝在部分事实检索任务中，整体文字回答能够回应用户问题，但下方可播放歌曲及逐首解释未必完整对应其描述。Spotify 的部分音乐文化事件回答则会说明证据限制并提供引用来源，但这些引用并不总是延续到最终歌曲列表。</Sidenote>
+<div class="read">
 
-这些来自辅助聊天入口的观察并不直接构成两款 AI 歌单功能的性能比较，却揭示了一个共同的设计问题：
+<p class="lbl" style={{color:'var(--muted)'}}>参考来源</p>
 
-**「解释用户的需求」「选择实际歌曲」「说明推荐依据」应当相互一致。**
+<ol class="refs">
 
-对于情绪与场景探索，解释可以保留主观联想和创造性；对于舆论事件、历史数据等事实驱动的需求，则更需要可核查的依据与适当的不确定性说明。
+<li id="ref-1"><span>1</span><a href="https://newsroom.spotify.com/2025-12-10/spotify-prompted-playlists-algorithm-gustav-soderstrom" target="_blank" rel="noopener">Spotify Newsroom，You’re in Control: Spotify Lets You Steer the Algorithm，2025-12-10</a></li>
 
-#### Product Insight｜让用户理解推荐，也能够低成本地修正推荐
+<li id="ref-2"><span>2</span><a href="https://www.cs.utoronto.ca/~ashton/pubs/alg-effects-spotify-www2020.pdf" target="_blank" rel="noopener">Anderson et al.，Algorithmic Effects on the Diversity of Consumption on Spotify，WWW 2020</a></li>
 
-自然语言优化为不同音乐知识水平的用户提供了较低门槛的反馈方式。用户不必掌握专业曲风或编曲术语，也可以表达「再明亮一点」「不要太忧郁」等调整方向。
+<li id="ref-3"><span>3</span>国元证券（香港），《腾讯音乐（TME.US）：AI 重构用户听歌体验，打造第二增长曲线》，2025-04-24</li>
 
-但理解可见性与反馈便利性必须由实际结果支撑。
+<li id="ref-4"><span>4</span><a href="https://music-tomorrow.com/blog/chatting-with-the-algorithm-spotify-ai-playlists-music-discovery" target="_blank" rel="noopener">Music Tomorrow，Chatting with the Algorithm: What Spotify’s AI Playlists Really Change，2025-12-17</a></li>
 
-<Verdict hypothesis="这种体验是否会提高陌生歌曲试听率、调整后满意度及持续使用意愿。">因此，好的 AI 音乐探索体验，不只是让用户感觉被理解，而是让用户看得懂 AI 的推荐方向、能够修正它，并通过实际试听验证这种理解。</Verdict>
+<li id="ref-5"><span>5</span><a href="https://newsroom.spotify.com/2026-01-22/prompted-playlists-expansion/" target="_blank" rel="noopener">Spotify Newsroom，Prompted Playlist in Beta Coming to Premium Listeners in More Markets，2026-01-22</a></li>
 
-<h3 id="f-04-3">04.3｜从一次性生成到持续使用：AI 歌单如何融入日常听歌习惯</h3>
+<li id="ref-6"><span>6</span><a href="https://soundplate.com/spotify-prompted-playlists-guide/" target="_blank" rel="noopener">Soundplate，Spotify Prompted Playlists guide，2026-02-06（第三方博客，非官方，未给出来源）</a></li>
 
-<p class="dek">核心发现：AI 歌单的价值不只在于降低创建成本。根据用户的收听目的，生成结果可能成为发现新歌曲的入口，也可能发展为一份长期使用、不断调整的个人歌单。</p>
+<li id="ref-7"><span>7</span><a href="https://support.spotify.com/us/article/prompted-playlists-ios/" target="_blank" rel="noopener">Spotify Support，Prompted Playlists（“Set your playlist to refresh daily or weekly”），2026-10-25 查阅</a></li>
 
-#### 01｜不同的收听目的，决定不同的后续行为
+<li id="ref-8"><span>8</span><span>Pierce, Kostova &amp; Dirks (2001), Toward a theory of psychological ownership in organizations, <i>Academy of Management Review</i>, 298–310；Pierce, Kostova &amp; Dirks (2003), The state of psychological ownership, <i>Review of General Psychology</i> 7(1), 84–107</span></li>
 
-AI 歌单生成之后，用户未必都希望保留整份结果。
+<li id="ref-9"><span>9</span><span>Atasoy &amp; Morewedge (2018), Digital goods are valued less than physical goods, <i>Journal of Consumer Research</i> 44(6)</span></li>
 
-**尝新探索：留下喜欢的歌曲。**
+</ol>
 
-当用户通过「听起来像蓝色的音乐」等创意提示词探索陌生音乐时，生成的歌单可能只是一次发现过程。用户试听后，将少数喜欢的歌曲加入自己的收藏或常听歌单，就已经获得了价值。
+</div>
 
-因此，原 AI 歌单没有被反复打开，并不一定意味着这次推荐失败。
-
-**高频场景：留下适合日常使用的歌单。**
-
-对于健身、通勤和学习等重复发生的场景，用户可能更希望保存一份符合需求的歌单，并在之后反复使用。
-
-Spotify 和 QQ 音乐智能歌单都提供定期更新选项，为长期使用的歌单持续引入新内容。
-
-**精细调整：逐渐形成个人偏好的音乐集合。**
-
-当用户通过多轮调整、保留和移除歌曲，逐渐获得满意的歌单时，这份结果已经包含了用户自己的选择。
-
-此时，歌单不再只是 AI 一次性生成的内容，也成为用户主动参与维护的音乐集合。
-
-以上属于根据产品能力与个人使用设想提出的情境划分，仍需要真实用户行为数据验证。
-
-#### 02｜从接受推荐，到主动控制自己的音乐体验
-
-传统个性化推荐主要根据历史行为推断用户偏好，而 AI 歌单允许用户主动设定推荐方向，并在生成后继续调整结果。
-
-这种变化可能带来两种体验价值。
-
-首先是**掌控感**：用户能够告诉系统自己想听什么、不想听什么，而不必完全依赖平台自动推断。
-
-其次是**个人投入感**：当用户花时间构思提示词、挑选歌曲、反复修改时，他们可能更愿意保留和继续使用自己参与创建的歌单。
-
-但主动控制并不意味着完全摆脱推荐算法，也不能证明用户因此更容易发现不同风格的音乐。
-
-真正值得关注的是：用户能否根据当前需求，在自动推荐与自主选择之间灵活切换。
-
-#### 03｜持续更新带来新鲜感，也带来控制权的取舍
-
-Spotify 与 QQ 音乐均支持定期更新 AI 歌单。对于高频场景，这可能减少重复创建歌单的成本，并持续提供新的音乐。
-
-但当用户已经花时间调整和筛选歌曲后，更新机制也可能与保留个人选择的需求产生冲突。
-
-在 Spotify 的个人体验中，手动更新可能覆盖此前的调整，而 Revert 主要用于撤销最近一次变更。单曲 Keep 是否在自动更新后持续生效，尚未验证。
-
-<Figure
-  n={6}
-  layout="row"
-  what="更新频率、覆盖提示与历史版本"
-  note="观察｜Spotify 提供不更新、每日、每周三种更新频率，手动更新时提示此前的修改可能丢失，Revert 入口在更多菜单里；QQ 音乐提供历史版本。比较范围｜只呈现入口与提示，不比较更新效果。"
-  items={[
-    { src: spotifyUpdateFrequency, alt: 'Spotify 设置更新频率：不更新、每日、每周', product: 'spotify', context: '更新频率', ratio: '9/16', crop: 'top' },
-    { src: spotifyOverwriteWarning, alt: 'Spotify 提示更新后此前的修改将丢失', product: 'spotify', context: '覆盖提示', ratio: '9/16', crop: 'top' },
-    { src: spotifyRevert, alt: 'Spotify 更多菜单中的 Revert changes', product: 'spotify', context: 'Revert', ratio: '9/16', crop: 'top' },
-    { src: qqHistoryVersions, alt: 'QQ 音乐歌单的历史版本列表', product: 'qq', context: '历史版本', ratio: '9/16', crop: 'top', light: true },
-  ]}
-/>
-
-这引出一个值得进一步研究的问题：
-
-**如何让用户持续获得新音乐，同时不轻易失去自己已经确认喜欢的内容？**
-
-#### Product Insight｜不同的使用目的，需要不同的成功标准
-
-对于探索型歌单，产品应关注用户是否发现并收藏喜欢的新歌，而不仅是原歌单有没有被保存。
-
-对于高频场景歌单，则应关注用户是否愿意反复播放，以及定期更新能否在新鲜感与熟悉感之间取得平衡。
-
-对于经过多次调整的歌单，修改的可控性与结果保护可能影响用户继续投入的意愿。
-
-<Verdict>因此，AI 歌单并不存在单一的使用终点：对于探索型需求，用户可能在收藏喜欢的歌曲后便完成任务；对于高频场景型需求，歌单的价值则体现在反复收听与持续维护。</Verdict>
-
-产品应支持这两种不同的使用路径，而不是默认每份生成的歌单都需要被长期保存。
-
-<SectionBreak />
-
-<h2 id="ch-05">05｜Product Opportunities：从研究发现到产品设计机会</h2>
-
-前三项发现表明，AI 音乐发现的价值不仅在于快速生成歌单，还包括支持开放式探索、帮助用户逐步明确偏好，以及让用户主动调整自己的收听体验。
-
-但这些能力也带来了新的产品设计取舍：AI 应该在多大程度上自由解释用户需求？如何确保推荐结果与解释一致？当用户开始维护 AI 生成的歌单后，系统又应该如何尊重他们已经做出的选择？
-
-基于体验观察，我归纳了三个潜在的优化方向。
-
-### 01｜开放式探索与明确控制如何协同
-
-**对应发现：04.1**
-
-自然语言适合表达情绪、场景和复杂意图，但歌曲数量、排除条件、曲风限制等明确要求，需要可靠执行。
-
-Spotify 的提示词范例有助于激发探索灵感；QQ 音乐通过结构化选项帮助用户组合条件。
-
-潜在机会不是用传统控件替代 AI，而是让两者各自承担更合适的任务：AI 负责理解开放式需求，明确控件帮助用户快速设定和验证确定性条件。
-
-### 02｜推荐解释如何与实际结果保持一致
-
-**对应发现：04.2**
-
-歌单简介和逐首推荐理由可以帮助用户理解系统如何诠释自己的需求，但解释的说服力并不等于推荐结果的可信度。
-
-特别是在事实驱动的音乐发现任务中，用户需要的不只是歌曲介绍，还包括与当前选曲条件相关的理由，以及必要的来源和不确定性说明。
-
-这一机会涉及推荐依据、结果解释及事实验证之间的协同，潜在价值较高，但具体改进可能需要推荐系统和 AI 生成链路的共同支持。
-
-### 03｜如何在持续更新中保留用户的个人选择
-
-**对应发现：04.3**
-
-AI 歌单允许用户通过多轮优化和单曲操作逐渐形成满意的结果，定期更新则为高频收听场景提供新鲜内容。
-
-但更新机制可能与用户已经投入的调整发生冲突。
-
-在 Spotify 的个人体验中，手动更新可能覆盖此前的修改，而 Revert 主要撤销最近一次变更。自动更新是否保留单曲 Keep 状态，目前仍未验证。
-
-这提示了一个具体的设计机会：让用户能够预测更新行为，并在持续获得新内容时，保留自己明确希望继续收听的歌曲。
-
-### Opportunity Prioritization｜为什么选择第三个方向？
-
-| 评估维度 | 需求表达与控制 | 推荐解释可信度 | 更新与结果保护 |
-| --- | --- | --- | --- |
-| 现有体验证据 | 较充分 | 有观察，但部分来自辅助聊天入口 | 有具体更新提示与编辑行为 |
-| 问题范围 | 较广，涉及多种任务 | 涉及推荐与解释链路 | 相对集中 |
-| 方案可控性 | 中等 | 较低，可能依赖底层能力 | 相对较高 |
-| 业务价值关联 | 生成效率、任务完成 | 信任、有效试听 | 持续收听、歌单复访 |
-| 当前决策 | 保留为设计原则 | 后续验证 | **选择为 Mini PRD 候选** |
-
-本次优先选择第三个方向，并不是因为它已经被证明拥有最大用户规模或商业收益，而是因为它具有相对明确的使用情境、可观察的产品行为，以及适合在 Mini PRD 中讨论的交互范围。
-
-这一选择仍有前提：需要首先核实 Spotify 现有 Keep 与自动更新机制是否已经解决了相关需求，避免重复设计。
-
-### Design Direction｜可预期的 AI 歌单更新
-
-**Predictable Playlist Refresh**
-
-核心设计问题是：
-
-<p class="dek">当用户希望定期发现新音乐时，如何让 AI 尊重他们已确认的歌曲选择，同时保持歌单的新鲜度？</p>
-
-后续 Mini PRD 将围绕更新规则的可理解性与用户选择的保护展开，而不是重新设计已有的单曲保留或自然语言优化功能。
-
-<SectionBreak />
-
-<h2 id="ch-06">06｜Product Proposal：From Prompt to Playback</h2>
-
-AI 歌单的价值并不都来自长期复访。对于一次性探索，成功可能意味着找到几首喜欢的歌曲；对于重复使用，价值可能来自再次调用相似需求或持续收听已有歌单。因此，本案例先区分不同的价值路径，再评估歌单更新是否构成值得投入的产品机会。
-
-**整体机会：让 AI 生成真正转化为有效收听，而不只停留在生成行为。**
-
-### 01｜Opportunity：为什么关注重复使用
-
-健身、通勤、学习等场景会反复发生。如果用户在这些场景中持续使用 AI 歌单，「更新」就成为影响长期收听的关键环节。但目前没有数据说明重复使用的占比——它是一个值得验证的细分机会，而不是默认的主流路径。
-
-### 02｜Evidence & Gaps：已知与未知
-
-#### 已观察到
-
-- 两款产品都支持每日 / 每周更新。
-- Spotify 手动更新时曾提示此前的修改可能丢失；Revert 主要撤销最近一次变更。
-
-#### 尚不知道
-
-- 重复使用 Prompt 或歌单的用户规模。
-- 自动更新是否保留用户 Keep 的单曲。
-- 更新问题是否真的影响后续收听。
-
-### 03｜Go / No-Go：什么时候值得做
-
-进入 MVP 前需同时满足三个条件：
-
-1. **规模**：重复使用 Prompt 或歌单、并实际开启更新的用户达到有意义的比例。
-2. **问题**：更新确实会覆盖用户已确认的选择，并导致跳过或停止收听。
-3. **缺口**：Spotify 现有 Keep / Remove 与更新机制未能解决这一问题。
-
-任一条件不成立，就停止投入，转向生成、试听等单次需求完成环节的优化。
-
-### 04｜Candidate MVP：Predictable Playlist Refresh
-
-**目标：让用户明确知道更新会改变什么，并确保已确认的选择不会被意外覆盖。**
-
-- **机制一｜更新规则透明化**：开启定期更新时，用一句话说明哪些歌曲会被替换、哪些会被保留，而不是在每次更新前打断用户确认。
-- **机制二｜保护明确的选择**：优先复用现有 Keep 操作，让被保留的歌曲跨更新持续生效；只有现有机制无法可靠实现时，才新增保护逻辑。
-
-- 辅助机制：更新后显示简短的变化摘要。
-- 后续迭代：历史版本恢复。
-- 不做：重新设计推荐算法；新增与现有单曲操作重复的控件。
-
-### 05｜Success & Trade-offs
-
-| 层次 | 核心关注 |
-| --- | --- |
-| 整体 AI 歌单 | 生成后有效收听率 |
-| 机会规模验证 | 重复使用 Prompt 或歌单、实际开启更新的用户比例 |
-| 候选 MVP 效果 | 更新后有效收听；已确认选择的保留情况 |
-
-**护栏：** 新歌有效收听率——防止保留过多旧歌，让更新失去探索价值。
-
-更新后复访只衡量这一候选方案，不代表整个 AI 音乐发现体验的成功。
-
-#### 主要取舍
-
-- **新鲜 ↔ 稳定**：保留太多旧歌，更新失去意义；变化太大，又破坏用户认可的方向。
-- **控制 ↔ 负担**：更多选项可能增加即时探索用户的操作成本。
-- **归因**：复访变化还受场景发生频率影响，需对照实验区分。
-
-### Product Decision
-
-<Verdict>AI 歌单不仅要让用户方便地调整当前结果，还应让用户预期这些选择在后续更新中如何被处理。</Verdict>
-
-本方案不追求让用户控制算法细节，而是先确认问题值得解决，再在自动化与个人选择之间建立可预期的规则。
-
-<SectionBreak />
-
-<h2 id="ch-07">07｜Business Impact & Reflection</h2>
-
-### 7.1｜AI 音乐发现的三条潜在价值路径
-
-AI 歌单不只是新的内容生成入口。不同的使用目的，可能让它为音乐平台创造不同的价值。
-
-| 价值路径 | 用户获得的价值 | 平台可关注的指标 |
-| --- | --- | --- |
-| **探索新音乐** | 通过创意场景和复杂需求发现陌生歌曲 | 新歌有效试听率、收藏率、收藏后继续播放 |
-| **融入日常收听** | 在健身、学习等重复场景中持续获得合适的音乐 | 歌单复访率、有效收听时长、更新后继续收听 |
-| **分享探索创意** | 分享有趣的 Prompt，让他人体验自己的个性化结果 | Prompt 分享转化率、二次生成率、后续有效收听 |
-
-**其中，Prompt 分享提供了一条不同于传统歌单分享的增长路径。**
-
-Reddit 社区中已有用户交流创意提示词，例如利用收听历史生成趣味性的音乐品味分析，或通过虚构故事构建主题歌单。
-
-Spotify 也支持分享 Prompted Playlist，让其他用户根据自身音乐偏好生成个性化版本。
-
-这意味着用户可以传播的不只是固定的歌曲列表，还包括一种可复用、可改写的音乐探索方式。
-
-从业务角度看，这可能为音乐平台带来新的功能尝试、音乐消费与社区互动机会。但社区个案尚不足以证明它能够形成规模化增长。
-
-### 7.2｜Reflection：AI 应该拓展探索，而不是替代用户的选择
-
-本次研究中，我最大的认识是：**AI 音乐发现的价值，并不在于让系统替用户决定听什么，而在于让用户既能探索原本想不到的音乐，也能掌控自己最终留下的内容。**
-
-对于开放式需求，AI 可以通过具有方向性的解释带来新的发现；而当用户逐渐明确偏好时，产品则需要提供可靠、直接且可预期的控制方式。
-
-这也意味着，评估 AI 音乐产品不能只关注模型生成了什么，还需要关注用户是否真正从结果中获得价值，以及系统能否尊重用户在后续使用中做出的选择。
-
-#### 用户主导，而非情绪驱动。
-
-AI 可以理解情绪，但不应为了延长使用时间而刻意放大情绪；可以支持音乐探索，但不应强迫用户持续生成、持续优化；可以提供个性化推荐，同时让用户决定什么时候停止探索。好的音乐发现，不应该让用户在平台上花尽可能多的时间，而应该让用户更容易找到真正想听的音乐。即使用户找到几首喜欢的歌之后离开，这也可以是一次成功的体验。
-
-本案例主要基于单人探索性体验、产品界面观察和公开社区反馈。
-
-Spotify 与 QQ 音乐测试账号在使用历史、订阅状态和个性化数据积累方面存在差异，因此不能据此判断两款产品底层推荐算法的优劣。
-
-尚无真实漏斗与用户规模数据；自动更新时 Keep 是否生效仍不确定；提出的可控更新方案也尚未经过开发和真实用户验证。后续应首先核实现有自动更新机制是否保留用户的 Keep 选择，再通过目标用户测试与小流量实验，判断问题规模、用户需求和实际业务价值。
+</section>

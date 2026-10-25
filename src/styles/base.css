@@ -1,48 +1,70 @@
-*, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: var(--t-body);
-  line-height: var(--t-body-lh);
-  -webkit-font-smoothing: antialiased;
-  font-variant-numeric: tabular-nums;
+/* 字体：自托管，不请求任何境外字体或 CDN。Quote Serif 是按文章实际用字子集化的 Noto Serif SC 500（scripts/subset-quote-font.mjs）。 */
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/SchibstedGrotesk-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
-h1, h2, h3, h4, p, figure, ol, ul, blockquote { margin: 0; padding: 0; }
-ol, ul { list-style: none; }
-a { color: inherit; text-decoration: none; }
-img { display: block; max-width: 100%; }
-h1, h2, h3, h4 { text-wrap: balance; }
-:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/SchibstedGrotesk-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Schibsted Grotesk';
+  src: url('/fonts/SchibstedGrotesk-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Quote Serif';
+  src: url('/fonts/quote-serif.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Quote Serif';
+  src: url('/fonts/quote-serif-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
-.pad { padding-left: var(--edge); padding-right: var(--edge-r); }
-.full { max-width: var(--full); margin-inline: auto; }
-.say { font-family: var(--quote); font-weight: 500; }
-.ast { width: 0.62em; height: 0.62em; display: inline-block; }
+/* 以下全部来自 docs/reference/case.html 的基础样式 */
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3,h4,p,figure,ol,ul,blockquote,dl,dd{margin:0;padding:0}
+ol,ul{list-style:none}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.tn{font-variant-numeric:tabular-nums}
+.say{font-family:var(--quote);font-weight:500}
+.pad{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+@media (min-width:760px){.pad{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px))}}
+@media (min-width:1200px){.pad{padding-left:max(48px,env(safe-area-inset-left,0px));padding-right:max(48px,env(safe-area-inset-right,0px))}}
+.read{max-width:var(--read);margin-inline:auto}
+.wide{max-width:var(--wide);margin-inline:auto}
+.full{max-width:var(--full);margin-inline:auto}
+.ic{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ast{width:14px;height:14px}
 
-/* 标志与页眉 */
-.site { border-bottom: 1px solid var(--ink); }
-.site .full { display: flex; justify-content: space-between; align-items: center; height: 64px; gap: var(--s-16); }
-.mark { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; display: flex; align-items: flex-start; gap: 3px; }
-.mark .ast { width: 13px; height: 13px; margin-top: 4px; }
-.site nav { display: flex; gap: 22px; font-size: 14px; font-weight: 500; color: var(--ink-2); }
-.site nav a { display: inline-flex; align-items: center; min-height: 44px; }
-.site nav a[aria-current] { color: var(--ink); }
+/* 页眉 */
+.site{border-bottom:1px solid var(--ink)}
+.site .full{display:flex;justify-content:space-between;align-items:center;height:60px}
+.mark{font-weight:700;font-size:19px;letter-spacing:-.03em;display:flex;align-items:center;gap:3px;text-decoration:none}
+.mark .ast{width:12px;height:12px;margin-top:-10px}
+.site nav{font-size:14px;font-weight:500;color:var(--ink-2)}
+.site nav a{text-decoration:none}
 
-.site-foot { border-top: 1px solid var(--line); margin-top: var(--s-88); padding-block: var(--s-32); font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); }
-.site-foot .full { display: flex; justify-content: space-between; gap: var(--s-16); flex-wrap: wrap; }
-.site-foot a { display: inline-flex; align-items: center; min-height: 44px; }
-
-/* 栏目标签 */
-.kind { font-size: var(--t-kind); line-height: var(--t-kind-lh); font-weight: 700; letter-spacing: 0.02em; color: var(--ink); }
-.kind .sub { font-weight: 400; color: var(--muted); }
-.meta { font-size: var(--t-cap2); line-height: var(--t-cap2-lh); color: var(--muted); }
-
-/* 图片位 */
-.shot { position: relative; background: var(--wash); border-radius: 3px; overflow: hidden; }
-.shot.light { box-shadow: inset 0 0 0 1px var(--shot-edge); }
-.shot.emphasis { box-shadow: 0 0 0 2px var(--ink); }
-.shot img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
-.shot img:focus-visible { outline-offset: 2px; }
+/* 手机端页眉链接：透明伪元素把点击区域扩到约 44px，不改变布局和外观（作者已同意，参考页之外）。 */
+@media (max-width:700px){
+  .mark,.site nav a{position:relative}
+  .mark::after{content:"";position:absolute;inset:-6px 0}
+  .site nav a::after{content:"";position:absolute;inset:-14px -8px}
+}
