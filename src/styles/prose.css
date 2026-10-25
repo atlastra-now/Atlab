@@ -120,7 +120,7 @@
 .step6 + .step6{border-top:1px solid var(--line);margin-top:32px}
 .step6 .k{font-size:13px;font-weight:700;line-height:24px}
 .step6 .k span{display:block;font-weight:400;color:var(--muted);font-size:12px}
-.step6 h4{font-size:19px;line-height:28px;font-weight:700}
+.step6 h3{font-size:19px;line-height:28px;font-weight:700}
 .step6 .sub{font-size:15px;line-height:26px;color:var(--ink-2);margin-top:6px}
 .kn{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:16px}
 .kn > div{padding:14px 16px;border:1px solid var(--ink);border-radius:3px}
@@ -146,7 +146,7 @@
 .stopbar .ic{color:var(--muted);width:18px;height:18px}
 .mech{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:18px}
 .mech .lbl{display:block}
-.mech h5{font-size:16px;line-height:25px;margin:4px 0 6px;font-weight:700}
+.mech h4{font-size:16px;line-height:25px;margin:4px 0 6px;font-weight:700}
 .mech p{font-size:14px;line-height:23px;color:var(--ink-2)}
 .rulecopy{margin-top:12px;padding:12px 14px;background:var(--wash);border-radius:3px;font-size:14px;line-height:22px}
 .rulecopy small{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
@@ -233,7 +233,7 @@
 .sch-big{margin-top:24px}
 .sch-big .sch{grid-template-columns:1fr 60px 1fr;gap:10px;max-width:520px}
 .sch-big .sch li{font-size:14px;line-height:20px;padding:8px 12px}
-.step6.lite h4{font-size:17px}
+.step6.lite h3{font-size:17px}
 .step6.lite .sub{font-size:14px;line-height:24px}
 /* 02 合并 */
 
