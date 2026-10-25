@@ -6,6 +6,7 @@ import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUT = path.join(ROOT, 'public/fonts/quote-serif.woff2');
+const OUT_BOLD = path.join(ROOT, 'public/fonts/quote-serif-bold.woff2');
 const SRC_FONT = path.join(import.meta.dirname, 'fonts-src', 'NotoSerifSC[wght].ttf');
 
 async function* walk(dir) {
@@ -62,6 +63,13 @@ try {
   const { default: subsetFont } = await import('subset-font');
   const buf = await subsetFont(await readFile(SRC_FONT), chars, { targetFormat: 'woff2', variationAxes: { wght: 500 }, layoutFeatures: ['*'] });
   await writeFile(OUT, buf);
+  // 700 字重：只含各篇文章 frontmatter 里 title 的字（首页头条标题用 --quote 粗体）。
+  let titles = '';
+  for await (const f of walk(path.join(ROOT, 'src/content/articles'))) titles += (/^title:\s*(.+)$/m.exec((await readFile(f, 'utf8')).split('---')[1] ?? '') ?? [])[1] ?? '';
+  const boldChars = [...new Set(titles.replace(/\s/g, ' '))].join('');
+  const bold = await subsetFont(await readFile(SRC_FONT), boldChars, { targetFormat: 'woff2', variationAxes: { wght: 700 }, layoutFeatures: ['*'] });
+  await writeFile(OUT_BOLD, bold);
+  console.log(`quote-serif-bold.woff2: ${[...boldChars].length} 个字符, ${(bold.length / 1024).toFixed(1)} KB`);
   await writeFile(path.join(ROOT, 'scripts/quote-chars.txt'), [...chars].sort().join('') + '\n');
   console.log(`quote-serif.woff2: ${[...chars].length} 个字符, ${(buf.length / 1024).toFixed(1)} KB`);
 } catch (err) {

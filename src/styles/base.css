@@ -27,6 +27,13 @@
   font-style: normal;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Quote Serif';
+  src: url('/fonts/quote-serif-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* 以下全部来自 docs/reference/case.html 的基础样式 */
 *{box-sizing:border-box}

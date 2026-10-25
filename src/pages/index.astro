@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { url } from '../utils/url';
 import '../styles/site.css';
@@ -9,24 +9,21 @@ import '../styles/site.css';
 // 站点简介由作者提供，提供前不显示。
 const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort((a, b) => b.data.date.localeCompare(a.data.date));
 const lead = articles[0];
-// 分享图：从封面裁成 1080×565（1.91:1）（底部对齐，保留标题），封面本身已避开截图里被模糊的用户名区域。
-const og = lead ? await getImage({ src: lead.data.cover, width: 1080, height: 565, fit: 'cover', position: 'bottom', format: 'jpg' }) : undefined;
 ---
-<BaseLayout title="Product Lab" description={lead?.data.dek} image={og?.src}>
+<BaseLayout title="Product Lab" description={lead?.data.dek} image={url('og.png')}>
   <main class="home pad">
-    <div class="full">
-      {lead && (
-        <a class="feat" href={url(`articles/${lead.id}/`)}>
-          <div class="img r1610">
-            <Image src={lead.data.cover} alt={lead.data.coverAlt} widths={[800, 1200]} sizes="(min-width: 900px) 780px, 100vw" loading="eager" />
-          </div>
-          <div class="txt">
-            <span class="kind">{lead.data.kind} {String(lead.data.issue).padStart(2, '0')}<span class="sub">{lead.data.topic}</span></span>
-            <h2>{lead.data.title}</h2>
-            <p>{lead.data.dek}</p>
-          </div>
-        </a>
-      )}
-    </div>
+    {lead && (
+      <a class="feat" href={url(`articles/${lead.id}/`)}>
+        <div class="img r43">
+          <Image src={lead.data.cover} alt={lead.data.coverAlt} widths={[700, 1180]} sizes="(min-width: 900px) 590px, 100vw" loading="eager" />
+        </div>
+        <div class="txt">
+          <span class="kind">{lead.data.kind} {String(lead.data.issue).padStart(2, '0')}</span>
+          <h2>{(lead.data.titleLines ?? [lead.data.title]).map((l, i) => (<>{i > 0 && <br />}{l}</>))}</h2>
+          <p class="dek">{lead.data.dek}</p>
+          <p class="by">{lead.data.byline}</p>
+        </div>
+      </a>
+    )}
   </main>
 </BaseLayout>
