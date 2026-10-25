@@ -23,7 +23,7 @@
 
 /* 以下全部来自 docs/reference/case.html 的基础样式 */
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 h1,h2,h3,h4,p,figure,ol,ul,blockquote,dl,dd{margin:0;padding:0}
 ol,ul{list-style:none}

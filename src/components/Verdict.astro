@@ -1,0 +1,10 @@
+---
+// 判断块：顶部 1px 黑线 + 标签 + 粗体判断句 + 一行说明（可选）。
+export interface Props { label: string; v: string; h?: string }
+const { label, v, h } = Astro.props;
+---
+<div class="verdict">
+  <p class="lbl">{label}</p>
+  <p class="v">{v}</p>
+  {h && <p class="h" style="border-left-style:solid;border-left-color:var(--line)">{h}</p>}
+</div>

@@ -1,0 +1,24 @@
+---
+// 06：核心指标嵌套、护栏与取舍。
+// 结构与类名取自 docs/reference/case.html，不改动；样式在 src/styles/prose.css。
+---
+<div class="step6">
+<p class="k">05<span>Success &amp; Trade-offs</span></p>
+<div><h4>核心指标、护栏与主要风险</h4>
+<div class="nest">
+<div class="ring"><span class="lbl">整体 AI 歌单</span><b>生成后有效收听率</b>
+<div class="ring"><span class="lbl">机会规模验证</span><b>有多少用户重复使用 Prompt 或歌单、实际开启更新</b>
+<div class="ring"><span class="lbl">候选 MVP 效果</span><b>更新后有效收听及用户已确认选择的保留情况</b></div>
+</div>
+</div>
+<div class="guard"><span class="lbl">护栏指标</span><b>新歌有效收听率、新歌收藏率</b><p>防止过度保留已有歌曲，损害音乐探索价值。</p></div>
+</div>
+<p class="small" style="margin-top:10px">更新后复访只适用于对应目标群体，不代表整个 AI 歌单功能的成功程度。</p>
+<div class="trade">
+<div class="tr"><div class="pair">新鲜度<i></i>稳定性</div><p>保留太多旧歌可能使更新失去意义；变化过大也可能破坏用户认可的音乐方向。</p></div>
+<div class="tr"><div class="pair">控制<i></i>操作复杂度</div><p>更多控制选项不一定改善体验，尤其可能增加即时探索用户的操作负担。</p></div>
+<div class="tr"><div class="pair">重复生成<i></i>结果归因</div><p>重复生成可能源于不满意，也可能是创意探索；复访变化还会受到实际场景发生频率影响。</p></div>
+</div>
+<p class="small" style="margin-top:16px">另外两项风险：目标群体可能有限，并非所有 AI 歌单都用于重复收听；现有能力可能重叠，必须先确认 Spotify 当前的单曲编辑、更新和恢复能力。</p>
+</div>
+</div>

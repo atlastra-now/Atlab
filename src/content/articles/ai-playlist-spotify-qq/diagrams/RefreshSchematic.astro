@@ -1,0 +1,29 @@
+---
+// 06：候选 MVP 两个机制与更新示意。
+// 结构与类名取自 docs/reference/case.html，不改动；样式在 src/styles/prose.css。
+---
+<div class="step6">
+<p class="k">04<span>Candidate MVP</span></p>
+<div><h4 class="h-big">让用户明确知道更新会改变什么，并确保已确认的选择不会被意外覆盖</h4>
+<div class="mech">
+<div>
+<span class="lbl">机制一</span><h5>明确更新规则</h5>
+<p>用户设置定期更新时，说明歌曲可能发生怎样的变化、哪些已有选择会受到影响。不要求用户在每次自动更新前进行确认。</p>
+<div class="rulecopy"><small>文案示意</small>每周一更新：标记 Keep 的歌曲会保留，其余替换为新的推荐。</div>
+</div>
+<div>
+<span class="lbl">机制二</span><h5>延续用户明确的选择</h5>
+<p>优先复用现有单曲编辑能力。只有确认现有机制无法可靠保留用户选择时，才考虑增加跨更新保护逻辑。</p>
+</div>
+</div>
+<div class="sch-big">
+<p class="lbl" style="margin-bottom:4px">机制二示意</p>
+<div class="sch" role="img" aria-label="示意：两首标记 Keep 的歌在更新后保留，其余替换为新推荐">
+<div><p class="h">更新前</p><ul><li class="k">曲目 A<svg class="ic"><use href="#i-lock"/></svg></li><li>曲目 B</li><li class="k">曲目 C<svg class="ic"><use href="#i-lock"/></svg></li><li>曲目 D</li></ul></div>
+<div class="mid"><span class="arr"></span>更新</div>
+<div><p class="h">更新后</p><ul><li class="k">曲目 A<svg class="ic"><use href="#i-lock"/></svg></li><li class="n">新推荐</li><li class="k">曲目 C<svg class="ic"><use href="#i-lock"/></svg></li><li class="n">新推荐</li></ul></div>
+</div>
+</div>
+<div class="scope"><span><b>辅助</b>更新发生后，提供简洁的变化摘要</span><span><b>后续迭代</b>历史版本恢复</span><span class="no"><b>不在 MVP 范围内</b>重新设计推荐算法、复杂多版本管理、完整 Prompt 记忆系统、社交协作编辑，以及新增一套与现有单曲操作重复的控制组件</span></div>
+</div>
+</div>

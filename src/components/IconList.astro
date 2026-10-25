@@ -1,0 +1,10 @@
+---
+// 图标 + 粗体短标题 + 一句说明。items 的 icon 对应 BaseLayout 里的图标符号 id（如 i-expand）。
+export interface Props { items: { href: string; icon: string; n: string; text: string }[]; class?: string }
+const { items, class: cls = 'iconrow c3' } = Astro.props;
+---
+<div class={cls}>
+  {items.map((it) => (
+    <a class="it" href={it.href} style="text-decoration:none"><svg class="ic"><use href={`#${it.icon}`}/></svg><b>{it.n}</b><p>{it.text}</p></a>
+  ))}
+</div>

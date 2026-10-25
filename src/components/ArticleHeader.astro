@@ -1,0 +1,10 @@
+---
+export interface Props { kind: string; issue: number; topic: string; title: string; dek: string; byline: string }
+const { kind, issue, topic, title, dek, byline } = Astro.props;
+---
+<header class="read hero-h">
+  <p class="kind">{kind} {String(issue).padStart(2, '0')}<span>{topic}</span></p>
+  <h1>{title}</h1>
+  <p class="dek">{dek}</p>
+  <p class="byline">{byline}</p>
+</header>
