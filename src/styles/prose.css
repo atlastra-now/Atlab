@@ -8,8 +8,8 @@
 .dek{font-size:18px;line-height:31px;color:var(--ink-2);margin-top:16px}
 .body p{font-size:15px;line-height:26px;text-wrap:pretty}
 .body p + p{margin-top:14px}
-.body .lead{font-family:var(--quote);font-weight:500;font-size:18.5px;line-height:33px;color:var(--ink)}
-.body .lead .say{font-family:inherit}
+.body .lead{font-family:var(--sans);font-weight:500;font-size:18.5px;line-height:33px;color:var(--ink)}
+.body .lead .say{font-family:var(--quote)}
 .body .lead + p{margin-top:24px}
 .body .pull{font-size:18px;line-height:30px;font-weight:500;margin-block:40px}
 .body .pull::before{content:"";display:block;width:24px;border-top:1.5px solid var(--ink);margin-bottom:16px}

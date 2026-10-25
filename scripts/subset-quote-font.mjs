@@ -1,5 +1,5 @@
 // 生成 public/fonts/quote-serif.woff2：只含「原话」实际用到的字。
-// 哪些元素用 --quote：.say、.body .lead、.c4-q（见 src/styles/base.css、prose.css），其后代继承。
+// 哪些元素用 --quote：.say、.c4-q（见 src/styles/base.css、prose.css），其后代继承。01 导语 .lead 用黑体，只有其中的 .say 原话用宋体。
 // 源字体 scripts/fonts-src/NotoSerifSC[wght].ttf 不提交；找不到源字体或生成失败时只给警告，沿用已提交的 quote-serif.woff2，不阻塞构建。
 import { readdir, readFile, writeFile, access } from 'node:fs/promises';
 import path from 'node:path';
@@ -41,8 +41,7 @@ function quoteText(src) {
     }
     if (VOID.has(tag) || selfClose) continue;
     const cls = ((attrs.match(/\bclass="([^"]*)"/) ?? [])[1] ?? '').split(/\s+/);
-    const inBody = stack.some((e) => e.cls.includes('body'));
-    const quote = cls.includes('say') || cls.includes('c4-q') || (cls.includes('lead') && inBody);
+    const quote = cls.includes('say') || cls.includes('c4-q');
     stack.push({ tag, cls, quote });
   }
   return out;
