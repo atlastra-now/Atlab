@@ -1,4 +1,4 @@
-/* 首页与 404 用的样式。首页部分取自 docs/reference/lab.html 的首页（.home / .feat / .meta / .img / .kind），数值不变；
+/* 首页与 404 用的样式。首页部分取自 docs/reference/lab.html 的首页（.home / .feat / .img / .kind），数值不变；
    lab.html 里的示例卡片、分类条不进入正式站。 */
 a.feat{text-decoration:none}
 .kind{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
@@ -12,7 +12,6 @@ a.feat{text-decoration:none}
 .feat .txt{grid-column:9 / 13;padding-bottom:4px}
 .feat h2{font-size:32px;line-height:42px;font-weight:700;letter-spacing:-.02em;margin-top:14px;text-wrap:balance}
 .feat p{font-size:16px;line-height:28px;color:var(--ink-2);margin-top:12px}
-.feat p.meta{font-size:13px;line-height:20px;color:var(--muted);margin-top:16px}
 @media (max-width:900px){
   .feat .img,.feat .txt{grid-column:1 / 13}
 }

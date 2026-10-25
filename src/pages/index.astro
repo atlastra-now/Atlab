@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { url } from '../utils/url';
-import { articleMinutes } from '../utils/reading-time';
 import '../styles/site.css';
 
 // 首页规则见 docs/HANDOFF.md §4.2：只列 draft:false 的文章，按 date 倒序；只有 1 篇时只显示头条。
@@ -25,7 +24,6 @@ const og = lead ? await getImage({ src: lead.data.cover, width: 1080, height: 56
             <span class="kind">{lead.data.kind} {String(lead.data.issue).padStart(2, '0')}<span class="sub">{lead.data.topic}</span></span>
             <h2>{lead.data.title}</h2>
             <p>{lead.data.dek}</p>
-            <p class="meta tn">{lead.data.kind} · 约 {articleMinutes(lead.id)} 分钟</p>
           </div>
         </a>
       )}

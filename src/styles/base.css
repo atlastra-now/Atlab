@@ -1,4 +1,4 @@
-/* 字体：自托管，不请求任何境外字体或 CDN。原话宋体 Quote Serif 在第 5 步生成后再加入。 */
+/* 字体：自托管，不请求任何境外字体或 CDN。Quote Serif 是按文章实际用字子集化的 Noto Serif SC 500（scripts/subset-quote-font.mjs）。 */
 @font-face {
   font-family: 'Schibsted Grotesk';
   src: url('/fonts/SchibstedGrotesk-400.woff2') format('woff2');
@@ -17,6 +17,13 @@
   font-family: 'Schibsted Grotesk';
   src: url('/fonts/SchibstedGrotesk-700.woff2') format('woff2');
   font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Quote Serif';
+  src: url('/fonts/quote-serif.woff2') format('woff2');
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
