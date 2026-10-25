@@ -1,0 +1,25 @@
+/* 首页与 404 用的样式。首页部分取自 docs/reference/lab.html 的首页（.home / .feat / .meta / .img / .kind），数值不变；
+   lab.html 里的示例卡片、分类条不进入正式站。 */
+a.feat{text-decoration:none}
+.kind{font-size:12px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--ink);display:inline-flex;align-items:center;gap:6px}
+.kind .sub{font-weight:400;color:var(--muted)}
+.img{position:relative;border-radius:3px;overflow:hidden;background:var(--wash)}
+.img img{width:100%;height:100%;object-fit:cover;display:block}
+.r1610{aspect-ratio:16/10}
+.home{padding-block:40px 96px}
+.feat{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;align-items:end;padding-bottom:48px;border-bottom:1px solid var(--line)}
+.feat .img{grid-column:1 / 9}
+.feat .txt{grid-column:9 / 13;padding-bottom:4px}
+.feat h2{font-size:32px;line-height:42px;font-weight:700;letter-spacing:-.02em;margin-top:14px;text-wrap:balance}
+.feat p{font-size:16px;line-height:28px;color:var(--ink-2);margin-top:12px}
+.feat p.meta{font-size:13px;line-height:20px;color:var(--muted);margin-top:16px}
+@media (max-width:900px){
+  .feat .img,.feat .txt{grid-column:1 / 13}
+}
+@media (max-width:620px){
+  .feat h2{font-size:26px;line-height:36px}
+}
+/* 404：只有状态码和返回链接，沿用上面的字级 */
+.nf{padding-block:88px 96px}
+.nf h1{font-size:32px;line-height:42px;font-weight:700;letter-spacing:-.02em;margin-top:14px}
+.nf a{display:inline-flex;align-items:center;min-height:44px;margin-top:20px;text-underline-offset:4px}

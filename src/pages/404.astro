@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../utils/url';
+import '../styles/site.css';
+---
+<BaseLayout title="404">
+  <main class="nf pad">
+    <div class="full">
+      <h1>404</h1>
+      <a href={url()}>返回首页</a>
+    </div>
+  </main>
+</BaseLayout>

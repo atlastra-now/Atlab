@@ -9,7 +9,8 @@ export async function getStaticPaths() {
 }
 const { article } = Astro.props;
 const { Content } = await render(article);
-const og = await getImage({ src: article.data.cover, width: 1200, format: 'jpg' });
+// 分享图：封面（已避开用户名区域）裁成 1080×565（1.91:1），底部对齐保留标题。
+const og = await getImage({ src: article.data.cover, width: 1080, height: 565, fit: 'cover', position: 'bottom', format: 'jpg' });
 ---
 <ArticleLayout title={article.data.title} description={article.data.dek} image={og.src}>
   <Content />
