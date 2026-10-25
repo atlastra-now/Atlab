@@ -54,3 +54,10 @@ a{color:inherit}
 .mark .ast{width:12px;height:12px;margin-top:-10px}
 .site nav{font-size:14px;font-weight:500;color:var(--ink-2)}
 .site nav a{text-decoration:none}
+
+/* 手机端页眉链接：透明伪元素把点击区域扩到约 44px，不改变布局和外观（作者已同意，参考页之外）。 */
+@media (max-width:700px){
+  .mark,.site nav a{position:relative}
+  .mark::after{content:"";position:absolute;inset:-6px 0}
+  .site nav a::after{content:"";position:absolute;inset:-14px -8px}
+}

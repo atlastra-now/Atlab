@@ -480,3 +480,17 @@ sup.ref a:hover{color:var(--ink)}
   .gate-go{background:var(--acc-fill)!important}
   .gate-go p{opacity:.9}
 }
+
+/* 手机端（≤700px）两处改动，作者已同意，参考页之外：
+   1) 正文段落 16px / 28px。只改 .body p 与 .c4-body p；导语 .lead、引句 .pull、带类名的次级段落（.hyp、.muted）和图内文字不动。
+   2) 真正的链接用透明伪元素或透明的竖向内边距把点击区域扩到约 44px，不改变布局和外观。 */
+@media (max-width:700px){
+  .body p,.c4-body p{font-size:16px;line-height:28px}
+  .map-seg,sup.ref a{position:relative}
+  .map-seg::after{content:"";position:absolute;inset:-9px 0}
+  sup.ref a::after{content:"";position:absolute;inset:-17px -21px}
+  /* 可能折成多行的链接：用透明的竖向内边距扩大点击区域。.xr 是行内元素，内边距不影响布局；
+     .refs a 是 grid 子项，用等量负外边距抵消，行高不变 */
+  .xr{padding-block:13px}
+  .refs a{padding-block:13px;margin-block:-13px}
+}
