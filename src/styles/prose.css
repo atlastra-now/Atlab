@@ -473,3 +473,10 @@ sup.ref a:hover{color:var(--ink)}
 .step6.gatewrap .gate-go{padding:12px}
 .step6.gatewrap .gate-go b{font-size:16px;line-height:24px}
 @media (max-width:900px){.step6.gatewrap .gates{grid-template-columns:1fr}}
+
+/* 参考页之外的小修（作者已同意，只改这一处）：深色模式下「进入候选 MVP」节点是白字压在浅蓝 --acc（#8ea6ff）上，
+   对比度只有约 2.3。改用浅色模式的蓝作底，副标题不透明度提到 .9；其余样式不动。 */
+@media (prefers-color-scheme: dark){
+  .gate-go{background:var(--acc-fill)!important}
+  .gate-go p{opacity:.9}
+}

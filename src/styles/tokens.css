@@ -12,6 +12,7 @@
   --qq: #f0b400;
   --acc: #2f5bea;
   --acc-soft: rgba(47, 91, 234, 0.07);
+  --acc-fill: #2f5bea; /* 实心蓝底（白字）。深色模式也用这个值，见 prose.css 末尾 */
   --band: #f6f6f3;
 
   --sans: 'Schibsted Grotesk', 'PingFang SC', 'HarmonyOS Sans SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
