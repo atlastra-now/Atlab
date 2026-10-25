@@ -368,7 +368,7 @@ sup.ref a:hover{color:var(--ink)}
 .c4-body p.hyp .lb{display:block;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--ink-2);margin-bottom:2px}
 
 /* ===== 方案 C 精简：图 + 三行紧凑说明 ===== */
-.E{max-width:700px;margin:0 auto}
+.E{max-width:var(--read);margin:0 auto}
 .E svg{display:block;width:min(340px,100%);height:auto;margin:0 auto}
 .Er{margin-top:12px;border-top:1px solid var(--ink)}
 .Er li{display:grid;grid-template-columns:132px minmax(0,1fr) minmax(0,1fr);column-gap:20px;padding-block:9px;border-bottom:1px solid var(--line);align-items:baseline}
@@ -378,7 +378,7 @@ sup.ref a:hover{color:var(--ink)}
 @media (max-width:700px){.Er li{grid-template-columns:1fr;row-gap:2px}.Er .in{border-left:1px dashed var(--muted)}}
 
 /* 图7：三者一致（三角） */
-.c4-T{max-width:700px;margin:0 auto}.c4-T svg{width:100%;height:auto;display:block}
+.c4-T{max-width:var(--read);margin:0 auto}.c4-T svg{width:100%;height:auto;display:block}
 .c4-T text{font-family:var(--sans)}
 .c4-T .ln{stroke:var(--ink);stroke-width:1.2}.c4-T .bgf{fill:var(--bg)}
 .c4-T .tick{stroke:var(--acc);stroke-width:2;stroke-linecap:round}
@@ -399,7 +399,7 @@ sup.ref a:hover{color:var(--ink)}
 @media (max-width:560px){.c4-T .d{display:none}.c4-T .m{display:block;max-width:360px;margin:0 auto}.c4-T .mn{display:block}.c4-T .node text{font-size:16px}.c4-T .mid{font-size:13px}}
 
 /* 图8：三种收听目的（宽度同正文；无箭头，字段名只在首栏显示） */
-.c5{max-width:700px;margin:0 auto}
+.c5{max-width:var(--read);margin:0 auto}
 .c5-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,auto);column-gap:28px}
 .c5-c{display:grid;grid-row:1 / span 3;grid-template-rows:subgrid}
 .c5-c i{display:block;visibility:hidden;font-style:normal;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--muted);margin-bottom:3px}
@@ -430,7 +430,7 @@ sup.ref a:hover{color:var(--ink)}
 @media (max-width:620px){#ch-02 .cov li{grid-template-columns:1fr;gap:4px}}
 
 /* 05 评估表：700 栏内三栏，行标题只在首栏显示，选中项浅底 */
-.c6{max-width:700px;margin:0 auto}
+.c6{max-width:var(--read);margin:0 auto}
 .c6-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(6,auto);column-gap:28px}
 .c6-c{display:grid;grid-row:1 / span 6;grid-template-rows:subgrid}
 .c6-c i{display:block;visibility:hidden;font-style:normal;font-size:11px;line-height:16px;font-weight:700;letter-spacing:.02em;color:var(--muted);margin-bottom:3px}
@@ -450,7 +450,7 @@ sup.ref a:hover{color:var(--ink)}
 @media (max-width:700px){.c6-g{display:block}.c6-c{display:block;margin-top:28px}.c6-c:first-child{margin-top:0}.c6-c.sel{padding-block:0 4px}.c6-c i,.c6-c:first-child i{visibility:visible}.c6-c .h{padding-bottom:14px}.c6-c .r,.c6-c .d{padding-bottom:12px}}
 
 /* Hero 新版：一个 Prompt + 两个结果 */
-.hero-fig2{margin-top:56px;max-width:700px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:40px;align-items:center}
+.hero-fig2{margin-top:56px;max-width:var(--read);margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:40px;align-items:center}
 .hero-fig2 .p .say{display:block;font-size:28px;line-height:42px;margin-top:10px}
 .hero-fig2 .p .small{margin-top:12px;max-width:17em}
 .hero-fig2 .p .to{margin-top:28px;height:0;border-top:1px solid var(--ink);position:relative;max-width:120px}
