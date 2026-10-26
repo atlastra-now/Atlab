@@ -18,6 +18,14 @@ a.feat{text-decoration:none}
   .feat .dek{font-size:16px;line-height:28px;margin-top:20px}
   .feat .by{margin-top:20px}
 }
+/* 首页卡片网格：三栏，只有一张卡时占左边三分之一 */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;max-width:var(--full);margin:72px auto 0;padding-top:48px;border-top:1px solid var(--line)}
+a.card{display:block;text-decoration:none;color:inherit}
+a.card .kind{display:block;margin-top:20px}
+a.card h3{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-.01em;margin-top:8px}
+a.card .sub{font-size:16px;line-height:26px;color:var(--ink);margin-top:4px}
+a.card .desc{font-size:14px;line-height:24px;color:var(--ink-2);margin-top:10px}
+@media (max-width:900px){.cards{grid-template-columns:minmax(0,1fr);margin-top:56px;padding-top:40px}}
 /* 404：只有状态码和返回链接，沿用上面的字级 */
 .nf{padding-block:88px 96px}
 .nf h1{font-size:32px;line-height:42px;font-weight:700;letter-spacing:-.02em;margin-top:14px}
