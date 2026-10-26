@@ -23,7 +23,7 @@ a.feat{text-decoration:none}
 a.card{display:block;text-decoration:none;color:inherit}
 a.card .kind{display:block;margin-top:20px}
 a.card h3{font-size:24px;line-height:32px;font-weight:700;letter-spacing:-.01em;margin-top:8px}
-a.card .sub{font-size:16px;line-height:26px;color:var(--ink);margin-top:4px}
+a.card h3 .sub{font-size:16px;line-height:26px;font-weight:400;letter-spacing:0;margin-left:6px}
 a.card .desc{font-size:14px;line-height:24px;color:var(--ink-2);margin-top:10px}
 @media (max-width:900px){.cards{grid-template-columns:minmax(0,1fr);margin-top:56px;padding-top:40px}}
 /* 404：只有状态码和返回链接，沿用上面的字级 */

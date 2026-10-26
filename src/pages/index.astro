@@ -11,7 +11,7 @@ import '../styles/site.css';
 const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort((a, b) => b.data.date.localeCompare(a.data.date));
 const lead = articles[0];
 // Doxa 暂时没有站内文章，卡片直接链接到它自己的网站。
-const doxa = { href: 'https://trydoxa.xyz/', kind: 'Case Study 02', title: 'Doxa', sub: '从讨论到清晰的群体决策', desc: '让小组讨论中的观点、理由与分歧逐步形成可追溯的「推理地图」，帮助团队看清选择，作出决策。' };
+const doxa = { href: 'https://trydoxa.xyz/', kind: 'Product', title: 'Doxa', sub: '从讨论到清晰的群体决策', desc: '让小组讨论中的观点、理由与分歧逐步形成可追溯的「推理地图」，帮助团队看清选择，作出决策。' };
 ---
 <BaseLayout title="atlab" description={lead?.data.dek} image={url('og.png')}>
   <main class="home pad">
@@ -21,7 +21,7 @@ const doxa = { href: 'https://trydoxa.xyz/', kind: 'Case Study 02', title: 'Doxa
           <Image src={lead.data.cover} alt={lead.data.coverAlt} widths={[700, 1180]} sizes="(min-width: 900px) 560px, 100vw" loading="eager" />
         </div>
         <div class="txt">
-          <span class="kind">{lead.data.kind} {String(lead.data.issue).padStart(2, '0')}</span>
+          <span class="kind">{lead.data.kind}</span>
           <h2>{(lead.data.titleLines ?? [lead.data.title]).map((l, i) => (<>{i > 0 && <br />}{l}</>))}</h2>
           <p class="dek">{lead.data.dek}</p>
           <p class="by">{lead.data.byline}</p>
@@ -32,8 +32,7 @@ const doxa = { href: 'https://trydoxa.xyz/', kind: 'Case Study 02', title: 'Doxa
       <a class="card" href={doxa.href} target="_blank" rel="noopener">
         <div class="img r43"><Image src={doxaCover} alt="Doxa 的推理地图：从「Start with students for validation」到「Validate with students first」的决策节点" widths={[400, 800]} sizes="(min-width: 900px) 320px, 100vw" /></div>
         <span class="kind">{doxa.kind}</span>
-        <h3>{doxa.title}</h3>
-        <p class="sub">{doxa.sub}</p>
+        <h3><span>{doxa.title}</span> <span class="sub">{doxa.sub}</span></h3>
         <p class="desc">{doxa.desc}</p>
       </a>
     </div>
