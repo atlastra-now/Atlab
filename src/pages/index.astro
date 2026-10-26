@@ -10,7 +10,7 @@ import '../styles/site.css';
 const articles = (await getCollection('articles', ({ data }) => !data.draft)).sort((a, b) => b.data.date.localeCompare(a.data.date));
 const lead = articles[0];
 ---
-<BaseLayout title="Product Lab" description={lead?.data.dek} image={url('og.png')}>
+<BaseLayout title="atlab" description={lead?.data.dek} image={url('og.png')}>
   <main class="home pad">
     {lead && (
       <a class="feat" href={url(`articles/${lead.id}/`)}>
