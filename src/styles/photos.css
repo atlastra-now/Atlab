@@ -16,11 +16,10 @@ html{scrollbar-gutter:stable}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 .chips button{border:1px solid var(--line);background:transparent;color:var(--ink-2);font:inherit;font-size:13px;border-radius:999px;padding:5px 12px;cursor:pointer}
 .chips button:hover,.chips button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
-.bar{display:flex;justify-content:flex-end;margin-top:28px;font-size:13px;border-bottom:1px solid var(--ink);padding-bottom:10px}
-.bar{padding-bottom:0}
+.bar{display:flex;justify-content:flex-end;margin-top:28px;font-size:13px;padding-bottom:10px}
 .seg{display:flex;gap:20px}
-/* 和页眉导航「照片」同一种做法：纯文字，选中的下面一条 2px 的线（这里用站里的蓝），线压在分隔线上 */
-.seg button{border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:2px 0 10px;cursor:pointer;border-radius:0}
+/* 和页眉导航「照片」同一种做法：纯文字，选中的下面一条 2px 的线（这里用站里的蓝），线在文字下方 */
+.seg button{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:2px 0 6px;cursor:pointer;border-radius:0}
 .seg button:hover{color:var(--ink)}
 .seg button[aria-pressed="true"]{color:var(--acc);border-bottom-color:var(--acc)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -46,7 +45,7 @@ html{scrollbar-gutter:stable}
 /* Entropy */
 .g.open{max-width:var(--full);margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);column-gap:24px;row-gap:48px;align-items:start}
 .g.open .c{grid-column:var(--cs)/span var(--sp);grid-row:var(--row);margin-top:var(--mt)}
-.g.open .cap,.g.open .m{animation:fade .5s .25s both}
+.g.open .cap,.g.open .m{animation:fade .6s calc(.9s + var(--i, 0) * 40ms) both} /* 图注等照片散开之后再出现 */
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (max-width:760px){
   .photos{padding-block:32px 80px}
@@ -60,6 +59,8 @@ html{scrollbar-gutter:stable}
 @media (prefers-reduced-motion:reduce){.g .c,.go{transition:none}.g.open .cap,.g.open .m{animation:none}}
 
 /* Entropy：随着滚动，照片从淡到清晰（浏览器支持滚动驱动动画时）。渐显的距离是 animation-range 的结尾（cover 50%：照片中心走到屏幕中间时完全清晰），想慢一点就把 50% 调大。动画放在 .in 上，不和 .dim 的透明度、切换动画冲突 */
+/* 散开的过程中照片全部清晰（不然飞行中的照片按它们最终的位置被淡化），散开结束后再按滚动渐显 */
+.g.flying .in{animation:none!important;opacity:1!important}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .g.open .in{animation:reveal linear both}

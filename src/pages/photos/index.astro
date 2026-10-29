@@ -93,7 +93,7 @@ const EX = ['布拉格', '落日时分', '赫尔辛基', '去年的夏天'];
     </div>
     <div class="g sheet" id="g">
       {items.map((p, i) => (
-        <a class="c" href={p.full} style={`--cs:${p.cs};--sp:${p.sp};--row:${p.row};--mt:${p.mt}px;--r:${p.r};--rn:${p.rn};--ri:${p.ri}`}
+        <a class="c" href={p.full} style={`--cs:${p.cs};--sp:${p.sp};--row:${p.row};--mt:${p.mt}px;--r:${p.r};--rn:${p.rn};--ri:${p.ri};--i:${i}`}
           data-i={i} data-full={p.full} data-w={p.isVideo ? 'v' : 'p'} data-mp4={p.mp4} data-webm={p.webm}
           data-place={p.place} data-place-zh={PLACE_ZH[p.place] ?? ''} data-rn={p.rn} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m}
           aria-label={[p.title, p.place].filter(Boolean).join('，') || p.file}>
