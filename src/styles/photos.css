@@ -1,4 +1,6 @@
 /* 照片页。结构和数值取自 docs/photo/reference/photo.html（Order 印样 / Entropy 图集 / 搜索）；颜色、字体、页眉沿用站里的 tokens。 */
+/* Order 很短、Entropy 很长：滚动条出现和消失会让整页横向挪 15px，看起来像闪动。预留滚动条位置 */
+html{scrollbar-gutter:stable}
 .photos{max-width:1120px;margin:0 auto;padding-block:56px 120px}
 .photos .top{max-width:var(--full);margin:0 auto 40px}
 .photos h1{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:0 0 28px}
@@ -17,7 +19,7 @@
 .bar{display:flex;justify-content:flex-end;margin-top:28px;font-size:13px;border-bottom:1px solid var(--ink);padding-bottom:10px}
 .seg{display:flex;gap:4px}
 .seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:2px 8px;cursor:pointer;border-radius:4px}
-.seg button[aria-pressed="true"]{color:var(--ink);background:var(--wash)}
+.seg button[aria-pressed="true"]{color:var(--acc);background:var(--acc-soft)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .photos button:focus-visible,.photos a:focus-visible,.photos input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .ask input:focus-visible{outline:0}
@@ -54,8 +56,23 @@
 }
 @media (prefers-reduced-motion:reduce){.g .c,.go{transition:none}.g.open .cap,.g.open .m{animation:none}}
 
+/* Entropy：随着滚动，照片从淡到清晰（浏览器支持滚动驱动动画时）。动画放在 .in 上，不和 .dim 的透明度、切换动画冲突 */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .g.open .in{animation:reveal linear both}
+    /* 另起一条规则：压缩器会把 animation-timeline 合并进 animation 简写，Chrome 不认那种简写 */
+    .g.open>.c>.in{animation-timeline:view();animation-range:entry 0% entry 70%}
+    @keyframes reveal{from{opacity:.08}to{opacity:1}}
+  }
+}
+
 /* 放大：外壳沿用站里的 .lbx（src/styles/lightbox.css），这里只加照片版的舞台和图注 */
-.lbx-photo .lbx-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:16px max(16px,env(safe-area-inset-right,0px))}
-.lbx-photo .lbx-stage img,.lbx-photo .lbx-stage video{display:block;max-width:100%;max-height:100%;min-height:0;width:auto;height:auto;object-fit:contain;border-radius:0}
-.lbx-photo .lbx-cap{margin:0;padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 20px);text-align:center;font-size:14px;line-height:22px;color:#ededea}
-.lbx-photo .lbx-cap span{color:#8c8c86;margin-left:10px;font-variant-numeric:tabular-nums}
+.lbx.lbx-photo{background:#111112}
+.lbx.lbx-photo .lbx-bar{border-bottom:0;font-size:14px;padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:8px}
+.lbx.lbx-photo .lbx-n{color:#8c8c86;font-variant-numeric:tabular-nums}
+.lbx.lbx-photo button{border:0;border-radius:4px;background:transparent;color:#ededea;font:500 14px var(--sans);padding:4px 12px}
+.lbx.lbx-photo button:hover:not(:disabled){background:rgba(255,255,255,.08)}
+.lbx.lbx-photo button:focus-visible{outline:2px solid #8ea6ff;outline-offset:2px}
+.lbx.lbx-photo .lbx-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px max(16px,env(safe-area-inset-right,0px)) 0}
+.lbx.lbx-photo .lbx-stage img,.lbx-photo .lbx-stage video{display:block;max-width:100%;max-height:100%;min-height:0;width:auto;height:auto;object-fit:contain;border-radius:0}
+.lbx.lbx-photo .lbx-cap{margin:0;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 22px);text-align:center;font-size:14px;line-height:22px;color:#ededea}

@@ -97,18 +97,20 @@ const EX = ['布拉格', '落日时分', '赫尔辛基', '去年的夏天'];
           data-i={i} data-full={p.full} data-w={p.isVideo ? 'v' : 'p'} data-mp4={p.mp4} data-webm={p.webm}
           data-place={p.place} data-place-zh={PLACE_ZH[p.place] ?? ''} data-rn={p.rn} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m}
           aria-label={[p.title, p.place].filter(Boolean).join('，') || p.file}>
-          {p.place && <div class="m"><span>{p.place}</span></div>}
-          <div class={`p${p.isVideo ? ' vid' : ''}`}>
-            {p.isVideo ? (
-              <video muted loop playsinline preload="none" poster={p.src} aria-hidden="true">
-                {p.webm && <source src={p.webm} type="video/webm" />}
-                {p.mp4 && <source src={p.mp4} type="video/mp4" />}
-              </video>
-            ) : (
-              <img src={p.src} srcset={p.srcset} sizes="(min-width: 760px) 110px, 25vw" alt={[p.title, p.place].filter(Boolean).join('，')} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" />
-            )}
+          <div class="in">
+            {p.place && <div class="m"><span>{p.place}</span></div>}
+            <div class={`p${p.isVideo ? ' vid' : ''}`}>
+              {p.isVideo ? (
+                <video muted loop playsinline preload="none" poster={p.src} aria-hidden="true">
+                  {p.webm && <source src={p.webm} type="video/webm" />}
+                  {p.mp4 && <source src={p.mp4} type="video/mp4" />}
+                </video>
+              ) : (
+                <img src={p.src} srcset={p.srcset} sizes="(min-width: 760px) 110px, 25vw" alt={[p.title, p.place].filter(Boolean).join('，')} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" />
+              )}
+            </div>
+            {p.title && <span class="cap">{p.title}</span>}
           </div>
-          {p.title && <span class="cap">{p.title}</span>}
         </a>
       ))}
     </div>

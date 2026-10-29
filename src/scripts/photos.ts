@@ -31,6 +31,32 @@ if ('IntersectionObserver' in window && !reduce) {
   videos.forEach((v) => io.observe(v));
 }
 
+/* 大图：Order 里每张只有几十像素宽，先加载小图（首屏更快）；页面空闲时把 Entropy 要用的大图悄悄预载进缓存，
+   预载好了再换 sizes，换的时候是瞬间的，不会在切换动画里出现空白。 */
+const LARGE_SIZES = '(min-width: 760px) 600px, 100vw';
+const imgs = items.map((el) => el.querySelector('img')).filter(Boolean) as HTMLImageElement[];
+let largeReady = false;
+function useLarge() {
+  if (largeReady) return;
+  largeReady = true;
+  imgs.forEach((im) => im.setAttribute('sizes', LARGE_SIZES));
+}
+function preloadLarge() {
+  const pre = imgs.map(
+    (im) =>
+      new Promise<void>((done) => {
+        const t = new Image();
+        t.sizes = LARGE_SIZES;
+        t.srcset = im.srcset;
+        t.onload = t.onerror = () => done();
+        t.src = im.src;
+      }),
+  );
+  Promise.all(pre).then(useLarge);
+}
+const idle = (window as unknown as { requestIdleCallback?: (f: () => void) => void }).requestIdleCallback ?? ((f: () => void) => setTimeout(f, 1500));
+window.addEventListener('load', () => idle(preloadLarge));
+
 /* Order ⇄ Entropy：FLIP，每张延迟 28ms，总时长 0.7s。
    .p 只做位移 + 等比缩放 + clip-path 裁剪，图片不被拉伸：
    Order 里看到的是照片中间的方形裁切，Entropy 里是完整照片，裁切区域随动画平滑展开或收起。 */
@@ -45,7 +71,7 @@ function setMode(m: 'sheet' | 'open') {
   bS.setAttribute('aria-pressed', String(!isOpen));
   bO.setAttribute('aria-pressed', String(isOpen));
   // Order 里每张只有几十像素宽，先加载小图；切到 Entropy 再换成大图（sizes 随排布变化）
-  items.forEach((el) => el.querySelector('img')?.setAttribute('sizes', isOpen ? '(min-width: 760px) 600px, 100vw' : '(min-width: 760px) 110px, 25vw'));
+  if (isOpen) useLarge();
   if (reduce) return;
   const last = rects();
   items.forEach((el, i) => {
