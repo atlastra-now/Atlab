@@ -62,7 +62,6 @@ const items = await Promise.all(
       full: full.src,
       mp4: isVideo ? find(videoUrls, `${base}.mp4`) : undefined,
       webm: isVideo ? find(videoUrls, `${base}.webm`) : undefined,
-      ym: p.date ? p.date.slice(0, 4) + '.' + p.date.slice(5, 7) : '',
       y: p.date ? Number(p.date.slice(0, 4)) : 0,
       m: p.date ? Number(p.date.slice(5, 7)) : 0,
     };
@@ -88,9 +87,9 @@ const EX = ['下雨的夜晚', '安静的清晨', '去年的海边', '京都'];
       {items.map((p, i) => (
         <a class="c" href={p.full} style={`--cs:${p.cs};--sp:${p.sp};--row:${p.row};--mt:${p.mt}px;--r:${p.r}`}
           data-i={i} data-full={p.full} data-w={p.isVideo ? 'v' : 'p'} data-mp4={p.mp4} data-webm={p.webm}
-          data-place={p.place} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m} data-ym={p.ym}
-          aria-label={[p.title, p.place, p.ym].filter(Boolean).join('，') || p.file}>
-          {(p.place || p.ym) && <div class="m"><span>{p.place}</span><span>{p.ym}</span></div>}
+          data-place={p.place} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m}
+          aria-label={[p.title, p.place].filter(Boolean).join('，') || p.file}>
+          {p.place && <div class="m"><span>{p.place}</span></div>}
           <div class={`p${p.isVideo ? ' vid' : ''}`}>
             {p.isVideo ? (
               <video muted loop playsinline preload="none" poster={p.src} aria-hidden="true">

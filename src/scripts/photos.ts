@@ -168,11 +168,8 @@ function show(i: number) {
     stage.appendChild(im);
   }
   cap.innerHTML = '';
-  const t = document.createElement('span');
-  t.style.cssText = 'margin:0;color:inherit';
   const parts = [x.title, x.place].filter(Boolean) as string[];
   cap.append(parts.join('　'));
-  if (x.ym) { const s = document.createElement('span'); s.textContent = x.ym; cap.appendChild(s); }
   const v = visible();
   const k = v.indexOf(i);
   num.textContent = v.length > 1 && k >= 0 ? `${k + 1} / ${v.length}` : '';
