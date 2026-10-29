@@ -57,11 +57,11 @@ function preloadLarge() {
 const idle = (window as unknown as { requestIdleCallback?: (f: () => void) => void }).requestIdleCallback ?? ((f: () => void) => setTimeout(f, 1500));
 window.addEventListener('load', () => idle(preloadLarge));
 
-/* Order ⇄ Entropy：FLIP，每张延迟 45ms，单张 1.5s。
+/* Order ⇄ Entropy：FLIP，每张延迟 28ms，单张 0.7s。
    .p 只做位移 + 等比缩放 + clip-path 裁剪，图片不被拉伸：
    Order 里看到的是照片中间的方形裁切，Entropy 里是完整照片，裁切区域随动画平滑展开或收起。 */
-const FLY = 1500; // 单张散开用时（ms）
-const STAGGER = 45; // 相邻两张的间隔（ms）
+const FLY = 700; // 单张散开用时（ms）
+const STAGGER = 28; // 相邻两张的间隔（ms）
 type Box = { left: number; top: number; width: number; height: number };
 const rects = (): Box[] => items.map((el) => (el.querySelector('.p') as HTMLElement).getBoundingClientRect());
 function setMode(m: 'sheet' | 'open') {
@@ -76,8 +76,6 @@ function setMode(m: 'sheet' | 'open') {
   if (isOpen) useLarge();
   if (reduce) return;
   const last = rects();
-  g.classList.add('flying');
-  window.setTimeout(() => g.classList.remove('flying'), FLY + STAGGER * items.length + 50);
   items.forEach((el, i) => {
     const p = el.querySelector('.p') as HTMLElement;
     const a = first[i], l = last[i];
@@ -97,7 +95,7 @@ function setMode(m: 'sheet' | 'open') {
         { transform: `translate(${tx}px,${ty}px) scale(${s})`, clipPath: `inset(${iy}px ${ix}px)` },
         { transform: 'none', clipPath: 'inset(0px)' },
       ],
-      { duration: FLY, delay: i * STAGGER, easing: 'cubic-bezier(.6,.05,.2,1)', fill: 'backwards' },
+      { duration: FLY, delay: i * STAGGER, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' },
     );
     anim.onfinish = anim.oncancel = () => { p.style.overflow = ''; };
   });

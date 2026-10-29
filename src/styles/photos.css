@@ -45,7 +45,7 @@ html{scrollbar-gutter:stable}
 /* Entropy */
 .g.open{max-width:var(--full);margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);column-gap:24px;row-gap:48px;align-items:start}
 .g.open .c{grid-column:var(--cs)/span var(--sp);grid-row:var(--row);margin-top:var(--mt)}
-.g.open .cap,.g.open .m{animation:fade .6s calc(.9s + var(--i, 0) * 40ms) both} /* 图注等照片散开之后再出现 */
+.g.open .cap,.g.open .m{animation:fade .5s .25s both}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (max-width:760px){
   .photos{padding-block:32px 80px}
@@ -59,8 +59,6 @@ html{scrollbar-gutter:stable}
 @media (prefers-reduced-motion:reduce){.g .c,.go{transition:none}.g.open .cap,.g.open .m{animation:none}}
 
 /* Entropy：随着滚动，照片从淡到清晰（浏览器支持滚动驱动动画时）。渐显的距离是 animation-range 的结尾（cover 50%：照片中心走到屏幕中间时完全清晰），想慢一点就把 50% 调大。动画放在 .in 上，不和 .dim 的透明度、切换动画冲突 */
-/* 散开的过程中照片全部清晰（不然飞行中的照片按它们最终的位置被淡化），散开结束后再按滚动渐显 */
-.g.flying .in{animation:none!important;opacity:1!important}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .g.open .in{animation:reveal linear both}
