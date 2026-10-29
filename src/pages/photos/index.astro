@@ -56,6 +56,8 @@ const items = await Promise.all(
       ...p,
       isVideo,
       r: `${meta.width}/${meta.height}`,
+      rn: meta.width / meta.height,
+      ri: meta.height / meta.width,
       cs, sp, row, mt,
       srcset: thumbs.map((t, k) => `${t.src} ${[240, 480, 960, 1440][k]}w`).join(', '),
       src: thumbs[1].src,
@@ -68,7 +70,13 @@ const items = await Promise.all(
   }),
 );
 
-const EX = ['下雨的夜晚', '安静的清晨', '去年的海边', '京都'];
+// 地点用英文显示；搜索时认中文地名。新增地点时在这里补一行。
+const PLACE_ZH: Record<string, string> = {
+  Vienna: '维也纳', Stockholm: '斯德哥尔摩', Barcelona: '巴塞罗那', Prague: '布拉格', Lisbon: '里斯本', Helsinki: '赫尔辛基',
+  Paris: '巴黎', Milan: '米兰', Gosau: '戈绍', 'St. Wolfgang': '圣沃尔夫冈',
+};
+// 示例词：要和真实照片的地点、标签、日期对得上
+const EX = ['布拉格', '落日时分', '赫尔辛基', '去年的夏天'];
 ---
 <BaseLayout title="照片" current="photos" description="照片">
   <main class="photos pad">
@@ -85,9 +93,9 @@ const EX = ['下雨的夜晚', '安静的清晨', '去年的海边', '京都'];
     </div>
     <div class="g sheet" id="g">
       {items.map((p, i) => (
-        <a class="c" href={p.full} style={`--cs:${p.cs};--sp:${p.sp};--row:${p.row};--mt:${p.mt}px;--r:${p.r}`}
+        <a class="c" href={p.full} style={`--cs:${p.cs};--sp:${p.sp};--row:${p.row};--mt:${p.mt}px;--r:${p.r};--rn:${p.rn};--ri:${p.ri}`}
           data-i={i} data-full={p.full} data-w={p.isVideo ? 'v' : 'p'} data-mp4={p.mp4} data-webm={p.webm}
-          data-place={p.place} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m}
+          data-place={p.place} data-place-zh={PLACE_ZH[p.place] ?? ''} data-rn={p.rn} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m}
           aria-label={[p.title, p.place].filter(Boolean).join('，') || p.file}>
           {p.place && <div class="m"><span>{p.place}</span></div>}
           <div class={`p${p.isVideo ? ' vid' : ''}`}>

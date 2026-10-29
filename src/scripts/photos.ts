@@ -15,6 +15,7 @@ const ALIAS: Record<string, string[]> = {
   海边: ['海', '水', '岸', '浪', '船'], 早晨: ['晨', '早', '日出'], 人: ['人', '背影', '朋友'], 光: ['光', '影', '阳', '亮'],
 };
 const CN: Record<string, number> = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10, 十一: 11, 十二: 12 };
+const SEASON: Record<string, number[]> = { 春天: [3, 4, 5], 夏天: [6, 7, 8], 秋天: [9, 10, 11], 冬天: [12, 1, 2] };
 const NOW = [new Date().getFullYear(), new Date().getMonth() + 1];
 let auto = true;
 
@@ -30,8 +31,11 @@ if ('IntersectionObserver' in window && !reduce) {
   videos.forEach((v) => io.observe(v));
 }
 
-/* Order → Entropy：FLIP，每张延迟 28ms，总时长 0.7s */
-const rects = () => items.map((el) => (el.querySelector('.p') as HTMLElement).getBoundingClientRect());
+/* Order ⇄ Entropy：FLIP，每张延迟 28ms，总时长 0.7s。
+   .p 只做位移 + 等比缩放 + clip-path 裁剪，图片不被拉伸：
+   Order 里看到的是照片中间的方形裁切，Entropy 里是完整照片，裁切区域随动画平滑展开或收起。 */
+type Box = { left: number; top: number; width: number; height: number };
+const rects = (): Box[] => items.map((el) => (el.querySelector('.p') as HTMLElement).getBoundingClientRect());
 function setMode(m: 'sheet' | 'open') {
   const isOpen = m === 'open';
   if (isOpen === g.classList.contains('open')) return;
@@ -48,12 +52,24 @@ function setMode(m: 'sheet' | 'open') {
     const p = el.querySelector('.p') as HTMLElement;
     const a = first[i], l = last[i];
     if (!l.width || !l.height) return;
-    p.style.transition = 'none';
-    p.style.transform = `translate(${a.left - l.left}px,${a.top - l.top}px) scale(${a.width / l.width},${a.height / l.height})`;
-    void p.offsetWidth;
-    p.style.transition = `transform .7s cubic-bezier(.2,.7,.2,1) ${i * 28}ms`;
-    p.style.transform = 'none';
-    p.addEventListener('transitionend', function h() { p.style.transition = ''; p.removeEventListener('transitionend', h); });
+    const r = Number(d(el).rn) || l.width / l.height;
+    // 起点时「看得见的区域」在 .p 自己坐标里的大小：去 Entropy 时是中间的方块，回 Order 时是整张照片（比 .p 大，居中）
+    let vw: number, vh: number;
+    if (isOpen) { vw = vh = Math.min(l.width, l.height); }
+    else { vw = Math.max(l.width, l.height * r); vh = vw / r; }
+    const s = a.width / vw;
+    const tx = a.left + a.width / 2 - l.left - (l.width * s) / 2;
+    const ty = a.top + a.height / 2 - l.top - (l.height * s) / 2;
+    const ix = (l.width - vw) / 2, iy = (l.height - vh) / 2;
+    p.style.overflow = 'visible';
+    const anim = p.animate(
+      [
+        { transform: `translate(${tx}px,${ty}px) scale(${s})`, clipPath: `inset(${iy}px ${ix}px)` },
+        { transform: 'none', clipPath: 'inset(0px)' },
+      ],
+      { duration: 700, delay: i * 28, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' },
+    );
+    anim.onfinish = anim.oncancel = () => { p.style.overflow = ''; };
   });
 }
 bS.onclick = () => { auto = false; setMode('sheet'); };
@@ -81,20 +97,25 @@ function parse(s: string) {
   if (my) { y = +my[1]; s = s.replace(my[1], '').replace('年', ''); }
   const mm = s.match(/(十二|十一|十|[一二三四五六七八九]|\d{1,2})月/);
   if (mm) { m = CN[mm[1]] || +mm[1]; s = s.replace(mm[0], ''); }
-  return { y, m, w: s.replace(/[的，,\s]/g, '') };
+  let season = '';
+  for (const k of Object.keys(SEASON)) if (s.includes(k)) { season = k; s = s.replace(k, ''); }
+  return { y, m, season, w: s.replace(/[的，,\s]/g, '') };
 }
 function textMatch(el: HTMLElement, w: string) {
   if (!w) return true;
-  const place = d(el).place ?? '', title = d(el).title ?? '';
+  const place = (d(el).place ?? '').toLowerCase(), zh = d(el).placeZh ?? '', title = d(el).title ?? '';
+  w = w.toLowerCase();
   const tags = (d(el).tags ?? '').split('|').filter(Boolean);
-  if (place && w.includes(place)) return true;
+  if ((place && (w.includes(place) || (w.length > 1 && place.includes(w)))) || (zh && w.includes(zh))) return true;
   if (title && (title.includes(w) || w.includes(title))) return true;
-  return tags.some((t) => (ALIAS[t] ?? [t]).some((a) => w.includes(a)) || w.includes(t));
+  return tags.some((t) => (ALIAS[t] ?? [t]).some((a) => w.includes(a)) || w.includes(t.toLowerCase()) || (w.length > 1 && t.toLowerCase().includes(w)));
 }
 function match(el: HTMLElement, s: string) {
   const k = parse(s);
   if (k.y && Number(d(el).y) !== k.y) return false;
   if (k.m && Number(d(el).m) !== k.m) return false;
+  // 「夏天」这类：拍摄月份在这个季节里，或标签/标题里写着它
+  if (k.season && !SEASON[k.season].includes(Number(d(el).m)) && !textMatch(el, k.season)) return false;
   return textMatch(el, k.w);
 }
 function run(s: string) {
