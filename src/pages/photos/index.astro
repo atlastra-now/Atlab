@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/photos.css';
+import '../../styles/lightbox.css';
+
+// 素材：src/content/photos/（已转正、缩到 3000px、去掉 EXIF，见 scripts/import-photos.mjs）；信息：photos.yaml。
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/content/photos/*.{jpg,jpeg,png,webp}', { eager: true });
+const videoUrls = import.meta.glob<string>('/src/content/photos/*.{mp4,webm}', { eager: true, query: '?url', import: 'default' });
+const find = <T,>(map: Record<string, T>, name: string) => map[`/src/content/photos/${name}`];
+
+const entries = (await getCollection('photos')).map((e) => e.data);
+
+// 本地预览：place / date 空着只给警告；GitHub Actions 上的正式构建遇到空的就报错。
+const missing = entries.filter((p) => !p.place || !p.date).map((p) => `${p.file}（${[!p.place && 'place', !p.date && 'date'].filter(Boolean).join('、')}）`);
+if (missing.length) {
+  const msg = `photos.yaml 里有 ${missing.length} 条缺 place 或 date：${missing.join('，')}`;
+  if ((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env.GITHUB_ACTIONS === 'true') throw new Error(msg);
+  console.warn(`[photos] ${msg}`);
+}
+
+// 排序：有 order 的先（小的在前），其余按 date 从新到旧；没有 date 的排最后。
+const sorted = [...entries].sort((a, b) => {
+  if (a.order != null && b.order != null) return a.order - b.order;
+  if (a.order != null) return -1;
+  if (b.order != null) return 1;
+  return b.date.localeCompare(a.date);
+});
+
+// Entropy 的版式：12 张一循环，按顺序套用（cs 起始栏、sp 占几栏、mt 起点下移 px）。
+// 竖图和方图占的栏数收窄，避免在宽槽里变得过高。
+const SLOTS: Array<[number, number, number, number]> = [
+  [1, 4, 1, 0], [6, 4, 1, 90], [11, 2, 1, 200],
+  [2, 3, 2, 40], [6, 7, 2, 0],
+  [1, 5, 3, 30], [7, 3, 3, 150], [10, 3, 3, 20],
+  [1, 3, 4, 0], [5, 4, 4, 60], [10, 3, 4, 10],
+  [4, 6, 5, 0],
+];
+
+const items = await Promise.all(
+  sorted.map(async (p, i) => {
+    const isVideo = /\.(mp4|webm)$/i.test(p.file);
+    const posterName = isVideo ? p.poster : p.file;
+    const meta = posterName ? find(images, posterName)?.default : undefined;
+    if (!meta) throw new Error(`photos.yaml：找不到 ${posterName ?? p.file} 对应的图片（应放在 src/content/photos/）`);
+    const [cs, sp0, rowBase, mt] = SLOTS[i % SLOTS.length];
+    const ratio = meta.width / meta.height;
+    const sp = ratio < 1.15 ? Math.min(sp0, 4) : sp0;
+    const row = rowBase + Math.floor(i / SLOTS.length) * 5;
+    const thumbs = await Promise.all([240, 480, 960, 1440].map((w) => getImage({ src: meta, width: w, format: 'webp', quality: 78 })));
+    const full = await getImage({ src: meta, width: 2400, format: 'webp', quality: 82 });
+    const base = p.file.replace(/\.[^.]+$/, '');
+    return {
+      ...p,
+      isVideo,
+      r: `${meta.width}/${meta.height}`,
+      cs, sp, row, mt,
+      srcset: thumbs.map((t, k) => `${t.src} ${[240, 480, 960, 1440][k]}w`).join(', '),
+      src: thumbs[1].src,
+      full: full.src,
+      mp4: isVideo ? find(videoUrls, `${base}.mp4`) : undefined,
+      webm: isVideo ? find(videoUrls, `${base}.webm`) : undefined,
+      ym: p.date ? p.date.slice(0, 4) + '.' + p.date.slice(5, 7) : '',
+      y: p.date ? Number(p.date.slice(0, 4)) : 0,
+      m: p.date ? Number(p.date.slice(5, 7)) : 0,
+    };
+  }),
+);
+
+const EX = ['下雨的夜晚', '安静的清晨', '去年的海边', '京都'];
+---
+<BaseLayout title="照片" current="photos" description="照片">
+  <main class="photos pad">
+    <div class="top">
+      <h1>照片</h1>
+      <form class="ask" id="f" role="search">
+        <input id="q" type="text" placeholder={EX[0]} aria-label="用一句话找照片" autocomplete="off" />
+        <button class="go" type="submit" aria-label="翻出来"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+      </form>
+      <div class="chips" id="chips">
+        {EX.map((t) => <button type="button" aria-pressed="false">{t}</button>)}
+      </div>
+      <div class="bar"><span class="sr" id="count" aria-live="polite">{items.length} 张</span><span class="seg" role="group" aria-label="排布：Order 或 Entropy"><button id="bSheet" type="button" aria-pressed="true">Order</button><button id="bOpen" type="button" aria-pressed="false">Entropy</button></span></div>
+    </div>
+    <div class="g sheet" id="g">
+      {items.map((p, i) => (
+        <a class="c" href={p.full} style={`--cs:${p.cs};--sp:${p.sp};--row:${p.row};--mt:${p.mt}px;--r:${p.r}`}
+          data-i={i} data-full={p.full} data-w={p.isVideo ? 'v' : 'p'} data-mp4={p.mp4} data-webm={p.webm}
+          data-place={p.place} data-title={p.title ?? ''} data-tags={p.tags.join('|')} data-y={p.y} data-m={p.m} data-ym={p.ym}
+          aria-label={[p.title, p.place, p.ym].filter(Boolean).join('，') || p.file}>
+          {(p.place || p.ym) && <div class="m"><span>{p.place}</span><span>{p.ym}</span></div>}
+          <div class={`p${p.isVideo ? ' vid' : ''}`}>
+            {p.isVideo ? (
+              <video muted loop playsinline preload="none" poster={p.src} aria-hidden="true">
+                {p.webm && <source src={p.webm} type="video/webm" />}
+                {p.mp4 && <source src={p.mp4} type="video/mp4" />}
+              </video>
+            ) : (
+              <img src={p.src} srcset={p.srcset} sizes="(min-width: 760px) 110px, 25vw" alt={[p.title, p.place].filter(Boolean).join('，')} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" />
+            )}
+          </div>
+          {p.title && <span class="cap">{p.title}</span>}
+        </a>
+      ))}
+    </div>
+  </main>
+  <script>
+    import '../../scripts/photos';
+  </script>
+</BaseLayout>
