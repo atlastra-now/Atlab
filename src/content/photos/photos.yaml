@@ -2,83 +2,105 @@
 # place 和 date 必填：本地预览允许空着（只给警告），GitHub 上的正式构建遇到空的会报错。
 # date 已按拍摄时间预填（只取日期），和你想显示的月份不一致就直接改。
 # 可选：title（图下方一句话）、tags（搜索用的主题词，如 下雨、夜晚、海边）、order（数字小的靠前）。
+# 现在的排布是手动排的：order 1–20 就是页面上的顺序（不再按日期）；想换位置就改 order。
+# tags 写成一个方括号，用逗号隔开：tags: [咖啡, brunch]
 - file: IMG_0003.jpg
-  place: ""
+  place: "维也纳"
   date: 2025-08-19
-  tags: []
+  tags: [咖啡, brunch, 初夏的午后, 好可爱的坐垫]
+  order: 3
 - file: IMG_0004.jpg
-  place: ""
+  place: "斯德哥尔摩"
   date: 2025-04-14
-  tags: []
+  tags: [早春的夜晚, 落日的骑士教堂, T-central]
+  order: 1
 - file: IMG_0296.jpg
-  place: ""
+  place: "斯德哥尔摩"
   date: 2037-01-01
-  tags: []
+  tags: [春天来了, 夏令时]
+  order: 20
 - file: IMG_0302.jpg
-  place: ""
+  place: "斯德哥尔摩"
   date: 2025-06-20
-  tags: []
+  tags: [仲夏节, 安静的瞬间, 节日的氛围]
+  order: 4
 - file: IMG_0386.jpg
-  place: ""
+  place: "巴塞罗那"
   date: 2025-03-24
-  tags: []
+  tags: [那片海, 落日时分, CCD, 孤独星宿, 早春的傍晚]
+  order: 2
 - file: IMG_0621.jpg
-  place: ""
+  place: "布拉格"
   date: 2025-08-24
-  tags: []
+  tags: [布拉格, 桥]
+  order: 9
 - file: IMG_0647.jpg
-  place: ""
+  place: "布拉格"
   date: 2025-08-24
-  tags: []
+  tags: [可爱, 鸭子鸭子]
+  order: 14
 - file: IMG_0657.jpg
-  place: ""
+  place: "里斯本"
   date: 2025-03-26
-  tags: []
+  tags: [一些回忆]
+  order: 19
 - file: IMG_0734.jpg
-  place: ""
+  place: "布拉格"
   date: 2025-08-25
-  tags: []
+  tags: [俯瞰, 欧洲中世纪]
+  order: 7
 - file: IMG_1041.jpg
-  place: ""
+  place: "赫尔辛基"
   date: 2025-10-13
-  tags: []
+  tags: [颂歌图书馆, 室内空间, Oodi, 图书馆]
+  order: 5
 - file: IMG_1256.jpg
   place: ""
   date: 2025-10-14
-  tags: []
+  tags: [Kiasma, 当代艺术博物馆, 芬兰, 喜欢赫尔辛基]
+  order: 15
 - file: IMG_1381.jpg
   place: ""
   date: 2025-10-17
-  tags: []
+  tags: [solo trip, 岩石教堂, 芬兰, 喜欢赫尔辛基]
+  order: 16
 - file: IMG_1418.jpg
-  place: ""
+  place: "赫尔辛基"
   date: 2025-10-17
-  tags: []
+  tags: [秋天, Alvar Aalto, 芬兰, 喜欢赫尔辛基, 室内空间, 朝圣之旅]
+  order: 6
 - file: IMG_2010.jpg
-  place: ""
+  place: "斯德哥尔摩"
   date: 2025-11-21
-  tags: []
+  tags: [初冬, 有朋自远方来, 海边, 落日时分]
+  order: 18
 - file: IMG_2335.jpg
-  place: ""
+  place: "巴黎"
   date: 2025-12-24
-  tags: []
+  tags: [巴黎, 圣诞节, 想吃法餐了]
+  order: 8
 - file: IMG_5413.jpg
-  place: ""
+  place: "米兰"
   date: 2026-06-13
-  tags: []
+  tags: [Milan, 是夏天, 落日时分, 米兰大教堂]
+  order: 11
 - file: IMG_5438.jpg
-  place: ""
+  place: "米兰"
   date: 2026-06-13
-  tags: []
+  tags: [Milan, 是夏天, 超热的, 电车, CCD, 漂亮的颜色]
+  order: 12
 - file: IMG_5449.jpg
   place: ""
   date: 2026-06-14
-  tags: []
+  tags: [Milan, 是夏天, 超热的, 米兰运河, CCD, 喧嚣又安静]
+  order: 17
 - file: IMG_8446.jpg
-  place: ""
+  place: "St. Wolfgang"
   date: 2025-08-21
-  tags: []
+  tags: [沙夫山, 红色小缆车, 超级壮观, 登山火车, St. Wolfgang, 静谧的一刻]
+  order: 13
 - file: IMG_8549.jpg
-  place: ""
+  place: "戈绍"
   date: 2025-08-22
-  tags: []
+  tags: [戈绍湖, 奥地利, 我会再去的]
+  order: 10
