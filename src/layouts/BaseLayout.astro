@@ -10,8 +10,9 @@ export interface Props {
   description?: string;
   image?: string;
   type?: 'website' | 'article';
+  current?: 'photos';
 }
-const { title, description, image, type = 'website' } = Astro.props;
+const { title, description, image, type = 'website', current } = Astro.props;
 const pageTitle = title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).href : undefined;
@@ -57,7 +58,7 @@ const ogImage = image ? new URL(image, Astro.site).href : undefined;
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></symbol>
     <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/></symbol>
     </svg>
-    <SiteHeader />
+    <SiteHeader current={current} />
     <slot />
     <SiteFooter />
   </body>

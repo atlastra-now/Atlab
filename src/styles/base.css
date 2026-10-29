@@ -59,8 +59,9 @@ a{color:inherit}
 .site .full{display:flex;justify-content:space-between;align-items:center;height:60px}
 .mark{font-weight:700;font-size:19px;letter-spacing:-.03em;display:flex;align-items:center;gap:3px;text-decoration:none}
 .mark .ast{width:12px;height:12px;margin-top:-10px}
-.site nav{font-size:14px;font-weight:500;color:var(--ink-2)}
+.site nav{font-size:14px;font-weight:500;color:var(--ink-2);display:flex;gap:28px}
 .site nav a{text-decoration:none}
+.site nav a[aria-current]{color:var(--ink);border-bottom:2px solid var(--ink);padding-bottom:2px}
 
 /* 手机端页眉链接：透明伪元素把点击区域扩到约 44px，不改变布局和外观（作者已同意，参考页之外）。 */
 @media (max-width:700px){

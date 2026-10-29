@@ -1,4 +1,5 @@
 ---
 import { url } from '../utils/url';
+const { current } = Astro.props as { current?: 'photos' };
 ---
-<header class="site pad"><div class="full"><a class="mark" href={url()}>atlab<svg class="ast"><use href="#ast"/></svg></a><nav><a href={url()}>文章</a></nav></div></header>
+<header class="site pad"><div class="full"><a class="mark" href={url()}>atlab<svg class="ast"><use href="#ast"/></svg></a><nav><a href={url()}>文章</a><a href={url('photos/')} aria-current={current === 'photos' ? 'page' : undefined}>照片</a></nav></div></header>
