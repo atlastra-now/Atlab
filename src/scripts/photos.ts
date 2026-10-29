@@ -181,14 +181,13 @@ lb.setAttribute('role', 'dialog');
 lb.setAttribute('aria-modal', 'true');
 lb.setAttribute('aria-label', '放大查看');
 lb.innerHTML =
-  '<div class="lbx-bar"><span class="lbx-t"></span><span class="lbx-n"></span>' +
-  '<button type="button" class="lbx-prev" aria-label="上一张">上一张</button>' +
-  '<button type="button" class="lbx-next" aria-label="下一张">下一张</button>' +
-  '<button type="button" class="lbx-close">关闭</button></div>' +
-  '<div class="lbx-stage"></div><p class="lbx-cap"></p>';
+  '<button type="button" class="lbx-close" aria-label="关闭"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+  '<button type="button" class="lbx-prev" aria-label="上一张"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5l-7 7 7 7"/></svg></button>' +
+  '<button type="button" class="lbx-next" aria-label="下一张"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5l7 7-7 7"/></svg></button>' +
+  '<div class="lbx-stage"></div><p class="lbx-cap"><span class="lbx-c"></span><span class="lbx-n"></span></p>';
 document.body.appendChild(lb);
 const lq = <T extends HTMLElement>(s: string) => lb.querySelector(s) as T;
-const stage = lq('.lbx-stage'), cap = lq('.lbx-cap'), num = lq('.lbx-n');
+const stage = lq('.lbx-stage'), capText = lq('.lbx-c'), num = lq('.lbx-n');
 const prev = lq<HTMLButtonElement>('.lbx-prev'), next = lq<HTMLButtonElement>('.lbx-next'), closeBtn = lq<HTMLButtonElement>('.lbx-close');
 let cur = -1;
 let opener: HTMLElement | null = null;
@@ -214,9 +213,7 @@ function show(i: number) {
     im.src = x.full ?? ''; // 放大时才请求大图
     stage.appendChild(im);
   }
-  cap.innerHTML = '';
-  const parts = [x.title, x.place].filter(Boolean) as string[];
-  cap.append(parts.join('　'));
+  capText.textContent = ([x.title, x.place].filter(Boolean) as string[]).join('　');
   const v = visible();
   const k = v.indexOf(i);
   num.textContent = v.length > 1 && k >= 0 ? `${k + 1} / ${v.length}` : '';

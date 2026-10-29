@@ -17,9 +17,12 @@ html{scrollbar-gutter:stable}
 .chips button{border:1px solid var(--line);background:transparent;color:var(--ink-2);font:inherit;font-size:13px;border-radius:999px;padding:5px 12px;cursor:pointer}
 .chips button:hover,.chips button[aria-pressed="true"]{border-color:var(--acc);color:var(--acc)}
 .bar{display:flex;justify-content:flex-end;margin-top:28px;font-size:13px;border-bottom:1px solid var(--ink);padding-bottom:10px}
-.seg{display:flex;gap:4px}
-.seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:2px 8px;cursor:pointer;border-radius:4px}
-.seg button[aria-pressed="true"]{color:var(--acc);background:var(--acc-soft)}
+.bar{padding-bottom:0}
+.seg{display:flex;gap:20px}
+/* 和页眉导航「照片」同一种做法：纯文字，选中的下面一条 2px 的线（这里用站里的蓝），线压在分隔线上 */
+.seg button{border:0;border-bottom:2px solid transparent;margin-bottom:-1px;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:2px 0 10px;cursor:pointer;border-radius:0}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{color:var(--acc);border-bottom-color:var(--acc)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .photos button:focus-visible,.photos a:focus-visible,.photos input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 .ask input:focus-visible{outline:0}
@@ -56,23 +59,28 @@ html{scrollbar-gutter:stable}
 }
 @media (prefers-reduced-motion:reduce){.g .c,.go{transition:none}.g.open .cap,.g.open .m{animation:none}}
 
-/* Entropy：随着滚动，照片从淡到清晰（浏览器支持滚动驱动动画时）。动画放在 .in 上，不和 .dim 的透明度、切换动画冲突 */
+/* Entropy：随着滚动，照片从淡到清晰（浏览器支持滚动驱动动画时）。渐显的距离是 animation-range 的结尾（cover 50%：照片中心走到屏幕中间时完全清晰），想慢一点就把 50% 调大。动画放在 .in 上，不和 .dim 的透明度、切换动画冲突 */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .g.open .in{animation:reveal linear both}
     /* 另起一条规则：压缩器会把 animation-timeline 合并进 animation 简写，Chrome 不认那种简写 */
-    .g.open>.c>.in{animation-timeline:view();animation-range:entry 0% entry 70%}
-    @keyframes reveal{from{opacity:.08}to{opacity:1}}
+    .g.open>.c>.in{animation-timeline:view();animation-range:cover 0% cover 50%}
+    @keyframes reveal{from{opacity:.15}to{opacity:1}}
   }
 }
 
 /* 放大：外壳沿用站里的 .lbx（src/styles/lightbox.css），这里只加照片版的舞台和图注 */
 .lbx.lbx-photo{background:#111112}
-.lbx.lbx-photo .lbx-bar{border-bottom:0;font-size:14px;padding-top:calc(env(safe-area-inset-top,0px) + 8px);padding-bottom:8px}
-.lbx.lbx-photo .lbx-n{color:#8c8c86;font-variant-numeric:tabular-nums}
-.lbx.lbx-photo button{border:0;border-radius:4px;background:transparent;color:#ededea;font:500 14px var(--sans);padding:4px 12px}
-.lbx.lbx-photo button:hover:not(:disabled){background:rgba(255,255,255,.08)}
-.lbx.lbx-photo button:focus-visible{outline:2px solid #8ea6ff;outline-offset:2px}
-.lbx.lbx-photo .lbx-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px max(16px,env(safe-area-inset-right,0px)) 0}
-.lbx.lbx-photo .lbx-stage img,.lbx-photo .lbx-stage video{display:block;max-width:100%;max-height:100%;min-height:0;width:auto;height:auto;object-fit:contain;border-radius:0}
-.lbx.lbx-photo .lbx-cap{margin:0;padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 22px);text-align:center;font-size:14px;line-height:22px;color:#ededea}
+/* 没有顶栏：照片占满窗口；关闭在右上，上一张 / 下一张在左右两侧，都是细线图标，没有边框和底色 */
+.lbx.lbx-photo button{position:absolute;z-index:1;width:44px;height:44px;min-width:0;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;color:#ededea;opacity:.7;display:grid;place-items:center;cursor:pointer;transition:opacity .2s}
+.lbx.lbx-photo button:hover:not(:disabled){opacity:1;background:transparent}
+.lbx.lbx-photo button:focus-visible{outline:2px solid #8ea6ff;outline-offset:2px;opacity:1}
+.lbx.lbx-photo button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lbx.lbx-photo .lbx-close{top:max(12px,env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px))}
+.lbx.lbx-photo .lbx-prev{left:max(8px,env(safe-area-inset-left,0px));top:50%;margin-top:-22px}
+.lbx.lbx-photo .lbx-next{right:max(8px,env(safe-area-inset-right,0px));top:50%;margin-top:-22px}
+.lbx.lbx-photo .lbx-stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:max(64px,calc(env(safe-area-inset-top,0px) + 56px)) max(64px,env(safe-area-inset-right,0px)) 76px}
+.lbx.lbx-photo .lbx-stage img,.lbx.lbx-photo .lbx-stage video{display:block;max-width:100%;max-height:100%;min-height:0;width:auto;height:auto;object-fit:contain;border-radius:0}
+.lbx.lbx-photo .lbx-cap{position:absolute;left:0;right:0;bottom:0;margin:0;padding:0 16px calc(env(safe-area-inset-bottom,0px) + 28px);text-align:center;font-size:13px;line-height:20px;color:#ededea}
+.lbx.lbx-photo .lbx-n{margin-left:14px;color:#8c8c86;font-variant-numeric:tabular-nums}
+@media (max-width:760px){.lbx.lbx-photo .lbx-stage{padding-inline:12px}}
