@@ -43,7 +43,7 @@ html{scrollbar-gutter:stable}
 .g.sheet .c:hover .p{transform:translateY(-4px)}
 .g.sheet .cap,.g.sheet .m{display:none}
 /* Entropy */
-.g.open{max-width:var(--full);margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);column-gap:24px;row-gap:48px;align-items:start}
+.g.open{max-width:var(--full);margin:0 auto;display:grid;grid-template-columns:repeat(12,1fr);column-gap:32px;row-gap:88px;align-items:start}
 .g.open .c{grid-column:var(--cs)/span var(--sp);grid-row:var(--row);margin-top:var(--mt)}
 .g.open .cap,.g.open .m{animation:fade .5s .25s both}
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -51,7 +51,7 @@ html{scrollbar-gutter:stable}
   .photos{padding-block:32px 80px}
   .photos h1{font-size:30px;margin-bottom:20px}
   .g.sheet{grid-template-columns:repeat(4,1fr);margin:0}
-  .g.open{display:flex;flex-direction:column;gap:32px}
+  .g.open{display:flex;flex-direction:column;gap:56px}
   .g.open .c{margin-top:0;width:100%}
   .g.open .c:nth-child(2n){width:72%;align-self:flex-end}
   .g.open .c:nth-child(3n){width:60%}

@@ -3,6 +3,7 @@
 # date 已按拍摄时间预填；页面上不显示日期，只用于搜索（去年、3月 这类）。
 # 可选：title（图下方一句话）、tags（搜索用的主题词，如 下雨、夜晚、海边）、order（数字小的靠前）。
 # 现在的排布是手动排的：order 1–20 就是页面上的顺序（不再按日期）；想换位置就改 order。
+# size: large 的照片会单独占一行、放大（想放大哪张就给哪张加这一行）。
 # tags 写成一个方括号，用逗号隔开：tags: [咖啡, brunch]
 - file: IMG_0003.jpg
   place: "Vienna"
@@ -99,6 +100,7 @@
   date: 2025-08-21
   tags: [沙夫山, 红色小缆车, 超级壮观, 登山火车, St. Wolfgang, 静谧的一刻]
   order: 13
+  size: large
 - file: IMG_8549.jpg
   place: "Gosau"
   date: 2025-08-22

@@ -45,10 +45,6 @@ const items = await Promise.all(
     const posterName = isVideo ? p.poster : p.file;
     const meta = posterName ? find(images, posterName)?.default : undefined;
     if (!meta) throw new Error(`photos.yaml：找不到 ${posterName ?? p.file} 对应的图片（应放在 src/content/photos/）`);
-    const [cs, sp0, rowBase, mt] = SLOTS[i % SLOTS.length];
-    const ratio = meta.width / meta.height;
-    const sp = ratio < 1.15 ? Math.min(sp0, 4) : sp0;
-    const row = rowBase + Math.floor(i / SLOTS.length) * 5;
     const thumbs = await Promise.all([240, 480, 960, 1440].map((w) => getImage({ src: meta, width: w, format: 'webp', quality: 78 })));
     const full = await getImage({ src: meta, width: 2400, format: 'webp', quality: 82 });
     const base = p.file.replace(/\.[^.]+$/, '');
@@ -58,7 +54,7 @@ const items = await Promise.all(
       r: `${meta.width}/${meta.height}`,
       rn: meta.width / meta.height,
       ri: meta.height / meta.width,
-      cs, sp, row, mt,
+      cs: 1, sp: 1, row: 1, mt: 0,
       srcset: thumbs.map((t, k) => `${t.src} ${[240, 480, 960, 1440][k]}w`).join(', '),
       src: thumbs[1].src,
       full: full.src,
@@ -69,6 +65,32 @@ const items = await Promise.all(
     };
   }),
 );
+
+// 版式：12 张一循环，按顺序套用；竖图和方图最多占 4 栏。
+// photos.yaml 里标了 size: large 的照片单独占一行、放大（横图 10 栏，竖图 6 栏），前后的循环从新的一行重新开始。
+let base = 0;
+let slot = 0;
+for (const it of items) {
+  const portrait = it.rn < 1.15;
+  if (it.size === 'large') {
+    if (slot > 0) base += SLOTS[slot - 1][2];
+    it.sp = portrait ? 6 : 10;
+    it.cs = Math.floor((12 - it.sp) / 2) + 1;
+    it.row = base + 1;
+    it.mt = 0;
+    base += 1;
+    slot = 0;
+    continue;
+  }
+  const [cs, sp0, rowBase, mt] = SLOTS[slot];
+  it.cs = cs;
+  it.sp = portrait ? Math.min(sp0, 4) : sp0;
+  it.row = base + rowBase;
+  it.mt = mt;
+  slot += 1;
+  if (slot === SLOTS.length) { base += SLOTS[SLOTS.length - 1][2]; slot = 0; }
+}
+
 
 // 地点用英文显示；搜索时认中文地名。新增地点时在这里补一行。
 const PLACE_ZH: Record<string, string> = {

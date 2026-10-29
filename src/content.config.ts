@@ -36,6 +36,7 @@ const photos = defineCollection({
     tags: z.array(z.string()).default([]),
     poster: z.string().optional(),
     order: z.number().int().optional(),
+    size: z.enum(['large']).optional(), // 好看的照片：单独占一行、放大
   }),
 });
 
